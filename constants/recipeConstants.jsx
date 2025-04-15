@@ -1,0 +1,95 @@
+exports.INGREDIENTS = {
+    // Vegetables
+    ONION,
+    ONION_WHITE,
+    ONION_YELLOW,
+    ONION_RED,
+    ONION_GREEN,
+    CARROT,
+    CELERY,
+    TOMATO,
+    TOMATO_DICED,
+    JALAEPENO,
+    CORN,
+    LETTUCE,
+    BROCCOLI,
+    BELL_PEPPER,
+    BELL_PEPPER_YELLOW,
+    BELL_PEPPER_RED,
+    PEAS,
+    POTATO_RUSSET,
+    POTATO_GOLDEN,
+
+
+    // Flavoring Vegetables
+    GARLIC_CLOVE,
+    GINGER,
+    CILANTRO,
+    LIME,
+    BASIL_FRESH,
+
+    // Meats
+    CHICKEN_BREAST,
+    CHICKEN_THIGH,
+    GROUND_BEEF,
+    BEEF_CHUCK,
+    GROUND_LAMB,
+
+    // Broths
+    CHICKEN_BROTH,
+    BEEF_BROTH,
+    VEGETABLE_BROTH,
+
+    // Sauce
+    TOMATO_CRUSHED,
+    TOMATO_PASTE,
+    WORCESTERSHIRE_SAUCE,
+    
+    // Oils and Fats
+    OLIVE_OIL,
+    VEGETABLE_OIL,
+    BUTTER,
+    RED_WINE_VINEGAR,
+    CORN_STARCH,
+
+    // Dairy
+    MILK,
+    HALF_AND_HALF,
+    HEAVY_WHIPPING_CREAM,
+    CHEESE_PARMESAN,
+    CHEESE_CHEDDAR,
+    EGG,
+    MAYO,
+
+    // Grains
+    RICE_WHITE,
+    RICE_BROWN,
+    BREAD_SLICE,
+
+
+    // Seasonings
+    SALT,
+    BLACK_PEPPER,
+    THYME,
+    ONION_POWDER,
+    GARLIC_POWDER,
+    CUMIN,
+    CHILI_POWDER,
+    OREGANO,
+    RED_PEPPER_FLAKES,
+    ROSEMARY,
+    PARSLEY,
+    CAYENNE_PEPPER,
+
+    // Misc.
+    BLACK_BEANS,
+    KIDNEY_BEANS,
+    SUGAR,
+    SUGAR_BROWN,
+    LIME_JUICE,
+    LEMON_JUICE,
+    WATER,
+    HONEY,
+    SESAME_OIL,
+    ALL_PURPOSE_FLOUR,
+}
