@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const serverURL = import.meta.env.VITE_HOSTED_SERVER_BASE_URL;
+const serverURL = import.meta.env.VITE_ENV === 'development'? 
+    import.meta.env.VITE_LOCAL_SERVER_BASE_URL : import.meta.env.VITE_HOSTED_SERVER_BASE_URL;
 
 const axiosInstance = axios.create({
     baseURL: serverURL,
