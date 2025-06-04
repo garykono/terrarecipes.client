@@ -1,0 +1,19 @@
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    .cardList.cardList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    .cardList.cardList {
+        /* grid-template-columns: 1fr; */
+    }
+}

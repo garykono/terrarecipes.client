@@ -1,0 +1,8 @@
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-items: center;
+    align-items: center;
+    gap: 3.6em;
+    padding: 4.8em;
+}

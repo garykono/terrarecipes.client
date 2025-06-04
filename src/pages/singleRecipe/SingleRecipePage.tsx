@@ -1,11 +1,13 @@
+import styles from './SingleRecipePage.module.css';
 import { useState } from 'react'
 import { useLoaderData, Link, useRouteLoaderData, useNavigate } from 'react-router-dom';
 import { editCollectionById, getCollectionById } from '../../api/queries/collectionApi';
-import TagList from '../../components/TagList';
+import TagList from '../../components/tagList/TagList';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import { SingleRecipeLoaderResult } from './singleRecipeLoader';
 import { RecipeFieldWithSection } from '../../api/types/recipe';
+import FormMessage from '../../components/formMessage/FormMessage';
 
 function SingleRecipePage() {
     const navigate = useNavigate();
@@ -66,11 +68,11 @@ function SingleRecipePage() {
         return list.map((item, index) => {
             if (item.isSection) {
                 return (
-                    <h5 
-                        className="is-size-5 is-underlined has-text-weight-medium mt-5 mb-3" 
+                    <div 
+                        className={`heading-tertiary ${styles.listItemIsSection}`}
                         key={index}>
                             {item.text}
-                    </h5>
+                    </div>
                 );
             } else {
                 return <li key={index}>{item.text}</li>;
@@ -84,19 +86,19 @@ function SingleRecipePage() {
                 <button 
                     className="button" 
                     onClick={() => setAddToCollectionDropdownButtonStatus(
-                        addToCollectionDropdownButtonStatus === "" ? "is-active" : ""
+                        addToCollectionDropdownButtonStatus === "" ? "dropdown--is-active" : ""
                     )}>
                     <span>+ Add to Collection</span>
                 </button>
             </div>
-            <div className="dropdown-menu" id="dropdown-menu" role="menu">
+            <div className="dropdown-menu">
                 <div className="dropdown-content">
                     {user && user.collections.length > 0 ?
                         user.collections.map((collection) => {
                             return (
                                 <a 
                                     key={collection._id} 
-                                    className="dropdown-item is-clickable"
+                                    className="dropdown-item"
                                     onClick={() => handleAddToCollection(collection._id)}
                                 >
                                         {collection.name}
@@ -120,60 +122,81 @@ function SingleRecipePage() {
     }
 
     return (
-        <div className="column is-8 mx-6">
-            <div className="is-flex is-justify-content-right">
-                {user && 
-                    <div>
-                        {user.recipes.map(recipe => recipe._id).includes(recipe._id) &&
-                            <Link to={`/editRecipe/${recipe._id}`}>
-                                <button className="button">
-                                    Edit Recipe
-                                </button>
-                            </Link>
-                        }
-                        <div className="my-2">
-                            {addToCollectionDropdownButton}
+        <div className="page-recipe">
+            {user && (
+                <div className="container">
+                    <div className={`${styles.recipeManagementButtonsContainer}`}>
+                        <div className={styles.recipeManagementButtons}>
+                            {user.recipes.map(recipe => recipe._id).includes(recipe._id) &&
+                                <Link to={`/editRecipe/${recipe._id}`}>
+                                    <button className="button">
+                                        Edit Recipe
+                                    </button>
+                                </Link>
+                            }
+                            <div className={styles.addToCollection}>
+                                {addToCollectionDropdownButton}
+                                
+                                <FormMessage message={addToCollectionStatus} />
+                            </div>
                         </div>
-                        <p>{addToCollectionStatus}</p>
                     </div>
-                }
-            </div>
-            <section className="section">
-                <div className="container mb-6">
-                    <h1 className="is-size-1 has-text-weight-bold">{recipe.name}</h1>
-                    <div className="is-flex is-align-items-center ml-3">
-                        <p className="has-text-weight-normal is-size 6 mr-1">by</p>
-                        <p className="has-text-weight-semibold is-size-6 my-color">
+                </div>
+            )}
+
+            <div className={styles.sectionHeading}>
+                <div className="container">
+                    <h1 className="heading-primary">{recipe.name}</h1>
+                    {/* <div className={styles.author}>
+                        by <span className={styles.authorText}>
                             {recipe.author? recipe.author.username : 'deleted-user'}
-                        </p>
-                    </div>
+                        </span>
+                    </div> */}
                 </div>
-                <p>{recipe.description}</p>
-                <div className="column is-6 my-4">
-                    <div className="image is-square">
-                        <img 
-                            className="image is-square" 
-                            src={recipe.image? recipe.image : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
-                        />
-                    </div>
-                </div>
-            </section>
+            </div>
 
-            <section className="section content">
-                <h3 className="is-size-3 has-text-weight-bold">Ingredients</h3>
-                <ul>
-                    {renderListWithSections(recipe.ingredients)}
-                </ul>
-            </section>
+            <div className={styles.sectionDescription}>
+                <div className="container">
+                    <div className={styles.control}>
+                        <p className="text">{recipe.description}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className={styles.sectionImage}>
+                <div className="container">
+                    <img 
+                        className={styles.recipeImage}
+                        src={recipe.image? recipe.image : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
+                    />
+                </div>
+            </div>
+
+            <div className={styles.sectionIngredients}>
+                <div className="container">
+                    <h2 className="heading-secondary">Ingredients</h2>
+                    <ul className={styles.ingredientsList}>
+                        {renderListWithSections(recipe.ingredients)}
+                    </ul>
+                </div>
+            </div>
             
-            <section className="section content">
-                <h3 className="is-size-3 has-text-weight-bold">Directions</h3>
-                <ol>
-                    {renderListWithSections(recipe.directions)}
-                </ol>
-            </section>
+            <div className={styles.sectionDirections}>
+                <div className="container">
+                    <h2 className="heading-secondary">Directions</h2>
+                    <div className={styles.control}>
+                        <ol className={styles.directionsList}>
+                            {renderListWithSections(recipe.directions)}
+                        </ol>
+                    </div>
+                </div>
+            </div>
 
-            <TagList tags={recipe.tags} />
+            <div className={styles.sectionTags}>
+                <div className="container">
+                    <TagList tags={recipe.tags} />
+                </div>
+            </div>
         </div>
     )
 }

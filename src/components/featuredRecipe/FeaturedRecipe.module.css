@@ -1,0 +1,85 @@
+.featuredRecipe {
+    padding: 2.4rem;
+    background-color: #fff;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.img {
+    width: 100%;  
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.recipeBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 4.8rem;
+}
+
+.recipeContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.recipeTitle {
+    text-align: center;
+}
+
+.recipeDescription {
+}
+
+.recipeButtonLink {
+    display: flex;
+    justify-content: center;
+}
+
+/**************************/
+/* Below 944px (Tablets) */
+/**************************/
+
+@media(max-width: 59em) {
+    .recipeBody {
+        padding: 0rem 3.6rem;
+    }
+    .recipeContent {
+        gap: 2rem;
+    }
+
+    .recipeDescription {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+                line-clamp: 3; 
+        -webkit-box-orient: vertical;
+    }
+}
+
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    .featuredRecipe {
+        display: flex;
+        flex-direction: column;
+        gap: 3.6rem;
+    }
+
+    .recipeTitle {
+        font-size: 3.6rem;
+    }
+
+    .recipeBody {
+        gap: 3.6rem;
+    }
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+}

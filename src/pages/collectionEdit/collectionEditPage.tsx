@@ -1,16 +1,18 @@
+import styles from './collectionEditPage.module.css';
 import { useState, useContext, useEffect } from 'react';
 import { useLoaderData, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
 import { useForm } from 'react-hook-form'; 
 import { CollectionUpdateProps, editCollectionById } from '../../api/queries/collectionApi';
-import RecipeCardWithFeatures from '../../components/RecipeCardWithFeatures';
-import CardList from '../../components/CardList';
-import Pagination from '../../components/Pagination';
-import FormMessage from '../../components/FormMessage';
+import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
+import CardList from '../../components/cardList/CardList';
+import Pagination from '../../components/pagination/Pagination';
+import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { CollectionEditLoaderResult } from './collectionEditLoader';
 import { Recipe, RecipeWithMarkForDelete } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
+import BasicHero from '../../components/basicHero/BasicHero';
 
 export default function CollectionEditPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
@@ -113,7 +115,7 @@ export default function CollectionEditPage() {
 
     if (!collection) {
         const e = new Error();
-        e.name = 'NoID';
+        e.name = 'No_ID';
         return <GlobalErrorDisplay error={e} />
     }
 
@@ -122,45 +124,46 @@ export default function CollectionEditPage() {
     }
 
     return (
-        <div className="column is-8 mx-6">
-            <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="page-collection-edit">
+            <BasicHero title='Edit Collection' />
 
-                <div className="field">
-                    <label className="label">Collection Name: </label>
-                    <div className="control">
-                        <input 
-                            className="input"
-                            {...register("name", {
-                                required: 'A collection must have a name.'
-                            })}
-                        />
-                        {errors.name?.message &&
-                            <FormMessage message={errors.name.message} danger />
-                        }
+            <div className="container">
+                <form className='form form--card' onSubmit={handleSubmit(onSubmit)}>
+                    <div className="field">
+                        <label className="label">Collection Name: </label>
+                        <div className="control">
+                            <input 
+                                className="input"
+                                {...register("name", {
+                                    required: 'A collection must have a name.'
+                                })}
+                            />
+                            {errors.name?.message &&
+                                <FormMessage message={errors.name.message} danger />
+                            }
+                        </div>
                     </div>
-                </div>
 
-                <div className="field">
-                    <label className="label">Description: </label>
-                    <div className="control">
-                        <textarea 
-                            className="textarea"
-                            rows={5}
-                            {...register("description", {
-                                maxLength: {
-                                    value: 300,
-                                    message: 'A collection description has a max length of 300 characters.'
-                                }
-                            })}
-                        />
-                        {errors.description?.message &&
-                            <FormMessage message={errors.description.message} danger />
-                        }
-                    </div>
-                </div>   
+                    <div className="field">
+                        <label className="label">Description: </label>
+                        <div className="control">
+                            <textarea 
+                                className="textarea"
+                                rows={5}
+                                {...register("description", {
+                                    maxLength: {
+                                        value: 300,
+                                        message: 'A collection description has a max length of 300 characters.'
+                                    }
+                                })}
+                            />
+                            {errors.description?.message &&
+                                <FormMessage message={errors.description.message} danger />
+                            }
+                        </div>
+                    </div>   
 
-                <section className="section">
-                    <CardList list={renderedRecipeCards} numCols={numCols} />
+                    <CardList list={renderedRecipeCards} className={styles.cardList} />
                     <Pagination 
                             currentPage={page} 
                             onFirstPageButtonClicked={() => navigate(`/collection/${collection._id}/${1}`)}
@@ -169,24 +172,22 @@ export default function CollectionEditPage() {
                             onLastPageButtonClicked={() => navigate(`/collection/${collection._id}/${totalPages}`)}
                             numPages={totalPages} 
                         />
-                </section>
-            
-                <section className="section">
-                        <div className="is-flex is-flex-direction-column">
-                            {errors.root?.general.message &&
-                                <FormMessage className="mb-3" message={errors.root.general.message} danger />
-                            }
-                            <div className="buttons">
-                                <button className="button" type="button" onClick={handleCancel}>
-                                    Cancel
-                                </button>
-                                <button className="button my-color-bg" type="submit">
-                                    Save
-                                </button>
-                            </div>
+                
+                    <div className="buttons">
+                        {errors.root?.general.message &&
+                            <FormMessage className="form-message" message={errors.root.general.message} danger />
+                        }
+                        <div className="buttons">
+                            <button className="button" type="button" onClick={handleCancel}>
+                                Cancel
+                            </button>
+                            <button className="button button--full" type="submit">
+                                Save
+                            </button>
                         </div>
-                </section>
-            </form>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }

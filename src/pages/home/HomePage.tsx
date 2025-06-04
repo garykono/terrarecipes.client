@@ -1,34 +1,41 @@
+import styles from "./HomePage.module.css";
 import { useState, useContext, useEffect } from "react";
-import { useLoaderData } from "react-router-dom";
-import FeaturedRecipe from "../../components/FeaturedRecipe";
-import FeaturedList from "../../components/FeaturedList";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import FeaturedRecipe from "../../components/featuredRecipe/FeaturedRecipe";
+import FeaturedList from "../../components/featuredList/FeaturedList";
 import { Recipe } from "../../api/types/recipe";
 import { HomeLoaderResult } from "./homeLoader";
+import BasicHero from "../../components/basicHero/BasicHero";
 
 function HomePage () {
     const { recipes } = useLoaderData() as HomeLoaderResult;
+    const navigate = useNavigate();
 
     const featuredListsData = 
         {
             dinner: {
                 title: "Dinner Recipes",
                 featuredList: getFeaturedRecipesList("dinner"),
-                buttonTitle: "More Dinner Recipes"
+                buttonTitle: "More Dinner Recipes",
+                onClick: () => navigate(`./recipes/1/dinner`)
             },
             bigPot: {
                 title: "Big Pot Recipes",
                 featuredList: getFeaturedRecipesList("big pot"),
-                buttonTitle: "More Big Pot Recipes"
+                buttonTitle: "More Big Pot Recipes",
+                onClick: () => navigate(`./recipes/1/big pot`)
             },
             side: {
                 title: "Sides Recipes",
                 featuredList: getFeaturedRecipesList("side"),
-                buttonTitle: "More Sides"
+                buttonTitle: "More Sides",
+                onClick: () => navigate(`./recipes/1/sides`)
             },
             toMake: {
                 title: "Recipes to Try",
                 featuredList: getFeaturedRecipesList("to make"),
-                buttonTitle: "More Recipes to Try"
+                buttonTitle: "More Recipes to Try",
+                onClick: () => navigate(`./recipes/1/to make`)
             }
         }
 
@@ -37,26 +44,14 @@ function HomePage () {
             return recipe.tags.includes(tag);
         }).slice(0, 4);
     }
-
-    let content = recipes[0] ? 
-        <HomePageFeaturedRecipe recipe={recipes[0]} /> : null; 
     
     return (
-        <div className="my-color my-color-page-bg" style={{fontFamily: "Helvetica", letterSpacing: '1.5px'}}>
-            <section className="hero is-medium my-color-bg" style={{}}>
-                <div className="hero-body">
-                    <div className="container has-text-centered">
-                        <p className="title my-5 has-text-white">A simple way to manage and share recipes</p>
-                        <p className="subtitle has-text-white">More features coming soon!</p>
-                    </div>
-                </div>
-            </section>
-            <div className="container">
-                {content}
-                <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
-                <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
-                <HomePageFeaturedList listInfo={featuredListsData["bigPot"]} />
-            </div>
+        <div className={styles.homePage}>
+            <BasicHero title='Home Page' text='A simple way to manage recipes. More features coming!' />
+            {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />}
+            <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
+            <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
+            <HomePageFeaturedList listInfo={featuredListsData["bigPot"]} />
         </div>
     );
 }
@@ -66,18 +61,20 @@ interface HomePageFeaturedListProps {
         title: string;
         featuredList: Recipe[];
         buttonTitle: string;
+        onClick: React.MouseEventHandler<HTMLButtonElement>;
     }
 }
 
 function HomePageFeaturedList({ listInfo }: HomePageFeaturedListProps) {
-    const { title, featuredList, buttonTitle } = listInfo;
+    const { title, featuredList, buttonTitle, onClick } = listInfo;
     return (
-        <section className="section is-flex is-justify-content-center">
-            <div className="column is-14">
+        <section className="section">
+            <div className="container">
                 <FeaturedList 
                     title={title}
                     featuredList={featuredList}
                     buttonTitle={buttonTitle}
+                    onClick={onClick}
                 />
             </div>
         </section>
@@ -86,8 +83,8 @@ function HomePageFeaturedList({ listInfo }: HomePageFeaturedListProps) {
 
 function HomePageFeaturedRecipe({ recipe }: { recipe: Recipe }) {
     return (
-        <section className="section is-flex is-justify-content-center">
-            <div className="column is-11">
+        <section className="section">
+            <div className="container">
                 <FeaturedRecipe recipe={recipe} />
             </div>
         </section>

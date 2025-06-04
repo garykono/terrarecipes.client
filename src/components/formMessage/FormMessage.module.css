@@ -1,0 +1,11 @@
+.message {
+    font-size: 1.2rem;
+}
+
+.success {
+    color: var(--success);
+}
+
+.danger {
+    color: var(--danger);
+}

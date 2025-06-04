@@ -1,0 +1,31 @@
+.recipeCard {
+    display: flex;
+    flex-direction: column;
+    min-width: 10rem;
+    max-width: 30rem;
+}
+
+.img {
+    width: 100%;  
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.recipeContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 3.2rem 1.6rem 1.6rem 1.6rem;
+}
+
+.recipeName {
+    color: #399147;
+    font-weight: 500;
+    font-size: 1.8rem;
+    text-decoration: none;
+}
+
+.recipeDescription {
+    font-size: 1.2rem;
+    color: #999;
+}

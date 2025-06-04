@@ -1,0 +1,27 @@
+.rootLayout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.sticky, .header {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--nav-bar-height);
+    background-color: rgba(255, 255, 255, 0.97);
+    z-index: 999;
+    box-shadow: 0 1.2rem 3.2rem rgba(0, 0, 0, 0.03);
+}
+
+.outlet {
+    display: flex;
+    flex: 1;
+    margin-top: var(--nav-bar-height);
+}
+
+.outlet > * {
+    /* display: flow-root; */
+    flex: 1;
+}

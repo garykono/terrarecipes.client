@@ -1,15 +1,18 @@
+import styles from './RecipeEditPage.module.css';
 import { useState, useContext, useEffect, Ref } from 'react';
 import { useNavigate, useLoaderData, useRouteLoaderData, useRevalidator } from 'react-router-dom';
 import { useForm, useFieldArray, RegisterOptions, ChangeHandler, UseFieldArrayRemove, UseFormRegister, FieldValues } from 'react-hook-form';
 import { GoXCircleFill, GoArrowUp, GoArrowDown } from 'react-icons/go';
 import { createRecipe, editRecipeById } from '../../api/queries/recipesApi';
-import TagList from '../../components/TagList'
-import FormMessage from '../../components/FormMessage';
+import TagList from '../../components/tagList/TagList'
+import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { RecipeEditLoaderResult } from './recipeEditLoader';
 import { Recipe, RecipeFieldWithSection, UnvalidatedRecipe } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
+import BasicHero from '../../components/basicHero/BasicHero';
+import DeleteButton from '../../components/buttons/DeleteButton';
 
 function RecipeEditPage() {
     const navigate = useNavigate();
@@ -216,16 +219,23 @@ function RecipeEditPage() {
 
         return (
             <>
-                <ul>
+                <ul className={styles.fieldArrayList}>
                     {field.map((item, index) => {
                         // const isSection = fieldArray[index].startsWith('section:');
                         const isSection = fieldArray[index].isSection;
                         // setValue(`${fieldArrayName}.${index}.text`, fieldArray[index].replace('section:', ''))
                         
                         return (
-                            <li key={index} className="py-1 is-flex is-align-items-center">
-                                <div className="">
+                            <li 
+                                key={index} 
+                                className={`
+                                    ${styles.fieldArrayListItem}
+                                    ${isSection? styles.fieldArraySection : ''}
+                                `}
+                            >
+                                <div className={styles.moveItemArrows}>
                                     <button
+                                        className={styles.moveItemArrow}
                                         type="button" 
                                         onClick={() => swap(index, index - 1)} 
                                         disabled={index === 0}
@@ -233,6 +243,7 @@ function RecipeEditPage() {
                                         <GoArrowUp />
                                     </button>
                                     <button
+                                        className={styles.moveItemArrow}
                                         type="button" 
                                         onClick={() => swap(index, index + 1)} 
                                         disabled={index === field.length - 1}
@@ -241,8 +252,8 @@ function RecipeEditPage() {
                                     </button>
                                 </div>
                                 
-                                {isSection && <div className='has-text-black mr-2'>Section:</div>}
-                                {isInput?
+                                {isSection && <div className={styles.sectionFieldTag}>Section:</div>}
+                                {isInput || isSection ?
                                     <input
                                         className="input"
                                         {...register(`${fieldArrayName}.${index}.text` as keyof FormData)}
@@ -253,22 +264,21 @@ function RecipeEditPage() {
                                         {...register(`${fieldArrayName}.${index}.text` as keyof FormData)}
                                     />
                                 }
-                                <button 
-                                    type="button" 
+                                <DeleteButton 
+                                    className={styles.deleteButton}
+                                    type="button"
                                     onClick={() => remove(index)}
-                                >
-                                    <GoXCircleFill className="px-2" />
-                                </button>
+                                />
                             </li>
                         )
                     })}
                 </ul>   
-                <div className="field is-grouped my-3">
-                    <button className="button" type="button" onClick={() => append({ text: "" , isSection: false}) }>
+                <div className={styles.buttons}>
+                    <button className="button button--small" type="button" onClick={() => append({ text: "" , isSection: false}) }>
                         Add {title}
                     </button>
                     {/* <button className="button" type="button" onClick={() => append("section:") }> */}
-                    <button className="button" type="button" onClick={() => append({ text: "" , isSection: true}) }>
+                    <button className="button button--small" type="button" onClick={() => append({ text: "" , isSection: true}) }>
                         Add Section
                     </button>
                 </div>
@@ -287,152 +297,163 @@ function RecipeEditPage() {
     }
     
     return (
-        <form className="container p-3" onSubmit={handleSubmit(onSubmit)}>
-            <div className="field mb-4">
-                <label className="label">Recipe Name:</label>
-                <div className="control">
-                    <input 
-                        className="input" 
-                        placeholder="ex. Beef Stew"
-                        type="text"
-                        {...register("name", {
-                            required: "Recipe must have a name.",
-                            minLength: {
-                                value: 5,
-                                message: "Name must be at least 5 characters."
-                            },
-                            maxLength: {
-                                value: 50,
-                                message: "Name must be 50 characters or less."
-                            }
-                        })}
-                    />
-                    {errors.name?.message && (
-                        <FormMessage message={errors.name.message} danger />
-                    )}
-                </div>
-            </div>
-            <div className="field mb-4">
-                <label className="label">Recipe Description:</label>
-                <div className="control">
-                    <textarea
-                        className="textarea"  
-                        placeholder="Enter a description for this recipe. You could include flavors, taste, inspiration, etc."
-                        rows={5}
-                        {...register("description", {
-                            maxLength: {
-                                value: 300,
-                                message: "Recipe description must be 300 or less characters."
-                            }
-                        })}
-                    />
-                    {errors.description?.message && (
-                        <FormMessage message={errors.description.message} danger />
-                    )}
-                </div>
-            </div>
+        <div className="page-edit-recipe">
+            <BasicHero title={loadedRecipe? "Edit Recipe" : "Build a Recipe"} />
 
-            <div className="field mb-4">
-                <label className="label">Recipe Image:</label>
-                <div className="column is-3">
-                    <div className="image is-square">
-                        <img src={getValues('image')? getValues('image') : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} />
-                    </div>
-                </div>
-                <label className="label">Image URL:</label>
-                <div className="field is-grouped">
-                        <input 
-                            className="input" 
-                            placeholder={"ex. https://www.cookingclassy.com/wp-content/uploads/2022/07/grilled-steak-15.jpg"} 
-                            type="text"
-                            {...register("image", {
-                                
-                            })}
-                        />
-                        <button className="button" type="button" onClick={handleCancelImageUrl}>Cancel</button>
-                </div>
-            </div>
-
-            <div className="field mb-4">
-                <label className="label">Ingredients:</label>
-                <div className="control">
-                    <FieldArrayList 
-                        fieldArrayName="ingredients"
-                        title={"Ingredient"}
-                        field={ingredientsField}
-                        isInput={true}
-                        register={register}
-                        append={appendIngredient} 
-                        remove={removeIngredient} 
-                        swap={swapIngredients} 
-                    />
-                </div>
-                {errors.ingredients?.root?.message && 
-                    <FormMessage message={errors.ingredients.root.message}  danger/>
-                }
-            </div>
-
-            <div className="field mb-4">
-                <label className="label">Directions:</label>
-                <div className="control">
-                    <FieldArrayList 
-                        fieldArrayName="directions"
-                        title={"Direction"}
-                        field={directionsField}
-                        isInput={false}
-                        register={register}
-                        append={appendDirection} 
-                        remove={removeDirection} 
-                        swap={swapDirections} 
-                    />
-                </div>
-            </div>
-
-            <div className="field mb-4">
-                <div className="control">
-                    <div className="">
-                        <div className="column is-6 is-flex is-align-items-center">
-                            <label className="label mr-3">Tag: </label>
-                            <input 
-                                className="input"  
-                                placeholder="ex. breakfast"
-                                type="text"
-                                // onKeyDown={(event) => event.key === 'Enter' && appendTag(event.target.value)}
-                                {...register("tag")}
-                            />
-                            <button 
-                                className="button mx-2" 
-                                type="button"
-                                onClick={handleAddTag}>
-                                    Add Tag
-                            </button>
-                        </div>
-                        {errors.tag?.message && (
-                                    <FormMessage className="ml-3 mb-3" message={errors.tag.message} danger />
+            <section className="section">
+                <div className="container">
+                    <form className={`form form--card ${styles.formEditRecipe}`} onSubmit={handleSubmit(onSubmit)}>
+                        <div className="field">
+                            <label className="label">Recipe Name:</label>
+                            <div className="control">
+                                <input 
+                                    className="input" 
+                                    placeholder="ex. Beef Stew"
+                                    type="text"
+                                    {...register("name", {
+                                        required: "Recipe must have a name.",
+                                        minLength: {
+                                            value: 5,
+                                            message: "Name must be at least 5 characters."
+                                        },
+                                        maxLength: {
+                                            value: 50,
+                                            message: "Name must be 50 characters or less."
+                                        }
+                                    })}
+                                />
+                                {errors.name?.message && (
+                                    <FormMessage className='form-message' message={errors.name.message} danger />
                                 )}
-                        <TagList tags={getValues('tags').map(tagObj => tagObj.value)} onDelete={removeTag} />
-                        {/* {tagsField.map((item, index) => {
-                            return <input 
-                                key={index} 
-                                type="hidden"
-                                {...register(`tags.${index}` as keyof FormData)}
+                            </div>
+                        </div>
+                        <div className="field">
+                            <label className="label">Recipe Description:</label>
+                            <textarea
+                                className="textarea"
+                                placeholder="Enter a description for this recipe. You could include flavors, taste, inspiration, etc."
+                                rows={5}
+                                {...register("description", {
+                                    maxLength: {
+                                        value: 300,
+                                        message: "Recipe description must be 300 or less characters."
+                                    }
+                                })}
                             />
-                        })} */}
-                    </div>
-                </div>
-            </div>
+                            {errors.description?.message && (
+                                <FormMessage className='form-message' message={errors.description.message} danger />
+                            )}
+                        </div>
 
-            {/* <p className="mb-3 has-text-weight-bold">{onSubmitStatus ? `${onSubmitStatus}` : ""}</p> */}
+                        <div className="field">
+                            <label className="label">Recipe Image:</label>
+                            <div className="image is-square">
+                                <img 
+                                    src={getValues('image')? getValues('image') : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
+                                    className={styles.recipeImage}
+                                />
+                            </div>
+                            <label className="label">Image URL:</label>
+                            <div className={`field ${styles.fieldGroup}`}>
+                                    <input 
+                                        className="input" 
+                                        placeholder={"ex. https://www.cookingclassy.com/wp-content/uploads/2022/07/grilled-steak-15.jpg"} 
+                                        type="text"
+                                        {...register("image", {
+                                            
+                                        })}
+                                    />
+                                    <button className="button button--outline button--small" type="button" onClick={handleCancelImageUrl}>Cancel</button>
+                            </div>
+                        </div>
 
-            <div className="field is-grouped">
-                <div className="control">
-                    <button className="button is-link" type="submit">Submit</button>
+                        <div className="field">
+                            <label className="label">Ingredients:</label>
+                            <div className="control">
+                                <FieldArrayList 
+                                    fieldArrayName="ingredients"
+                                    title={"Ingredient"}
+                                    field={ingredientsField}
+                                    isInput={true}
+                                    register={register}
+                                    append={appendIngredient} 
+                                    remove={removeIngredient} 
+                                    swap={swapIngredients} 
+                                />
+                            </div>
+                            {errors.ingredients?.root?.message && 
+                                <FormMessage className='form-message' message={errors.ingredients.root.message}  danger/>
+                            }
+                        </div>
+
+                        <div className="field">
+                            <label className="label">Directions:</label>
+                            <FieldArrayList 
+                                fieldArrayName="directions"
+                                title={"Direction"}
+                                field={directionsField}
+                                isInput={false}
+                                register={register}
+                                append={appendDirection} 
+                                remove={removeDirection} 
+                                swap={swapDirections} 
+                            />
+                        </div>
+
+                        <div className="field">
+                            <label className="label">Tag: </label>
+                            <div className="control">
+                                <div className={styles.fieldGroup}>
+                                    <input 
+                                        className="input"  
+                                        placeholder="ex. breakfast"
+                                        type="text"
+                                        // onKeyDown={(event) => event.key === 'Enter' && appendTag(event.target.value)}
+                                        {...register("tag")}
+                                    />
+                                    <button 
+                                        className={`button button--small ${styles.oneLineButton}`}
+                                        type="button"
+                                        onClick={handleAddTag}>
+                                            Add Tag
+                                    </button>
+                                </div>
+                                {errors.tag?.message && (
+                                            <FormMessage className='form-message' message={errors.tag.message} danger />
+                                        )}
+                                {/* {tagsField.map((item, index) => {
+                                    return <input 
+                                        key={index} 
+                                        type="hidden"
+                                        {...register(`tags.${index}` as keyof FormData)}
+                                    />
+                                })} */}
+                                <div className={styles.tagListContainer}>
+                                    <TagList tags={getValues('tags').map(tagObj => tagObj.value)} onDelete={removeTag} />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* <p className="mb-3 has-text-weight-bold">{onSubmitStatus ? `${onSubmitStatus}` : ""}</p> */}
+
+                        <div className="field">
+                            <div className={styles.submitButtons}>
+                                {loadedRecipe && 
+                                    <button className="button" type="button" onClick={onCancel}>
+                                        Cancel
+                                    </button>
+                                }
+                                <button 
+                                    className="button button--full" 
+                                    type="submit">
+                                        {loadedRecipe? 'Save' : 'Submit Recipe'}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div className="control">
-                    <button className="button is-link is-light" type="button" onClick={onCancel}>Cancel</button>
-                </div>
-            </div>
-        </form>
+            </section>
+        </div>
     );
 }
 

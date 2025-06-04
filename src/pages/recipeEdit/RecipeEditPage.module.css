@@ -1,0 +1,81 @@
+.formEditRecipe {
+    gap: 5.2rem;
+}
+
+.recipeImage {
+    width: 20%;  
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: row;
+    max-width: 80rem;
+    gap: 1.2rem;
+}
+
+.fieldArrayList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    list-style-type: none;
+    margin-top: 1.6rem;
+}
+
+.fieldArrayListItem {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.fieldArraySection {
+    color: var(--primary);
+}
+
+.moveItemArrows {
+    display: flex;
+    flex-direction: column;
+}
+
+.moveItemArrow {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.6rem;
+    font-weight: 600;
+    background-color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.sectionFieldTag {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0 1.0rem;
+}
+
+.deleteButton {
+    margin-left: 0.8rem;
+}
+
+.buttons {
+    display: flex;
+    gap: 1.6rem;
+    margin-top: 2.0rem;
+}
+
+.oneLineButton {
+    white-space: nowrap;
+}
+
+.tagListContainer {
+    margin-top: 1.6rem;
+}
+
+.submitButtons {
+    display: flex;
+    justify-content: center;
+    gap: 1.6rem;
+    margin: 7rem 0 1.2rem 0;
+}

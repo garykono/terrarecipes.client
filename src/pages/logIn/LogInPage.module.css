@@ -1,0 +1,55 @@
+.pageLogin {
+    display: flex;
+    justify-content: center;
+    background-color: var(--primary-background);
+}
+
+.formContainer {
+    display: flex;
+}
+
+.formLogin {
+    margin: 3.6rem auto;
+    align-items: center;
+}
+
+.submitOptions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.8rem;
+    margin-top: 2.0rem;
+}
+
+.submitButtons {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+}
+
+.signupButton {
+    color: var(--grey);
+    background-color: #eee;
+}
+
+.forgotPasswordLink,
+.forgotPasswordLink:link,
+.forgotPasswordLink.visited {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.forgotPasswordLink:hover,
+.forgotPasswordLink:active {
+    color: var(--primary-dark)
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    .formLogin {
+        min-width: 290px;
+    }
+}

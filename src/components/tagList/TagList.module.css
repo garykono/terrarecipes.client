@@ -1,0 +1,20 @@
+.tagList {
+    display: flex;
+    gap: 1.0rem;
+}
+
+.tag {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    background-color: #eee;
+    border-radius: 7px;
+    font-size: 1.2rem;
+    padding:  0.6rem;
+}
+
+.deleteButton {
+    display: flex;
+    border: none;
+    cursor: pointer;
+}

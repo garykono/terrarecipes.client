@@ -1,0 +1,57 @@
+/* rem and em do NOT depend on the html font-size in media queries (at least the line @media (max-width: 84em). the properties still
+function off of the normal rem and em the rest of the project uses)!
+Instead, 1rem = 1em = 16px */
+
+/**************************/
+/* BELOW 1344px (1344px / 16 ~ 84rem) (Smaller desktops) */
+/**************************/
+@media (max-width: 84em) {
+    /* font-size: 62.5% by default as specified in global stylesheet */
+}
+
+/**************************/
+/* Below 1200px (Landscape Tablets) */
+/**************************/
+@media (max-width: 75em) {
+    html {
+        /* 9px / 16px = 56.25% */
+        font-size: 56.25%;
+    }
+}
+
+/**************************/
+/* Below 944px (Tablets) */
+/**************************/
+@media(max-width: 59em) {
+    html {
+        /* font-size: 50%; */
+    }
+
+    
+    
+}
+
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    
+}
+
+
+/*
+-FONT SIZE SYSTEM (px)
+10 / 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 44 / 52 / 62 / 74 / 86 / 98
+
+-SPACING SYSTEM (px)
+2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+*/

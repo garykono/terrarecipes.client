@@ -1,0 +1,21 @@
+.recipeCardWithFeatures {
+    display:flex;
+    flex-direction: column;
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.managementButtons {
+    display: flex;
+    gap: 0.2rem;
+    padding: 0.8rem 0 0.4rem 0;
+}
+
+.managementIcon {
+    width: 2.0rem;
+    height: 2.0rem;
+    cursor: pointer;
+}

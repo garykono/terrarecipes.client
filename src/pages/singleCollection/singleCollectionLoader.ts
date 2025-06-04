@@ -3,8 +3,7 @@ import type { Recipe } from '../../api/types/recipe';
 import { getCollectionById } from '../../api/queries/collectionApi';
 import { Collection } from '../../api/types/collection';
 
-const RESULTS_COLS = 4;
-const RESULTS_ROWS = 4;
+const NUM_RESULTS = 20;
 
 interface LoaderArgs {
     params: Params
@@ -13,8 +12,7 @@ interface LoaderArgs {
 export interface SingleCollectionLoaderResult {
     collection: Collection | null;
     page: number;
-    numCols: number;
-    numRows: number;
+    numResults: number;
 }
 
 export async function singleCollectionLoader({ params }: LoaderArgs): Promise<SingleCollectionLoaderResult> {
@@ -36,7 +34,6 @@ export async function singleCollectionLoader({ params }: LoaderArgs): Promise<Si
     return {
         collection,
         page: page? pageNum : 1,
-        numCols: RESULTS_COLS,
-        numRows: RESULTS_ROWS
+        numResults: NUM_RESULTS,
     }
 }

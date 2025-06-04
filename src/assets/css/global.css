@@ -1,0 +1,450 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap');
+
+/*
+
+--- 01 TYPOGRAPHY SYSTEM
+
+-FONT WEIGHTS
+
+-LINE HEIGHTS: 
+Default: 1
+Small: 1.05
+Medium: 1.2
+Paragraph Default: 1.6
+
+-LETTER SPACING
+
+
+-FONT SIZE SYSTEM (px)
+10 / 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 44 / 52 / 62 / 74 / 86 / 98
+
+-Font Weight
+Default: 400
+Medium: 500
+Semi-Bold: 600
+Bold: 700
+
+--- 02 COLORS
+
+MAIN COLOR: #20c997
+-Tints: 
+
+-Shades
+-Accents
+-Greys: #555 #333
+
+--- 05 SHADOWS
+
+--- 06 BORDER-RADIUS
+Default: 9px
+
+--- 07 WHITESPACE
+
+-SPACING SYSTEM (px)
+2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+
+*/
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #fff;
+    --primary: #51cf66;
+    --primary-background: #eefaf0;
+    --primary-light: #97e2a3;
+    --primary-dark: #296833;
+    --secondary: #339af0;
+    --secondary-background: #f1f9ff;
+    --grey: #444;
+    --grey-subtle: #eee;
+    --grey-light: #bbb;
+    --grey-dark: #333;
+    --success: #37b24d;
+    --danger: #f03e3e;
+    --danger-dark: #c92a2a;
+
+    --font-size-large: 2.0rem;
+    --font-size-medium: 1.8rem;
+    --font-size-small: 1.6rem;
+
+    --font-weight-semi-bold: 600;
+    --font-weight-bold: 700;
+
+    --nav-bar-height: 9.6rem;
+}
+
+html {
+    /* font-size: 10px; */
+    /* 10px / 16px = 0.625 = 62.5% */
+    /* Percentage of user's browser font-size setting */
+    font-size: 62.5%;
+}
+
+body {
+    /* font-size: 10px; */
+    /* 10px / 16px = 0.625 = 62.5% */
+    font-family: 'Roboto', sans-serif;
+    line-height: 1;
+    font-weight: 400;
+    color: var(--grey);
+    background-color: var(--background);
+    padding: 0.005rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+    height: 10rem;
+    resize: none;
+ }
+
+/**************************/
+/* Basic Components */
+/**************************/
+
+.container {
+    width: 100%;
+    max-width: 120rem;
+    margin: 0 auto;
+    padding: 0 3.2rem;
+}
+
+.section {
+    margin: 12rem 0;
+}
+
+/**************************/
+/* Text */
+/**************************/
+
+.heading-primary, 
+.heading-secondary,
+.heading-tertiary {
+    font-weight: 700;
+    color: var(--grey);
+    letter-spacing: -0.5px;
+}
+
+.heading-primary {
+    font-size: 5.2rem;
+    line-height: 1.05;
+}
+
+.heading-secondary {
+    font-size: 4.4rem;
+    line-height: 1.2;
+}
+
+.heading-tertiary {
+    font-size: 3rem;
+    line-height: 1.2;
+}
+
+.text {
+    font-size: 1.8rem;
+    line-height: 1.4;
+    color: var(--grey);
+}
+
+/**************************/
+/* Grid */
+/**************************/
+
+.grid {
+    display: grid;
+}
+
+.grid--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.grid--cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.grid--cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+/**************************/
+/* Buttons */
+/**************************/
+
+.button, .button:link, .button:visited {
+    display: inline-block;
+    text-decoration: none;
+    font-size: var(--font-size-medium);
+    font-weight: 600;
+    padding: 1.6rem 3.2rem;
+    border-radius: 9px;
+    cursor: pointer;
+
+    /* Put transition on original "state" */
+    transition: all 0.2s;
+}
+
+.button--small, .button--small:link, .button--small:visited {
+    font-size: var(--font-size-small);
+    padding: 1.2rem 2.4rem;
+}
+
+.button--large {
+
+}
+
+.button--full,
+.button--full:link, 
+.button--full:visited {
+    background-color: var(--primary);
+    color: var(--grey);
+}
+
+.button--full:hover, 
+.button--full:active {
+    background-color: var(--primary-dark);
+    color: #fff;
+}
+
+.button--outline,
+.button--outline:link, 
+.button--outline:link {
+    background-color: #fff;
+    color: #555;
+}
+
+.button--outline:hover, 
+.button--outline:active {
+    background-color: var(--primary-background);
+
+    /* trick to add border inside (doesn't shift all other elements) */
+    box-shadow: inset 0 0 0 3px #fff;
+}
+
+.button--danger,
+.button--danger:link, 
+.button--danger:link {
+    background-color: var(--danger);;
+    color: #111;
+}
+
+.button--danger:hover, 
+.button--danger:active {
+    background-color: var(--danger-dark);
+    color: #fff;
+}
+
+.buttons {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+/**************************/
+/* Card */
+/**************************/
+
+.box {
+    background-color: #ffffff;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 2em 4em rgba(0, 0, 0, 0.07);
+}
+
+/**************************/
+/* Dropdown Menu */
+/**************************/
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.dropdown--arrow {
+    padding-right: 2.4rem;
+}
+
+.dropdown--arrow::after {
+    position: absolute;
+    top: 25%;
+    right: 0.8rem;
+    content: '';
+    border: solid black;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    /* padding: 0.8rem 0 0.8rem 0; */
+    cursor: pointer;
+    z-index: 1;
+}
+
+.dropdown-menu--right {
+    right: 0;
+}
+  
+.dropdown-content {
+    border-top: 1px solid var(--grey-light);
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+}
+
+.dropdown--is-hoverable:hover .dropdown-menu,
+.dropdown--is-active .dropdown-menu {
+    display: flex;
+}
+
+.dropdown-item,
+.dropdown-item:link,
+.dropdown-item:visited {
+    color: var(--grey);
+    text-decoration: none;
+    font-size: var(--font-size-small);
+    font-weight: 400;
+    padding: 1.2rem 1.8rem;
+    /* Forces text to only occupy one line */
+    white-space: nowrap;
+    /* Text that doesn't fit into max width of the line turns to ellipsis */
+    text-overflow: ellipsis;
+    overflow:hidden;
+}
+
+.dropdown-item:hover,
+.dropdown-item:active {
+    cursor: pointer;
+    text-decoration: none;
+    background-color: var(--grey-subtle);
+}
+
+/**************************/
+/* Basic Form */
+/**************************/
+
+.form--card {
+    box-shadow: 0 2.4rem 4.8rem rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 4.0rem 5.4rem;
+    background-color: #fff;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+}
+
+.form-heading {
+    margin-bottom: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.form-title {
+    font-size: 4.4rem;
+    line-height: 1.2;
+    color: var(--grey);
+    text-align: center;
+}
+
+.form-description {
+    font-size: var(--font-size-small);
+    line-height: 1.4;
+    color: #666;
+}
+
+.form-message {
+    margin-top: 0.4rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+}
+
+.label {
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: #666;
+}
+
+.control {
+    max-width: 50rem;
+}
+
+.input {
+    width: 100%;
+    background-color: #fff;
+    font-size: var(--font-size-small);
+    padding: 0.8rem;
+    border-radius: 3px;
+}
+
+.textarea {
+    width: 100%;
+    background-color: #fff;
+    font-size: var(--font-size-small);
+    padding: 0.8rem;
+    border-radius: 3px;
+}
+
+
+
+
+
+:root {
+  --loader-bg: WhiteSmoke;       /* loading screen background color */
+  --spinner-border: #ffffff;  /* spinner border color */
+  --spinner-transparent: transparent; /* spinner top border (invisible) Can change to color*/
+}
+
+#loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--loader-bg);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--spinner-border);
+  border-top-color: var(--spinner-transparent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

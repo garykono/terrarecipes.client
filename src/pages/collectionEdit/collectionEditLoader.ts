@@ -27,10 +27,10 @@ export async function collectionEditLoader({ params }: LoaderArgs): Promise<Coll
         pageNum = 1;
     }
 
-    const collection = null;
+    let collection = null;
     
     if (id) {
-        await getCollectionById(id)
+        collection = await getCollectionById(id)
     };
 
     return {

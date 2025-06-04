@@ -1,0 +1,36 @@
+.firstLine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 3.6rem 0 1.2rem;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.description {
+    margin-bottom: 4.8rem;
+}
+
+.cardList {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+@media(max-width: 59em) {
+    .cardList {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    .cardList.cardList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

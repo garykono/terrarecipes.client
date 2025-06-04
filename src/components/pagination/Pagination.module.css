@@ -1,0 +1,74 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3.6rem;
+    padding: 2rem 0;
+    margin: 2rem 0;
+}
+
+.pageList {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    list-style-type: none;
+}
+
+.paginationButton {
+    background-color: #fff;
+    color: var(--primary-dark);
+    border: 1px solid var(--primary-dark);
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.paginationButton:hover {
+    background-color:var(--primary-dark);
+}
+
+.paginationButton:hover 
+.paginationButtonIcon {
+    stroke: #fff;
+}
+
+.paginationButtonIcon {
+    height: 2.4rem;
+    width: 2.4rem;
+    stroke: var(--primary-dark);
+}
+
+.pageLink,
+.pageLink:link, 
+.pageLink:visited {
+    font-size: 18px;
+    color: #343a40;
+    text-decoration: none;
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* The page-link--current has lower priority than page-link:link above, so above's color is used instead. So we use an
+"end selector" by putting the .page-link in front to give it same priority */
+.pageLink:hover, 
+.pageLink:active, 
+.pageLink.pageLinkCurrent {
+    background-color: var(--primary-dark);
+    color: #fff;
+}
+
+.paginationEllipsis {
+    font-size: 2rem;
+    color: var(--grey-dark);
+}

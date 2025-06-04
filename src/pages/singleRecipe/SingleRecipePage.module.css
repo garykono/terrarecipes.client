@@ -1,0 +1,77 @@
+.control {
+    max-width: 80rem;
+}
+
+.recipeManagementButtons {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: end;
+    gap: 1.2rem;
+    margin-top: 2.4rem;
+}
+
+.addToCollection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.sectionHeading {
+    margin-top: 2.4rem;
+    margin-bottom: 1.6rem;
+}
+
+.author {
+    font-size: 2.0rem;
+}
+
+.sectionDescription {
+    margin-bottom: 4.8em;
+}
+
+.sectionImage {
+    margin-bottom: 6.4rem;
+}
+
+.recipeImage {
+    width: 50%;
+    overflow: hidden;
+    object-fit: cover;
+}
+
+.sectionIngredients {
+    margin-bottom: 6.4rem;
+}
+
+.ingredientsList,
+.directionsList {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.8rem;
+    line-height: 1.6;
+}
+
+.ingredientsList {
+    margin: 2.4rem 0 0 1.2rem;
+    gap: 1.4rem;
+}
+
+.listItemIsSection {
+    color: var(--primary-dark);
+    margin: 1.2rem 0;
+    text-decoration: underline;
+}
+
+.directionsList {
+    margin: 2.4rem 0 0 0;
+    gap: 2.4rem;
+}
+
+.sectionDirections {
+    margin-bottom: 6.4rem;
+}
+
+.sectionTags {
+    margin-bottom: 2.4rem;
+}

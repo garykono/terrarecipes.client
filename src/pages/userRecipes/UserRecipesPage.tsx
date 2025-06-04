@@ -1,19 +1,21 @@
+import styles from './UserRecipesPage.module.css';
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate, Link, useRouteLoaderData, useLoaderData } from 'react-router-dom';
-import SearchBar from "../../components/SearchBar";
-import RecipeCardWithFeatures from '../../components/RecipeCardWithFeatures';
-import CardList from '../../components/CardList';
-import Pagination from '../../components/Pagination';
-import FormError from '../../components/FormMessage';
+import SearchBar from "../../components/searchBar/SearchBar";
+import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
+import CardList from '../../components/cardList/CardList';
+import Pagination from '../../components/pagination/Pagination';
+import FormError from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import { Recipe } from '../../api/types/recipe';
+import BasicHero from '../../components/basicHero/BasicHero';
 
 function UserRecipesPage() {
     const navigate = useNavigate();
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
     const { search } = useLoaderData();
-    const { page, numCols, numRows } = useLoaderData();
+    const { page, numResults } = useLoaderData();
     const [ recipesToShow, setRecipesToShow ] = useState<Recipe[]>([]);
     const [ totalPages, setTotalPages ] = useState(1);
 
@@ -42,11 +44,10 @@ function UserRecipesPage() {
 
             // Slice the searched recipes into what will be displayed on this page
             const numRecipes = recipes.length;
-            const resultsPerPage = numCols * numRows;
-            setTotalPages(Math.ceil(numRecipes / resultsPerPage));
+            setTotalPages(Math.ceil(numRecipes / numResults));
 
-            const startIndex = (page - 1) * resultsPerPage;
-            const endIndex = Math.min((page * resultsPerPage), numRecipes)
+            const startIndex = (page - 1) * numResults;
+            const endIndex = Math.min((page * numResults), numRecipes)
 
             // Apply pagination to recipes
             const filteredRecipesToShow = recipes.slice(startIndex, endIndex);
@@ -80,35 +81,43 @@ function UserRecipesPage() {
     }
 
     return (
-        <div>
-            <section className="section column is-7">
-                <h3 className="is-size-4 has-text-weight-bold mb-5">My Recipes:</h3>
-                <div className="container is-flex is-justify-content-space-between py-5">
-                    <div className="is-half">
-                        <SearchBar initialSearchTerm={search} onSearch={searchTerm => navigate(`/myRecipes/1/${searchTerm}`)} />
+        <div className={styles.pageUserRecipes}>
+            <BasicHero title="My Recipes" text="View and manage your uploaded recipes." />
+
+            <div className='container'>
+                <div className="create-recipe">
+                    <div className={styles.createRecipe}>
+                        {showAddRecipeButton &&
+                            <Link to="/editRecipe">
+                                <button className="button button--outline">New Recipe</button>
+                            </Link>  
+                        }
                     </div>
-                    {showAddRecipeButton &&
-                        <Link to="/editRecipe">
-                            <button className="button">New Recipe</button>
-                        </Link>  
-                    }
                 </div>
-                {deletedRecipeName !== '' &&
-                    <FormError className="mb-3" message={`Recipe '${deletedRecipeName}' successfully deleted.`} success />
-                }
-                {error &&
-                    <FormError className="mb-3" message={'There was an error with this request.'} danger />
-                }
-                <CardList list={renderedRecipeCards} numCols={numCols} />
-                <Pagination 
-                    currentPage={page} 
-                    onFirstPageButtonClicked={() => navigate(`/myRecipes/${1}`)}
-                    onPreviousPageButtonClicked={() => navigate(`/myRecipes/${page - 1}`)} 
-                    onNextPageButtonClicked={() => navigate(`/myRecipes/${page + 1}`)}
-                    onLastPageButtonClicked={() => navigate(`/myRecipes/${totalPages}`)}
-                    numPages={totalPages} 
-                />
-            </section>
+            </div>
+
+            <div className="container">
+                <div className={styles.recipes}>
+                    <SearchBar initialSearchTerm={search} onSearch={searchTerm => navigate(`/myRecipes/1/${searchTerm}`)} className={styles.search} />
+                    
+                    {deletedRecipeName !== '' &&
+                        <FormError className="mb-3" message={`Recipe '${deletedRecipeName}' successfully deleted.`} success />
+                    }
+                    {error &&
+                        <FormError className="mb-3" message={'There was an error with this request.'} danger />
+                    }
+                    
+                    <CardList list={renderedRecipeCards} className={styles.cardList} />
+                    <Pagination 
+                        currentPage={page} 
+                        onFirstPageButtonClicked={() => navigate(`/myRecipes/${1}`)}
+                        onPreviousPageButtonClicked={() => navigate(`/myRecipes/${page - 1}`)} 
+                        onNextPageButtonClicked={() => navigate(`/myRecipes/${page + 1}`)}
+                        onLastPageButtonClicked={() => navigate(`/myRecipes/${totalPages}`)}
+                        numPages={totalPages} 
+                    />
+                </div>
+            </div>
         </div>
     );
     

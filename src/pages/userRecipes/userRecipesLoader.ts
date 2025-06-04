@@ -1,8 +1,7 @@
 import { useRouteLoaderData, type Params } from 'react-router-dom';
 import type { Recipe } from '../../api/types/recipe';
 
-const RESULTS_COLS = 4;
-const RESULTS_ROWS = 4;
+const NUM_RESULTS = 20;
 
 interface LoaderArgs {
     params: Params
@@ -13,8 +12,7 @@ export interface UserRecipesLoaderResult {
     totalPages?: number;
     page?: number;
     search?: string;
-    numCols: number;
-    numRows: number;
+    numResults: number;
 }
 
 export async function userRecipesLoader({ params }: LoaderArgs): Promise<UserRecipesLoaderResult> {
@@ -30,7 +28,6 @@ export async function userRecipesLoader({ params }: LoaderArgs): Promise<UserRec
     return {
         page: page ? pageNum : 1,
         search,
-        numCols: RESULTS_COLS,
-        numRows: RESULTS_ROWS
+        numResults: NUM_RESULTS,
     }
 }

@@ -1,0 +1,13 @@
+.hero {
+    background-color: var(--primary-light);
+    padding: 4.8rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    align-items: center;
+    text-align: center;
+}
+
+.heroText {
+    font-size: var(--font-size-medium);
+}

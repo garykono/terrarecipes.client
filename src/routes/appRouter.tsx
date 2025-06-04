@@ -14,16 +14,16 @@ import SingleCollectionPage from "../pages/singleCollection/SingleCollectionPage
 import { singleCollectionLoader } from "../pages/singleCollection/singleCollectionLoader";
 import CollectionEditPage from "../pages/collectionEdit/collectionEditPage";
 import { collectionEditLoader } from '../pages/collectionEdit/collectionEditLoader';
-import LogInPage from '../pages/LogInPage'
-import SignUpPage from '../pages/SignUpPage'
-import ForgotPasswordPage from '../pages/ForgotPasswordPage'
-import ChangePasswordPage from '../pages/ChangePasswordPage'
-import AccountPage from '../pages/AccountPage'
-import AccountEditPage from "../pages/AccountEditPage";
+import LogInPage from '../pages/logIn/LogInPage'
+import SignUpPage from '../pages/signUp/SignUpPage'
+import ForgotPasswordPage from '../pages/forgotPassword/ForgotPasswordPage'
+import ChangePasswordPage from '../pages/changePassword/ChangePasswordPage'
+import AccountEditPage from "../pages/accountEdit/AccountEditPage";
 import UserRecipesPage from "../pages/userRecipes/UserRecipesPage";
 import { userRecipesLoader } from '../pages/userRecipes/userRecipesLoader';
-import UserCollectionsPage from '../pages/UserCollectionsPage';
+import UserCollectionsPage from '../pages/userCollections/UserCollectionsPage';
 import LoadingScreen from "../components/LoadingScreen";
+import TestPage from "../pages/test/TestPage";
 
 export const appRouter = createBrowserRouter([
     {
@@ -106,13 +106,6 @@ export const appRouter = createBrowserRouter([
             },
             {
                 path: '/account',
-                element: <AccountPage />,
-                loader: undefined,
-                hydrateFallbackElement: <LoadingScreen />,
-                errorElement:<GlobalErrorDisplay />,
-            },
-            {
-                path: '/accountEdit',
                 element: <AccountEditPage />,
                 loader: undefined,
                 hydrateFallbackElement: <LoadingScreen />,
@@ -128,6 +121,13 @@ export const appRouter = createBrowserRouter([
             {
                 path: '/myCollections',
                 element: <UserCollectionsPage />,
+                loader: undefined,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/test',
+                element: <TestPage />,
                 loader: undefined,
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,

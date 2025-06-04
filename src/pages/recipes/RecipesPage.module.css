@@ -1,0 +1,56 @@
+.recipePage {
+    background-color: var(--primary-background);
+}
+
+.recipes {
+    display: flex;
+    flex-direction: column;
+    gap: 3.2rem;
+    padding-top: 8.0rem;
+}
+
+.search {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.searchForm {
+    display: flex;
+    justify-content: center;
+}
+
+.resultsText {
+    font-size: 1.6rem;
+    color: #111;
+}
+
+.cardList {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+@media(max-width: 59em) {
+    .cardList {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    .cardList.cardList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    .cardList.cardList {
+    }
+}

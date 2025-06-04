@@ -1,0 +1,15 @@
+.deleteButton {
+    display: inline-block;
+    text-decoration: none;
+    border: none;
+    background-color: inherit;
+}
+
+.deleteButtonIcon {
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: var(--danger);
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 50%;
+}

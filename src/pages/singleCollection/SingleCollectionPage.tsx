@@ -1,8 +1,9 @@
+import styles from './SingleCollectionPage.module.css';
 import { useState, useContext, useEffect } from 'react';
 import { useLoaderData, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
-import RecipeCardWithFeatures from '../../components/RecipeCardWithFeatures';
-import CardList from '../../components/CardList';
-import Pagination from '../../components/Pagination';
+import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
+import CardList from '../../components/cardList/CardList';
+import Pagination from '../../components/pagination/Pagination';
 import { SingleCollectionLoaderResult } from './singleCollectionLoader';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { Recipe } from '../../api/types/recipe';
@@ -13,20 +14,19 @@ function SingleCollectionPage() {
     const navigate = useNavigate();
 
     // Recipes list and pagination data
-    const { collection, page, numCols, numRows } = useLoaderData() as SingleCollectionLoaderResult;
+    const { collection, page, numResults } = useLoaderData() as SingleCollectionLoaderResult;
     const [ recipesToShow, setRecipesToShow ] = useState<Recipe[]>([]);
     const [ totalPages, setTotalPages ] = useState(1);
 
     // Pagination Data
     useEffect(() => {
         const numUserRecipes = collection? collection.recipes.length : 0;
-        const resultsPerPage = numCols * numRows;
 
-        const startIndex = (page - 1) * resultsPerPage;
-        const endIndex = Math.min((page * resultsPerPage), numUserRecipes)
+        const startIndex = (page - 1) * numResults;
+        const endIndex = Math.min((page * numResults), numUserRecipes)
 
         setRecipesToShow(collection? collection.recipes.slice(startIndex, endIndex) : []);
-        setTotalPages(Math.ceil(numUserRecipes / resultsPerPage));
+        setTotalPages(Math.ceil(numUserRecipes / numResults));
     }, [page])
 
     const renderedRecipeCards = recipesToShow.map(recipe => {
@@ -40,33 +40,31 @@ function SingleCollectionPage() {
     }
 
     return (
-        <div className="column is-8 mx-6">
-            <section className="section">
-                <div className="is-flex is-flex-direction-column">
-                    <div className='is-flex is-justify-content-space-between'>
-                        <p className="is-size-5 my-color">Collection:</p>
+        <div className="page-single-collection">
+            <div className="container">
+                    <div className={styles.firstLine}>
+                        <div className={styles.header}>
+                            <div className="heading-tertiary">Collection:</div>
+                            <h1 className="heading-primary">{collection.name}</h1>
+                        </div>
+
                         {user && user.collections.map(collection => collection._id).includes(collection._id) && 
-                            <button className='button' onClick={() => navigate(`/editCollection/${collection._id}`)}>Edit Collection</button>}
+                            <button className={`button ${styles.editButton}`} onClick={() => navigate(`/editCollection/${collection._id}`)}>Edit Collection</button>}
                     </div>
-                    <p className="title is-size-1 mb-5">{collection.name}</p>
-                    <p>{collection.description}</p>        
-                </div>     
-            </section>
+                    
+                    <p className={`text ${styles.description}`}>{collection.description}</p>        
 
-            <section className="section">
-                <CardList list={renderedRecipeCards} numCols={numCols} />
-                <Pagination 
-                        currentPage={page} 
-                        onFirstPageButtonClicked={() => navigate(`/collection/${collection._id}/${1}`)}
-                        onPreviousPageButtonClicked={() => navigate(`/collection/${collection._id}/${page - 1}`)} 
-                        onNextPageButtonClicked={() => navigate(`/collection/${collection._id}/${page + 1}`)}
-                        onLastPageButtonClicked={() => navigate(`/collection/${collection._id}/${totalPages}`)}
-                        numPages={totalPages} 
-                    />
-            </section>
+                    <CardList list={renderedRecipeCards} className={styles.cardList} />
+                    <Pagination 
+                            currentPage={page} 
+                            onFirstPageButtonClicked={() => navigate(`/collection/${collection._id}/${1}`)}
+                            onPreviousPageButtonClicked={() => navigate(`/collection/${collection._id}/${page - 1}`)} 
+                            onNextPageButtonClicked={() => navigate(`/collection/${collection._id}/${page + 1}`)}
+                            onLastPageButtonClicked={() => navigate(`/collection/${collection._id}/${totalPages}`)}
+                            numPages={totalPages} 
+                        />
+            </div>
         </div>
-
-        
     )
 }
 
