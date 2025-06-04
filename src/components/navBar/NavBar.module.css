@@ -203,6 +203,6 @@
 
 @media (max-width: 34em) {
     .navBarBrand {
-        display: none;
+        /* display: none; */
     }
 }
