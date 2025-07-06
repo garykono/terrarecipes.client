@@ -46,7 +46,7 @@ export default function NavBar({ className }: NavBarProps) {
                                 <Link className="dropdown-item" to={"/account"}>
                                     Account
                                 </Link>
-                                <Link className="dropdown-item" to="/editRecipe">
+                                <Link className="dropdown-item" to="/createRecipe">
                                     Create Recipe
                                 </Link>
                                 <Link className="dropdown-item" to={"/myRecipes"}>

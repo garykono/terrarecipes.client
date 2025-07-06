@@ -330,6 +330,7 @@ textarea {
     overflow:hidden;
 }
 
+.dropdown-item--is-highlighted,
 .dropdown-item:hover,
 .dropdown-item:active {
     cursor: pointer;

@@ -24,6 +24,8 @@ import { userRecipesLoader } from '../pages/userRecipes/userRecipesLoader';
 import UserCollectionsPage from '../pages/userCollections/UserCollectionsPage';
 import LoadingScreen from "../components/LoadingScreen";
 import TestPage from "../pages/test/TestPage";
+import GroceryListPage from "../pages/groceryList/GroceryListPage";
+import { groceryListLoader } from "../pages/groceryList/groceryListLoader";
 
 export const appRouter = createBrowserRouter([
     {
@@ -56,8 +58,15 @@ export const appRouter = createBrowserRouter([
                 errorElement:<GlobalErrorDisplay />,
             },
             {
+                path: '/createRecipe?',
+                element: <RecipeEditPage mode="create"/>,
+                loader: undefined,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
                 path: '/editRecipe/:id?',
-                element: <RecipeEditPage />,
+                element: <RecipeEditPage mode="edit"/>,
                 loader: recipeEditLoader,
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,
@@ -122,6 +131,20 @@ export const appRouter = createBrowserRouter([
                 path: '/myCollections',
                 element: <UserCollectionsPage />,
                 loader: undefined,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/groceryList/recipe/:recipeId',
+                element: <GroceryListPage mode="recipe"/>,
+                loader: groceryListLoader,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/groceryList/collection/:collectionId',
+                element: <GroceryListPage mode="collection"/>,
+                loader: groceryListLoader,
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,
             },

@@ -88,7 +88,7 @@ function UserRecipesPage() {
                 <div className="create-recipe">
                     <div className={styles.createRecipe}>
                         {showAddRecipeButton &&
-                            <Link to="/editRecipe">
+                            <Link to="/createRecipe">
                                 <button className="button button--outline">New Recipe</button>
                             </Link>  
                         }

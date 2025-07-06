@@ -1,6 +1,6 @@
 import styles from './SingleCollectionPage.module.css';
 import { useState, useContext, useEffect } from 'react';
-import { useLoaderData, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
 import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
@@ -42,17 +42,29 @@ function SingleCollectionPage() {
     return (
         <div className="page-single-collection">
             <div className="container">
-                    <div className={styles.firstLine}>
-                        <div className={styles.header}>
+                    <div className={styles.firstSection}>
+                        <div className={styles.info}>
                             <div className="heading-tertiary">Collection:</div>
                             <h1 className="heading-primary">{collection.name}</h1>
+                            <p className={`text ${styles.description}`}>{collection.description}</p>    
                         </div>
 
-                        {user && user.collections.map(collection => collection._id).includes(collection._id) && 
-                            <button className={`button ${styles.editButton}`} onClick={() => navigate(`/editCollection/${collection._id}`)}>Edit Collection</button>}
-                    </div>
-                    
-                    <p className={`text ${styles.description}`}>{collection.description}</p>        
+                        <div className={styles.buttons}>
+                            <Link to={`/groceryList/collection/${collection._id}`}>
+                                <button className="button button--full">
+                                    Make Grocery List
+                                </button>
+                            </Link>
+                            {user && user.collections.map(collection => collection._id).includes(collection._id) && 
+                                <button 
+                                    className={`button ${styles.editButton}`} 
+                                    onClick={() => navigate(`/editCollection/${collection._id}`)}
+                                >
+                                    Edit Collection
+                                </button>
+                            }
+                        </div>
+                    </div>                    
 
                     <CardList list={renderedRecipeCards} className={styles.cardList} />
                     <Pagination 

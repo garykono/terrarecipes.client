@@ -18,7 +18,7 @@ function SearchBar({ initialSearchTerm, placeholder, onSearch, className }: Sear
         });    
     
     const onSubmit: SubmitHandler<{ search: string | undefined}> = ({ search }: { search: string | undefined}) => {
-        onSearch(search? search.trim().replace(' ', '-') : "");
+        onSearch(search ? search.trim().toLowerCase().replace(' ', '-') : "");
     }
 
     return (

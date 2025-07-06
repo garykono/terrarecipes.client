@@ -49,6 +49,11 @@
     cursor: pointer;
 }
 
+.fieldArraySectionContent {
+    display: flex;
+    align-items: center;
+}
+
 .sectionFieldTag {
     font-size: 1.6rem;
     font-weight: 600;

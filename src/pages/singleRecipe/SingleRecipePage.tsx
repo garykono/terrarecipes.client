@@ -6,7 +6,7 @@ import TagList from '../../components/tagList/TagList';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import { SingleRecipeLoaderResult } from './singleRecipeLoader';
-import { RecipeFieldWithSection } from '../../api/types/recipe';
+import { Ingredient, Direction } from '../../api/types/recipe';
 import FormMessage from '../../components/formMessage/FormMessage';
 
 function SingleRecipePage() {
@@ -64,7 +64,7 @@ function SingleRecipePage() {
         
     }
 
-    function renderListWithSections(list: RecipeFieldWithSection[]) {
+    function renderListWithSections(list: Ingredient[] | Direction[]) {
         return list.map((item, index) => {
             if (item.isSection) {
                 return (
@@ -127,6 +127,11 @@ function SingleRecipePage() {
                 <div className="container">
                     <div className={`${styles.recipeManagementButtonsContainer}`}>
                         <div className={styles.recipeManagementButtons}>
+                            <Link to={`/groceryList/recipe/${recipe._id}`}>
+                                <button className="button button--full">
+                                    Make Grocery List
+                                </button>
+                            </Link>
                             {user.recipes.map(recipe => recipe._id).includes(recipe._id) &&
                                 <Link to={`/editRecipe/${recipe._id}`}>
                                     <button className="button">
