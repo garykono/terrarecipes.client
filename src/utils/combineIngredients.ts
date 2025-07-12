@@ -2,7 +2,7 @@ import { Ingredient } from "../api/types/recipe";
 import { StandardIngredients, StandardLookupTable, StandardMeasurements } from "../api/types/standardized";
 import { logger } from "./logger";
 
-type VolumeUnit = 'teaspoon' | 'tablespoon' | 'cup' | 'milliliter' | 'liter';
+type VolumeUnit = 'teaspoon' | 'tablespoon' | 'cup' | 'milliliter' | 'liter' | 'fluid ounce';
 type WeightUnit = 'gram' | 'kilogram' | 'ounce' | 'pound';
 type Unit = VolumeUnit | WeightUnit;
 
@@ -54,9 +54,17 @@ export function combineIngredients({
         }
         
         logger.debug("ingredient: ", ingredient)
+        const optionalQuantity = ingredient.parsed.optionalQuantity;
         const parsedQuantity = ingredient.parsed.quantity;
         const parsedUnit = ingredient.parsed.unit;
         const parsedIngredientName = ingredient.parsed.ingredient;
+
+        // Flag: optional quantity — skip standardization, preserve in list
+        if (optionalQuantity) {
+            logger.debug(`Ingredient "${ingredient.text}" marked as optional quantity. Skipping standardization, adding to miscellaneous.`);
+            combinedIngredients.miscellaneous.push(ingredient.text);
+            return;
+        }
 
         // Get the ingredient's standard name
         const standardName = standardIngredientsLookupTable[parsedIngredientName];
@@ -72,7 +80,8 @@ export function combineIngredients({
         logger.debug("standard ingredient's info: ", ingredientInfo)
         const standardUnit = ingredientInfo.standardUnit as Unit;
 
-        if (!parsedQuantity || !parsedIngredientName) {
+        // Convert to ingredient's standard unit
+        if (!parsedIngredientName || !parsedQuantity) {
             logger.debug("This ingredient is missing a parsed field, so no conversion possible. Adding to miscellaneous ingredients.")
             combinedIngredients.miscellaneous.push(ingredient.text);
             return;
@@ -89,6 +98,11 @@ export function combineIngredients({
             // Do a lookup to get the parsed measurement unit's standard name
             let standardNameOfParsedUnit = standardMeasurementsLookupTable[parsedUnit] as Unit;
 
+            // Convert ounce to fluid ounce in the case that that is what this ingredient should default to
+            if (standardNameOfParsedUnit === "ounce" && ingredientInfo.treatOuncesAsVolume) {
+                standardNameOfParsedUnit = "fluid ounce";
+            }
+
             // convert to standard unit
             logger.debug("standard unit: ", standardUnit)
                 try {
@@ -96,6 +110,8 @@ export function combineIngredients({
                     logger.debug(`converted units: from ${parsedQuantity} ${parsedUnit} -> ${convertedUnitAmount} ${standardUnit})`);
                 } catch (e) {
                     logger.error(e)
+                    combinedIngredients.miscellaneous.push(ingredient.text);
+                    return;
                 }
         } else {
             logger.debug(`${parsedIngredientName} didn't have a standard unit, so it is already converted!`)
@@ -107,7 +123,7 @@ export function combineIngredients({
         logger.debug("new amount: ", (currentStandardIngredient?.quantity || 0) + convertedUnitAmount)
         combinedIngredients.validatedIngredients[standardName] = {
             quantity: (currentStandardIngredient?.quantity || 0) + convertedUnitAmount,
-            standardUnit
+            standardUnit: standardUnit
         }
     })
     logger.debug("final combined ingredients list: ", combinedIngredients)
@@ -123,17 +139,59 @@ type UnitConversionTable = {
 
 const unitConversionTable: UnitConversionTable = {
     // volume
-    teaspoon: { tablespoon: 1 / 3, cup: 1 / 48, milliliter: 4.92892 },
-    tablespoon: { teaspoon: 3, cup: 1 / 16, milliliter: 14.7868 },
-    cup: { teaspoon: 48, tablespoon: 16, milliliter: 240 },
-    milliliter: { teaspoon: 1 / 4.92892, tablespoon: 1 / 14.7868, cup: 1 / 240 },
-    liter: { milliliter: 1000 },
+    teaspoon: {
+        tablespoon: 1 / 3,
+        cup: 1 / 48,
+        milliliter: 4.92892,
+        "fluid ounce": 1 / 6  // 1 fl oz = 6 tsp
+    },
+    tablespoon: {
+        teaspoon: 3,
+        cup: 1 / 16,
+        milliliter: 14.7868,
+        "fluid ounce": 1 / 2  // 1 fl oz = 2 tbsp
+    },
+    cup: {
+        teaspoon: 48,
+        tablespoon: 16,
+        milliliter: 240,
+        "fluid ounce": 8  // 1 cup = 8 fl oz
+    },
+    milliliter: {
+        teaspoon: 1 / 4.92892,
+        tablespoon: 1 / 14.7868,
+        cup: 1 / 240,
+        "fluid ounce": 1 / 29.5735  // 1 fl oz = 29.5735 ml
+    },
+    liter: {
+        milliliter: 1000,
+        "fluid ounce": 1000 / 29.5735
+    },
+    "fluid ounce": {
+        teaspoon: 6,
+        tablespoon: 2,
+        cup: 1 / 8,
+        milliliter: 29.5735,
+        liter: 1 / (1000 / 29.5735)
+    },
 
     // weight
-    gram: { kilogram: 0.001, ounce: 1 / 28.3495, pound: 1 / 453.592 },
-    kilogram: { gram: 1000 },
-    ounce: { gram: 28.3495, pound: 1 / 16 },
-    pound: { gram: 453.592, ounce: 16 }
+    gram: {
+        kilogram: 0.001,
+        ounce: 1 / 28.3495,
+        pound: 1 / 453.592
+    },
+    kilogram: {
+        gram: 1000
+    },
+    ounce: {
+        gram: 28.3495,
+        pound: 1 / 16
+    },
+    pound: {
+        gram: 453.592,
+        ounce: 16
+    }
 };
 
 function convertSameType(amount: number, from: Unit, to: Unit): number {

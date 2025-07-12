@@ -7,6 +7,7 @@ import { RootLoaderResult } from "../../pages/root/rootLoader";
 import { parseIngredientLine } from "../../utils/parseIngredientLine";
 import { preprocessIngredientInput } from "../../utils/ingredientPreprocessor";
 import { StandardIngredient, StandardMeasurement } from "../../api/types/standardized";
+import { logger } from "../../utils/logger";
 
 const UNIT_SEARCH_KEYS = ['name', 'plural', 'symbol', 'aliases'];
 const INGREDIENT_SEARCH_KEYS = ['name'];
@@ -22,9 +23,12 @@ interface InputWithAutoSuggestProps {
  */
 export default function IngredientInput({ name, className, suggestionLimit = 5 }: InputWithAutoSuggestProps) {
     const {
+        standardMeasurementsLookupTable,
         flattenedStandardIngredientsForFuse,
         flattenedStandardMeasurementsForFuse,
-        rawUnitsList
+        rawUnitsList,
+        allIngredientForms,
+        allIngredientPreparations
     } = useRouteLoaderData('root') as RootLoaderResult;
 
     const TEXT_NAME = `${name}.text`;
@@ -44,9 +48,12 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
     const hasData =
+        standardMeasurementsLookupTable &&
         flattenedStandardIngredientsForFuse &&
         flattenedStandardMeasurementsForFuse &&
-        rawUnitsList
+        rawUnitsList &&
+        allIngredientForms &&
+        allIngredientPreparations
 
     const searchUnits = hasData
         ? useAutoSuggest<StandardMeasurement>({
@@ -95,11 +102,13 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
         if (isLikelyAmount) {
             // Do nothing
         } else if (inputValue.trim().split(/\s+/).length < 3 && isLikelyUnit && searchUnits && searchIngredients) {
+            // Make unit recommendations
             results = searchUnits(currentWord);
             if (results.length < suggestionLimit) {
                 results = results.concat(searchIngredients(currentWord));
             }
         } else if (searchIngredients && searchUnits) {
+            // Make ingredient recommendation
             const parsed = getValues(PARSED_INGREDIENT_NAME)?.ingredient || '';
             results = searchIngredients(parsed);
             if (results.length < suggestionLimit) {
@@ -112,7 +121,14 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
 
     const updateParsedInfo = (input: string) => {
         if (!hasData) return;
-        const parsedIngredient = parseIngredientLine(preprocessIngredientInput(input), rawUnitsList);
+        const parsedIngredient = parseIngredientLine(
+            preprocessIngredientInput(input, rawUnitsList), 
+            rawUnitsList, 
+            standardMeasurementsLookupTable,
+            allIngredientForms,
+            allIngredientPreparations
+        );
+        logger.debug(`input: ${preprocessIngredientInput(input, rawUnitsList)} ===> `, parsedIngredient)
         setValue(PARSED_INGREDIENT_NAME, parsedIngredient);
     };
 

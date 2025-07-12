@@ -1,7 +1,9 @@
 import type { Params } from 'react-router-dom';
 import type { User } from '../../api/types/user';
 import { StandardIngredients, StandardMeasurements, StandardLookupTable, StandardIngredientsGroupedByCategory,
-    FlattenedStandardIngredientsForFuse, FlattenedStandardMeasurementsForFuse
+    FlattenedStandardIngredientsForFuse, FlattenedStandardMeasurementsForFuse,
+    IngredientForms,
+    IngredientPreparations
 } from '../../api/types/standardized';
 import { getUserInfo } from '../../api/queries/usersApi';
 import { getStaticFiles, StaticFilesData } from '../../api/queries/staticApi';
@@ -21,6 +23,8 @@ export interface RootLoaderResult {
     flattenedStandardIngredientsForFuse: FlattenedStandardIngredientsForFuse | null;
     flattenedStandardMeasurementsForFuse: FlattenedStandardMeasurementsForFuse | null;
     rawUnitsList: string[] | null;
+    allIngredientForms: IngredientForms | null;
+    allIngredientPreparations: IngredientPreparations | null;
 }
 
 export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResult> {
@@ -33,6 +37,8 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
     let flattenedStandardIngredientsForFuse = null;
     let flattenedStandardMeasurementsForFuse = null;
     let rawUnitsList = null;
+    let allIngredientForms = null;
+    let allIngredientPreparations = null;
 
     await getUserInfo()
         .then(response => {
@@ -52,7 +58,9 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
             standardMeasurements = data.standardMeasurements;
             standardIngredientsLookupTable = data.standardIngredientsLookupTable;
             standardMeasurementsLookupTable = data.standardMeasurementsLookupTable;
-            stardardIngredientsGroupedByCategory = data.stardardIngredientsGroupedByCategory;
+            stardardIngredientsGroupedByCategory = data.standardIngredientsGroupedByCategory;
+            allIngredientForms = data.ingredientForms;
+            allIngredientPreparations = data.ingredientPreparations;
         })
         .catch(err => {
             if (err.status) {
@@ -83,6 +91,8 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
         stardardIngredientsGroupedByCategory,
         flattenedStandardIngredientsForFuse,
         flattenedStandardMeasurementsForFuse,
-        rawUnitsList
+        rawUnitsList,
+        allIngredientForms,
+        allIngredientPreparations
     }
 }

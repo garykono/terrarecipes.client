@@ -1,12 +1,14 @@
 import axiosInstance from "../../utils/axiosConfig"
-import { StandardIngredients, StandardIngredientsGroupedByCategory, StandardLookupTable, StandardMeasurements } from "../types/standardized";
+import { IngredientForms, IngredientPreparations, StandardIngredients, StandardIngredientsGroupedByCategory, StandardLookupTable, StandardMeasurements } from "../types/standardized";
 
 export interface StaticFilesData {
     standardIngredients: StandardIngredients;
     standardMeasurements: StandardMeasurements;
     standardIngredientsLookupTable: StandardLookupTable;
     standardMeasurementsLookupTable: StandardLookupTable;
-    stardardIngredientsGroupedByCategory: StandardIngredientsGroupedByCategory;
+    standardIngredientsGroupedByCategory: StandardIngredientsGroupedByCategory;
+    ingredientForms: IngredientForms;
+    ingredientPreparations: IngredientPreparations;
 }
 
 export const getStaticFiles = () => {

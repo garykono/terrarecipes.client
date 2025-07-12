@@ -2,13 +2,24 @@
 
 export interface StandardIngredient {
     name: string;
-    plural: string;
-    needsUnit: boolean;
     standardUnit?: string;
     acceptableMassUnits: string[];
     acceptableVolumeUnits: string[];
     acceptableCountUnits: string[];
-    category: string;
+    plural: string;
+    aliases: string[];
+    categories: string[];
+    forms: string[];
+    defaultForm: string;
+    substitutes: string[];
+    intensity: string;
+    storage: string;
+    shelfLifeMonths: number;
+    commonPreparations: string[];
+    notes: string;
+    tags: string[];
+    averagePriceUSDPerUnit: number;
+    treatOuncesAsVolume: boolean;
 }
 
 // An object used for quick ingredient lookups with format: [name of ingredient]: info about ingredient
@@ -21,6 +32,13 @@ export interface StandardIngredientsGroupedByCategory {
 }
 
 export type FlattenedStandardIngredientsForFuse = StandardIngredient[];
+
+
+/* -- INGREDIENT FORMS AND PREPARATIONS -- */
+export type IngredientForms = string[];
+
+export type IngredientPreparations = string[];
+
 
 /* -- STANDARDIZED MEASUREMENTS -- */
 

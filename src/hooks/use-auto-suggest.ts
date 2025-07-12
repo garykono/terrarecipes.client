@@ -4,7 +4,7 @@ import type { FuseOptionKey } from 'fuse.js';
 
 
 export interface AutoSuggestProps<T> {
-    autoSuggestionsList: T;
+    autoSuggestionsList: T[];
     keys: FuseOptionKey<T>[];
 }
 
@@ -13,7 +13,7 @@ export interface AutoSuggestResult<T> {
     confidence: number;
 }
 
-export function useAutoSuggest<T extends { name: string }[]>({ autoSuggestionsList, keys }: AutoSuggestProps<T>) {
+export function useAutoSuggest<T extends { name: string }>({ autoSuggestionsList, keys }: AutoSuggestProps<T>) {
     const fuse = useMemo(() => {
         return new Fuse(autoSuggestionsList, {
             keys,

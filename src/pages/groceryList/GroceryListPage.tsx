@@ -61,7 +61,7 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                                         {`${ingredient.quantity} ${getFormattedUnitLabel(ingredient.quantity, ingredient.standardUnit, standardMeasurements)} `}
                                     </span>
                                     <span className={styles.ingredientText}>
-                                        {(ingredient.quantity > 1 && !ingredient.standardUnit && standardIngredients) ? 
+                                        {(ingredient.quantity > 1 && standardIngredients) ? 
                                             standardIngredients[ingredientName].plural : ingredientName}
                                     </span>
                                 </>
