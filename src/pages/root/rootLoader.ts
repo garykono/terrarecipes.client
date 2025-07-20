@@ -22,6 +22,8 @@ export interface RootLoaderResult {
     stardardIngredientsGroupedByCategory: StandardIngredientsGroupedByCategory | null;
     flattenedStandardIngredientsForFuse: FlattenedStandardIngredientsForFuse | null;
     flattenedStandardMeasurementsForFuse: FlattenedStandardMeasurementsForFuse | null;
+    rawIngredientsList: string[] | null;
+    rawIngredientsSet: Set<string> | null;
     rawUnitsList: string[] | null;
     allIngredientForms: IngredientForms | null;
     allIngredientPreparations: IngredientPreparations | null;
@@ -36,6 +38,8 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
     let stardardIngredientsGroupedByCategory = null;
     let flattenedStandardIngredientsForFuse = null;
     let flattenedStandardMeasurementsForFuse = null;
+    let rawIngredientsList = null;
+    let rawIngredientsSet = null;
     let rawUnitsList = null;
     let allIngredientForms = null;
     let allIngredientPreparations = null;
@@ -75,6 +79,12 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
     // Reformat for compatibility with fuse searching
     if (standardIngredients) flattenedStandardIngredientsForFuse = flattenDataForFuse(standardIngredients, "ingredient");
     if (standardMeasurements) flattenedStandardMeasurementsForFuse = flattenDataForFuse(standardMeasurements, "measurement");
+    if (flattenedStandardIngredientsForFuse) rawIngredientsList = flattenedStandardIngredientsForFuse.flatMap(ingredient => [
+        ingredient.name,
+        ...ingredient.plural,
+        ...ingredient.aliases
+    ]);
+    if (rawIngredientsList) rawIngredientsSet = new Set(rawIngredientsList);
     if (flattenedStandardMeasurementsForFuse) rawUnitsList = flattenedStandardMeasurementsForFuse.flatMap(units => [
         units.name,
         ...units.plural,
@@ -91,6 +101,8 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
         stardardIngredientsGroupedByCategory,
         flattenedStandardIngredientsForFuse,
         flattenedStandardMeasurementsForFuse,
+        rawIngredientsList,
+        rawIngredientsSet,
         rawUnitsList,
         allIngredientForms,
         allIngredientPreparations

@@ -27,6 +27,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
         flattenedStandardIngredientsForFuse,
         flattenedStandardMeasurementsForFuse,
         rawUnitsList,
+        rawIngredientsSet,
         allIngredientForms,
         allIngredientPreparations
     } = useRouteLoaderData('root') as RootLoaderResult;
@@ -51,6 +52,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
         standardMeasurementsLookupTable &&
         flattenedStandardIngredientsForFuse &&
         flattenedStandardMeasurementsForFuse &&
+        rawIngredientsSet &&
         rawUnitsList &&
         allIngredientForms &&
         allIngredientPreparations
@@ -109,8 +111,8 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
             }
         } else if (searchIngredients && searchUnits) {
             // Make ingredient recommendation
-            const parsed = getValues(PARSED_INGREDIENT_NAME)?.ingredient || '';
-            results = searchIngredients(parsed);
+            // const parsed = getValues(PARSED_INGREDIENT_NAME)?.ingredient || '';
+            results = searchIngredients(currentWord);
             if (results.length < suggestionLimit) {
                 results = results.concat(searchUnits(currentWord));
             }
@@ -121,15 +123,16 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
 
     const updateParsedInfo = (input: string) => {
         if (!hasData) return;
-        const parsedIngredient = parseIngredientLine(
+        const parsedIngredients = parseIngredientLine(
             preprocessIngredientInput(input, rawUnitsList), 
+            rawIngredientsSet,
             rawUnitsList, 
             standardMeasurementsLookupTable,
             allIngredientForms,
             allIngredientPreparations
         );
-        logger.debug(`input: ${preprocessIngredientInput(input, rawUnitsList)} ===> `, parsedIngredient)
-        setValue(PARSED_INGREDIENT_NAME, parsedIngredient);
+        logger.debug(`input: ${preprocessIngredientInput(input, rawUnitsList)} ===> `, parsedIngredients)
+        setValue(PARSED_INGREDIENT_NAME, parsedIngredients);
     };
 
     const handleIngredientChange = (e: React.ChangeEvent<HTMLInputElement>) => {

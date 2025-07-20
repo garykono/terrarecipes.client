@@ -7,13 +7,15 @@ import BasicHero from '../../components/basicHero/BasicHero';
 import { Ingredient } from '../../api/types/recipe';
 import { combineIngredients, CombinedIngredients } from '../../utils/combineIngredients';
 import { StandardMeasurements } from '../../api/types/standardized';
+import { formatWithUnicodeFraction } from '../../utils/helpers';
 
 export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection' }) {
     // const navigate = useNavigate();
     const { standardIngredients, standardMeasurements, standardIngredientsLookupTable, standardMeasurementsLookupTable } = useRouteLoaderData('root') as RootLoaderResult;
     const { name, recipes } = useLoaderData() as GroceryListLoaderResult;
     const [ingredientsList, setIngredientsList] = useState<CombinedIngredients>({
-        validatedIngredients: {},
+        standardizedIngredients: {},
+        optionalStandardizedIngredients: {},
         miscellaneous: []
     });
     const [error, setError] = useState(null);
@@ -53,12 +55,27 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                     <h1 className="heading-primary">Shopping List for {`${mode}: ${name}`}</h1>
 
                     <ul className={styles.ingredientsList}>
-                        {Object.keys(ingredientsList.validatedIngredients).map((ingredientName, index) => {
-                            const ingredient = ingredientsList.validatedIngredients[ingredientName];
+                        {Object.keys(ingredientsList.standardizedIngredients).map((ingredientName, index) => {
+                            const ingredient = ingredientsList.standardizedIngredients[ingredientName];
                             return <li key={index} className={styles.ingredientListItem}>
                                 <>
                                     <span className={styles.ingredientAmount}>
-                                        {`${ingredient.quantity} ${getFormattedUnitLabel(ingredient.quantity, ingredient.standardUnit, standardMeasurements)} `}
+                                        {`${getFormattedQuantityAndUnitLabel(ingredient.normalizedUnitQuantity, ingredient.normalizedUnit, standardMeasurements)} `}
+                                    </span>
+                                    <span className={styles.ingredientText}>
+                                        {(ingredient.quantity > 1 && standardIngredients) ? 
+                                            standardIngredients[ingredientName].plural : ingredientName}
+                                    </span>
+                                </>
+                            </li>
+                        })}
+                        {Object.keys(ingredientsList.optionalStandardizedIngredients).map((ingredientName, index) => {
+                            const ingredient = ingredientsList.optionalStandardizedIngredients[ingredientName];
+                            return <li key={index} className={styles.ingredientListItem}>
+                                <>
+                                    <span>(Optional) </span>
+                                    <span className={styles.ingredientAmount}>
+                                        {`${getFormattedQuantityAndUnitLabel(ingredient.normalizedUnitQuantity, ingredient.normalizedUnit, standardMeasurements)} `}
                                     </span>
                                     <span className={styles.ingredientText}>
                                         {(ingredient.quantity > 1 && standardIngredients) ? 
@@ -84,14 +101,28 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
     )
 }
 
-function getFormattedUnitLabel(
+function getFormattedQuantityAndUnitLabel(
     quantity: number,
     unit: string | null,
     standardMeasurements: StandardMeasurements | null
 ): string {
-    if (!unit) return "";
+    let label = "";
+    // Quantity
+    if (quantity === 0) {
+        return label
+    } else {
+        label = label + formatWithUnicodeFraction(quantity) + " ";
+    };
+
+    // Unit
+    if (!unit) return label;
+
+    //if (unit === "fluid ounce") unit = "ounce";
+    
     if (quantity > 1 && standardMeasurements && standardMeasurements[unit].plural) {
-        return standardMeasurements[unit].plural[0];
+        label = label + standardMeasurements[unit].plural[0];
+    } else {
+        label = label + unit;
     }
-    return unit;
+    return label;
 }

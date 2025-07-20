@@ -51,10 +51,11 @@ export default function CollectionEditPage() {
 
         const startIndex = (page - 1) * resultsPerPage;
         const endIndex = Math.min((page * resultsPerPage), numUserRecipes);
+        console.log(`page: ${page}, resultsPerPage: ${resultsPerPage}`)
 
         setRecipesToShow(collectionRecipes.slice(startIndex, endIndex));
         setTotalPages(Math.ceil(numUserRecipes / resultsPerPage));
-    }, [collectionRecipes])
+    }, [collectionRecipes, page])
 
     /**
      * Removes the recipe from the local version of the collection.
@@ -166,10 +167,10 @@ export default function CollectionEditPage() {
                     <CardList list={renderedRecipeCards} className={styles.cardList} />
                     <Pagination 
                             currentPage={page} 
-                            onFirstPageButtonClicked={() => navigate(`/collection/${collection._id}/${1}`)}
-                            onPreviousPageButtonClicked={() => navigate(`/collection/${collection._id}/${page - 1}`)} 
-                            onNextPageButtonClicked={() => navigate(`/collection/${collection._id}/${page + 1}`)}
-                            onLastPageButtonClicked={() => navigate(`/collection/${collection._id}/${totalPages}`)}
+                            onFirstPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${1}`)}
+                            onPreviousPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${page - 1}`)} 
+                            onNextPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${page + 1}`)}
+                            onLastPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${totalPages}`)}
                             numPages={totalPages} 
                         />
                 

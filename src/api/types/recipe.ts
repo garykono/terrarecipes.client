@@ -7,7 +7,7 @@ import { ParsedIngredient } from "../../utils/parseIngredientLine";
 export interface Ingredient {
     text: string;
     isSection: boolean;
-    parsed?: ParsedIngredient
+    parsed?: ParsedIngredient[]
 }
 
 export interface Direction {

@@ -1,5 +1,7 @@
 import { parse as fallbackParse } from 'recipe-ingredient-parser-v3';
 import { IngredientForms, IngredientPreparations, StandardLookupTable, StandardMeasurements } from '../api/types/standardized';
+import { logger } from './logger';
+import { findLongestWholePhraseMatch } from './helpers';
 
 function isLikelyUnit(word: string, unitsList: string[]): boolean {
   return unitsList.includes(word.toLowerCase());
@@ -9,28 +11,44 @@ function isLikelyAmount(word: string): boolean {
   return /^\d+$|^\d+\/\d+$|^\d+\.\d+$/.test(word); // whole, fraction, decimal
 }
 
+const OPTIONAL_PHRASES = [
+    "optional"
+];
+
 const OPTIONAL_QUANTITY_PHRASES = [
-    "optional",
     "or as needed",
     "to taste",
     "as needed",
     "or more",
-    "as desired"
+    "as desired",
+    "and more",
+    "plus more to serve"
 ];
 
-function stripOptionalQuantityPhrases(input: string): { cleaned: string; wasOptional: boolean } {
+function stripOptionalQuantityPhrases(input: string): { cleaned: string; isOptional: boolean; optionalQuantity: boolean } {
     let cleaned = input;
-    let wasOptional = false;
+    let isOptional = false;
+    let optionalQuantity = false;
 
+    for (const phrase of OPTIONAL_PHRASES) {
+        const pattern = new RegExp(`\\b${phrase}\\b`, 'gi');
+        if (pattern.test(cleaned)) {
+            cleaned = cleaned.replace(pattern, '').trim();
+            isOptional = true;
+        }
+    }
     for (const phrase of OPTIONAL_QUANTITY_PHRASES) {
         const pattern = new RegExp(`\\b${phrase}\\b`, 'gi');
         if (pattern.test(cleaned)) {
             cleaned = cleaned.replace(pattern, '').trim();
-            wasOptional = true;
+            optionalQuantity = true;
         }
     }
 
-    return { cleaned, wasOptional };
+    // Remove trailing and leading commas and whitespace
+    cleaned = cleaned.replace(/^,+|,+$/g, '').trim();
+
+    return { cleaned, isOptional, optionalQuantity };
 }
 
 function parseFraction(input: string): number {
@@ -75,8 +93,9 @@ function extractQuantityAndRest(tokens: string[]): { quantity?: number, rest: st
 
     const normalizeFractions = (input: string) => {
         return input
+            .replace(/(\d)([\u00BC-\u00BE\u2150-\u215E])/g, (_, digit, frac) => `${digit} ${unicodeFractions[frac] || frac}`)
             .replace(/[\u00BC-\u00BE\u2150-\u215E]/g, (match) => unicodeFractions[match] || match)
-            .replace(/–|—/g, "-"); // normalize en/em dash to hyphen
+            .replace(/–|—/g, "-");
     };
 
     const normalized = normalizeFractions(joined);
@@ -125,7 +144,70 @@ function extractAndStandardizeUnit(tokens: string[], unitsList: string[], standa
     return unit;
 }
 
-export function extractFormAndPreparation(
+function lookAheadForNextIngredient(
+    tokens: string[],
+    ingredientsSet: Set<string>,
+    unitsList: string[],
+): { index: number; skipCount: number; connector: string[] } | null {
+    const DEBUG = false;
+
+    if (DEBUG) logger.debug(`look ahead in tokens: ${tokens}`);
+    const commonDualIngredients = new Set([
+        "salt", "pepper", "black pepper", "ground black pepper", "white pepper", "oil", "vinegar",
+        "sugar", "cinnamon", "nutmeg", "oregano", "thyme", "basil", "paprika",
+        "coriander", "cumin", "onion", "garlic"
+    ]);
+
+    for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i]?.toLowerCase();
+        const next = tokens[i + 1]?.toLowerCase();
+        const third = tokens[i + 2]?.toLowerCase();
+
+        const isSeparator = token === "or" || token === "and" || token === ",";
+
+        if (DEBUG) logger.debug(`--loop ${i}--`);
+        if (DEBUG) logger.debug(`token: ${token}, next: ${next}, third: ${third}`);
+
+        // === 1. "or use" or "and substitute" → substitution cue
+        if ((token === "or" || token === "and") && (next === "use" || next === "substitute")) {
+            return { index: i, skipCount: 2, connector: [token, next] };
+        }
+
+        // === 2. Separator followed by amount or unit → new ingredient
+        const followsAmount = isLikelyAmount(next) || /^\d+[\/\d\.]*$/.test(next || "");
+        const followsUnit = isLikelyUnit(next || "", unitsList);
+        if (isSeparator && (followsAmount || followsUnit)) {
+        if (DEBUG) logger.debug("→ separator followed by unit/amount → new ingredient");
+            return { index: i, skipCount: 1, connector: [token] };
+        }
+
+        // === 3. Handle "salt and pepper", "salt and black pepper", etc.
+        if ((token === "and" || token === "or") && i > 0 && i < tokens.length - 1) {
+            // Build 1-word and 2-word phrases before and after the separator
+            const before1 = tokens[i - 1]?.toLowerCase();
+            const before2 = tokens[i - 2]?.toLowerCase();
+            const after1 = tokens[i + 1]?.toLowerCase();
+            const after2 = tokens[i + 2]?.toLowerCase();
+
+            const beforePhrase = before2 ? `${before2} ${before1}` : before1;
+            const afterPhrase = after2 ? `${after1} ${after2}` : after1;
+
+            const beforeMatches =
+                ingredientsSet.has(before1) || (before2 && ingredientsSet.has(beforePhrase));
+            const afterMatches =
+                ingredientsSet.has(after1) || (after2 && ingredientsSet.has(afterPhrase));
+
+            if (beforeMatches && afterMatches) {
+                if (DEBUG) logger.debug("→ dual ingredient combo like 'salt and black pepper'");
+                    return { index: i, skipCount: 1, connector: [token] };
+            }
+        }
+    }
+
+    return null;
+}
+
+function extractFormAndPreparation(
     input: string,
     formList: string[],
     preparationList: string[]
@@ -149,7 +231,7 @@ export function extractFormAndPreparation(
     for (let i = 0; i < words.length; i++) {
         prepSet.forEach(prep => {
             const prepWords = prep.split(" ");
-            const segment = words.slice(i, i + prepWords.length).join(" ");
+            const segment = words.slice(i, i + prepWords.length).join(" ").replace(",", "");
             if (segment === prep) {
                 preparations.push(prep);
                 for (let j = i; j < i + prepWords.length; j++) usedIndexes.add(j);
@@ -163,7 +245,7 @@ export function extractFormAndPreparation(
         if (usedIndexes.has(i)) continue;
         formSet.forEach(form => {
             const formWords = form.split(" ");
-            const segment = words.slice(i, i + formWords.length).join(" ");
+            const segment = words.slice(i, i + formWords.length).join(" ").replace(",", "");
             if (segment === form) {
                 forms.push(form);
                 for (let j = i; j < i + formWords.length; j++) usedIndexes.add(j);
@@ -184,106 +266,149 @@ export function extractFormAndPreparation(
     };
 }
 
-
 export interface ParsedIngredient {
-    optionalQuantity?: boolean;
     quantity?: number;
     unit?: string;
     ingredient: string;
     forms?: string[];
     preparations?: string[];
     size?: "small" | "medium" | "large";
+    isOptional?: boolean;
+    optionalQuantity?: boolean;
+    isSubstitute?: boolean,
     raw: string;
     parsedBy: 'manual' | 'fallback' | 'initialized';
 }
 
 export function parseIngredientLine(
     line: string,
+    ingredientsSet: Set<string>,
     unitsList: string[],
     standardMeasurementsLookupTable: StandardLookupTable,
     allForms: IngredientForms,
     allPreparations: IngredientPreparations
-): ParsedIngredient {
-    const raw = line.trim();
+): ParsedIngredient[] {
+    const DEBUG = true;
+    const parsedIngredients = [] as ParsedIngredient[];
 
-    const { cleaned, wasOptional } = stripOptionalQuantityPhrases(raw);
-    const tokens = cleaned.split(/\s+/);
+    let { cleaned, isOptional, optionalQuantity } = stripOptionalQuantityPhrases(line.trim());
+    let isSubstitute = false;
+    let tokens = cleaned.split(/\s+/);
 
-    const { quantity, rest } = extractQuantityAndRest(tokens);
+    while (tokens.length > 0) {
+        // Parse Quantity and then remove it
+        let { quantity, rest } = extractQuantityAndRest(tokens);
 
-    const unit: string | undefined = extractAndStandardizeUnit(
-        rest,
-        unitsList,
-        standardMeasurementsLookupTable
-    );
+        // Parse Unit and then remove it
+        const unit: string | undefined = extractAndStandardizeUnit(
+            rest,
+            unitsList,
+            standardMeasurementsLookupTable
+        );
 
-    // === Extract size descriptor
-    const sizeDescriptors = new Set(['small', 'medium', 'large']);
-    let size: 'small' | 'medium' | 'large' | undefined;
+        // Most of what can reliable be parsed out based on structure has been parsed and shaved off the input. Look ahead to indicate 
+        // whether there is more than one ingredient left in the input
+        const indexOfNextIngredient = lookAheadForNextIngredient(rest, ingredientsSet, unitsList);
 
-    if (rest.length && sizeDescriptors.has(rest[0].toLowerCase())) {
-        size = rest.shift()?.toLowerCase() as 'small' | 'medium' | 'large';
-    }
+        // Get the phrase between this ingredient and the next one in this input ex. "or", "or use"
+        const connectingWords = indexOfNextIngredient !== null
+            ? rest.slice(indexOfNextIngredient.index, indexOfNextIngredient.index + indexOfNextIngredient.skipCount)
+            : null;
 
-    let { cleanedInput, forms, preparations } = extractFormAndPreparation(
-        rest.join(' ').trim(),
-        allForms,
-        allPreparations
-    );
+        const currentTokens = indexOfNextIngredient !== null
+            ? rest.slice(0, indexOfNextIngredient.index)
+            : [...rest];
 
-     // Check if size appears after the ingredient name (e.g., "1 onion, medium, chopped")
-    if (!size && cleanedInput.includes(',')) {
-        const parts = cleanedInput.split(',').map(part => part.trim());
-        for (let i = 1; i < parts.length; i++) {
-            const part = parts[i].toLowerCase();
-            if (sizeDescriptors.has(part)) {
-                size = part as 'small' | 'medium' | 'large';
-                parts.splice(i, 1); // remove size from parts
-                break;
-            }
+        const raw = [...tokens.slice(0, tokens.length - rest.length), ...currentTokens].join(' ');
+
+        // Adjust tokens for next iteration
+        if (indexOfNextIngredient !== null) {
+            tokens = rest.slice(indexOfNextIngredient.index + indexOfNextIngredient.skipCount);
+            rest = currentTokens;
+        } else {
+            tokens = [];
         }
-        cleanedInput = parts[0]; // use base name as ingredient
+        if (DEBUG) logger.debug(`going to finish processing these tokens: ${rest}\ngoing to process these tokens next: ${tokens}`)
+
+        // Attempt to parse a standard ingredient from the input
+        const restPhrase = rest.join(' ').toLowerCase();
+        const matchedIngredient = findLongestWholePhraseMatch(restPhrase, ingredientsSet);
+        // Remove first occurrence of matched ingredient from rest
+        if (matchedIngredient) {
+            rest = restPhrase.replace(
+                new RegExp(`\\b${matchedIngredient.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i'),
+                ''
+            ).trim().split(/\s+/);
+        }
+        
+        // === Extract size descriptor
+        const sizeDescriptors = new Set(['small', 'medium', 'large']);
+        let size: 'small' | 'medium' | 'large' | undefined;
+
+        if (rest.length && sizeDescriptors.has(rest[0].toLowerCase())) {
+            size = rest.shift()?.toLowerCase() as 'small' | 'medium' | 'large';
+        }
+
+        let { cleanedInput, forms, preparations } = extractFormAndPreparation(
+            rest.join(' ').trim(),
+            allForms,
+            allPreparations
+        );
+
+        // Check if size appears after the ingredient name (e.g., "1 onion, medium, chopped")
+        if (!size && cleanedInput.includes(',')) {
+            const parts = cleanedInput.split(',').map(part => part.trim());
+            for (let i = 1; i < parts.length; i++) {
+                const part = parts[i].toLowerCase();
+                if (sizeDescriptors.has(part)) {
+                    size = part as 'small' | 'medium' | 'large';
+                    parts.splice(i, 1); // remove size from parts
+                    break;
+                }
+            }
+            cleanedInput = parts[0]; // use base name as ingredient
+        }
+
+        // Final cleanup in case of dangling comma
+        // const ingredient = cleanedInput.replace(/,\s*$/, '').trim();
+
+        const hasValidIngredient = matchedIngredient != null;
+        const hasValidQuantity = quantity !== undefined;
+        optionalQuantity = optionalQuantity || (!hasValidQuantity && hasValidIngredient);
+
+        if (!hasValidIngredient) {
+            const fallback = fallbackParse(raw, 'eng');
+            parsedIngredients.push({
+                quantity: fallback.quantity !== undefined ? parseFloat("" + fallback.quantity) : undefined,
+                unit: fallback.unit || undefined,
+                ingredient: fallback.ingredient || '',
+                raw,
+                parsedBy: 'fallback'
+            });
+        } else {
+            parsedIngredients.push({
+                quantity,
+                unit,
+                ingredient: matchedIngredient,
+                forms,
+                preparations,
+                size,
+                isOptional,
+                optionalQuantity,
+                isSubstitute,
+                raw,
+                parsedBy: 'manual'
+            });
+        }
+
+        // Determine if next ingredient is a substitute or not
+        if (connectingWords) {
+            if (DEBUG) logger.debug("connecting words: ", connectingWords)
+            isSubstitute = ["substitute", "or"].includes(connectingWords[0])
+                || (connectingWords.length > 1 && ["substitute"].includes(connectingWords[1]))
+            if (DEBUG && isSubstitute) logger.debug("This is a substitute!");
+        }
     }
 
-    // Final cleanup in case of dangling comma
-    const ingredient = cleanedInput.replace(/,\s*$/, '').trim();
-
-    const hasValidIngredient = ingredient.length > 0;
-    const hasValidQuantity = quantity !== undefined;
-
-    if (!hasValidQuantity && hasValidIngredient) {
-        return {
-            ingredient,
-            unit,
-            forms,
-            preparations,
-            size,
-            raw,
-            parsedBy: 'manual',
-            optionalQuantity: true
-        };
-    }
-
-    if (!hasValidIngredient) {
-        const fallback = fallbackParse(raw, 'eng');
-        return {
-            quantity: fallback.quantity !== undefined ? parseFloat("" + fallback.quantity) : undefined,
-            unit: fallback.unit || undefined,
-            ingredient: fallback.ingredient || '',
-            raw,
-            parsedBy: 'fallback'
-        };
-    }
-
-    return {
-        optionalQuantity: wasOptional,
-        quantity,
-        unit,
-        ingredient,
-        forms,
-        preparations,
-        size,
-        raw,
-        parsedBy: 'manual'
-    };
+    return parsedIngredients;
 }
