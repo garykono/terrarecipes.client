@@ -11,6 +11,7 @@ import BasicHero from '../../components/basicHero/BasicHero';
 function RecipesPage() {
     const navigate = useNavigate();
     const { recipes, totalPages, page, search } = useLoaderData() as RecipesLoaderResult;
+    const previousSearchTerm = search?.replace('-', ' ');
 
     return (
         <div className={styles.recipePage}>
@@ -22,11 +23,11 @@ function RecipesPage() {
                         <div className={styles.searchForm}>
                             <SearchBar 
                                 placeholder='ex. "beef stew", "dinner"'
-                                initialSearchTerm={search} 
+                                initialSearchTerm={previousSearchTerm} 
                                 onSearch={searchTerm => navigate(`/recipes/1/${searchTerm}`)} 
                             />
                         </div>
-                        <p className={styles.resultsText}>{search && `Showing results for "${search}".`}</p>
+                        <p className={styles.resultsText}>{search && `Showing results for "${previousSearchTerm}".`}</p>
                     </div>
                     <CardList
                         list={

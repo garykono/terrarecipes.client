@@ -6,12 +6,13 @@ interface FetchRecipesProps {
     limit?: number;
     page?: number;
     search?: string;
+    searchFields?: string;
     [key: string]: any;
 }
 
 // export const fetchRecipes = (params: { [key: string]: string }) => {
-export const fetchRecipes = ({limit, page, search, ...rest} : FetchRecipesProps) => {
-    const p = new URLSearchParams(removeEmptyFieldsFromObj({ limit, page, search, ...rest}));
+export const fetchRecipes = ({limit, page, search, searchFields, ...rest} : FetchRecipesProps) => {
+    const p = new URLSearchParams(removeEmptyFieldsFromObj({ limit, page, search, searchFields, ...rest}));
 
     return (
         axiosInstance
