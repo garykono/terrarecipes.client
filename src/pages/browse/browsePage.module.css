@@ -1,0 +1,36 @@
+.staticCategoryList {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6rem;
+}
+
+.categoryItem {
+    list-style: none;
+    flex: 1 1 8rem; /* Grow/shrink, min width 80px */
+    max-width: 10rem; /* Optional max width */
+    text-align: center;
+}
+
+.categoryLink {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.categoryIcon {
+    font-size: 6.4rem;
+}
+
+.categoryTitle {
+    font-size: 2.4rem;
+}
+.featuredLists {
+    display: flex;
+    flex-direction: column;
+    gap: 6.4rem;
+}
+
+.featuredList {
+    margin-bottom: 16rem;
+}

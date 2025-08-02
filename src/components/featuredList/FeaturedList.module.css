@@ -1,35 +1,54 @@
 .featuredList {
-    display: flex;
-    flex-direction: column;
-    gap: 3.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .title {
-    display: flex;
-    justify-content: center;
+  font-weight: 600;
 }
 
-.moreButton {
-    display: flex;
-    justify-content: center;
+.scrollWrapper {
+  display: flex;
+  gap: 1.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem; /* for scroll bar space */
+  scroll-snap-type: x mandatory;
 }
 
-/**************************/
-/* Below 704px (Small Tablets) */
-/**************************/
+.cardWrapper {
+  flex: 0 0 auto; /* prevent flex items from shrinking */
+  scroll-snap-align: start;
+  width: 250px; /* fixed width for consistent card sizes */
+}
 
+/* Hide scrollbar (WebKit)  HIDE THESE LATER WHEN I MAKE SIDE ARROWS TO NAVIGATE THROUGH THEM */
+/* .scrollWrapper::-webkit-scrollbar {
+  display: none;
+} */
+
+/* Hide scrollbar (Firefox) */
+/* .scrollWrapper {
+  scrollbar-width: none;
+} */
+
+/**************************/
+/* Responsive tweaks */
+/**************************/
 @media (max-width: 44em) {
-    .cardList.cardList {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .cardWrapper {
+    width: 200px;
+  }
 }
-
-/**************************/
-/* Below 544px (Phones) */
-/**************************/
 
 @media (max-width: 34em) {
-    .cardList.cardList {
-        /* grid-template-columns: 1fr; */
-    }
+  .cardWrapper {
+    width: 150px;
+  }
 }

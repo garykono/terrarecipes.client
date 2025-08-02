@@ -33,5 +33,5 @@ export interface Recipe extends UnvalidatedRecipe {
 }
 
 export interface RecipeWithMarkForDelete extends Recipe {
-        markForDelete: boolean;
-    }
+    markForDelete: boolean;
+}

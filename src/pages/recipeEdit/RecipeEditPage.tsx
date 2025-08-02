@@ -1,5 +1,5 @@
 import styles from './RecipeEditPage.module.css';
-import { useState, useContext, useEffect, useMemo, Ref } from 'react';
+import { useState, useContext, useEffect, useMemo, Ref, useRef } from 'react';
 import { useNavigate, useLoaderData, useRouteLoaderData, useRevalidator } from 'react-router-dom';
 import { useForm, useFieldArray, RegisterOptions, ChangeHandler, UseFieldArrayRemove, UseFormRegister, FieldValues, FormProvider } from 'react-hook-form';
 import { GoXCircleFill, GoArrowUp, GoArrowDown } from 'react-icons/go';
@@ -137,6 +137,8 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         }
     }
 
+    const tagInputRef = useRef<HTMLInputElement>(null);
+
     const handleAddTag = async () => {
         const tagValue = getValues('tag');
         if (tagValue.trim().length < 3) {
@@ -149,6 +151,16 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
             appendTag({ value: tagValue });
             clearErrors('tag');
             setValue('tag', "");
+            requestAnimationFrame(() => {
+                tagInputRef.current?.focus(); // keep cursor in input
+            });
+        }
+    }
+
+    function handleEnterKeyOnTagField(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === "Enter") {
+            e.preventDefault(); // prevent form submit
+            handleAddTag(); // Pass the value to your add handler
         }
     }
 
@@ -430,7 +442,7 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                             className="input"  
                                             placeholder="ex. breakfast"
                                             type="text"
-                                            // onKeyDown={(event) => event.key === 'Enter' && appendTag(event.target.value)}
+                                            onKeyDown={handleEnterKeyOnTagField}
                                             {...register("tag")}
                                         />
                                         <button 

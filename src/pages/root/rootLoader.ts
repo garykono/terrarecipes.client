@@ -3,7 +3,8 @@ import type { User } from '../../api/types/user';
 import { StandardIngredients, StandardMeasurements, StandardLookupTable, StandardIngredientsGroupedByCategory,
     FlattenedStandardIngredientsForFuse, FlattenedStandardMeasurementsForFuse,
     IngredientForms,
-    IngredientPreparations
+    IngredientPreparations,
+    Categories
 } from '../../api/types/standardized';
 import { getUserInfo } from '../../api/queries/usersApi';
 import { getStaticFiles, StaticFilesData } from '../../api/queries/staticApi';
@@ -27,6 +28,7 @@ export interface RootLoaderResult {
     rawUnitsList: string[] | null;
     allIngredientForms: IngredientForms | null;
     allIngredientPreparations: IngredientPreparations | null;
+    categories: Categories | null;
 }
 
 export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResult> {
@@ -43,6 +45,7 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
     let rawUnitsList = null;
     let allIngredientForms = null;
     let allIngredientPreparations = null;
+    let categories = null;
 
     await getUserInfo()
         .then(response => {
@@ -65,6 +68,7 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
             stardardIngredientsGroupedByCategory = data.standardIngredientsGroupedByCategory;
             allIngredientForms = data.ingredientForms;
             allIngredientPreparations = data.ingredientPreparations;
+            categories = data.categories;
         })
         .catch(err => {
             if (err.status) {
@@ -105,6 +109,7 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
         rawIngredientsSet,
         rawUnitsList,
         allIngredientForms,
-        allIngredientPreparations
+        allIngredientPreparations,
+        categories
     }
 }

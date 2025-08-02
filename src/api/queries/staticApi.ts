@@ -1,5 +1,5 @@
 import axiosInstance from "../../utils/axiosConfig"
-import { IngredientForms, IngredientPreparations, StandardIngredients, StandardIngredientsGroupedByCategory, StandardLookupTable, StandardMeasurements } from "../types/standardized";
+import { Categories, IngredientForms, IngredientPreparations, StandardIngredients, StandardIngredientsGroupedByCategory, StandardLookupTable, StandardMeasurements } from "../types/standardized";
 
 export interface StaticFilesData {
     standardIngredients: StandardIngredients;
@@ -9,6 +9,7 @@ export interface StaticFilesData {
     standardIngredientsGroupedByCategory: StandardIngredientsGroupedByCategory;
     ingredientForms: IngredientForms;
     ingredientPreparations: IngredientPreparations;
+    categories: Categories;
 }
 
 export const getStaticFiles = () => {

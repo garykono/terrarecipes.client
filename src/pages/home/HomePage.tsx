@@ -19,11 +19,11 @@ function HomePage () {
                 buttonTitle: "More Dinner Recipes",
                 onClick: () => navigate(`./recipes/1/dinner`)
             },
-            bigPot: {
-                title: "Big Pot Recipes",
-                featuredList: getFeaturedRecipesList("big pot"),
-                buttonTitle: "More Big Pot Recipes",
-                onClick: () => navigate(`./recipes/1/big pot`)
+            onePot: {
+                title: "One Pot Recipes",
+                featuredList: getFeaturedRecipesList("one pot"),
+                buttonTitle: "More One Pot Recipes",
+                onClick: () => navigate(`./recipes/1/one pot`)
             },
             side: {
                 title: "Sides Recipes",
@@ -51,7 +51,7 @@ function HomePage () {
             {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />}
             <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
             <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
-            <HomePageFeaturedList listInfo={featuredListsData["bigPot"]} />
+            <HomePageFeaturedList listInfo={featuredListsData["onePot"]} />
         </div>
     );
 }

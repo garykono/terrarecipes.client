@@ -60,3 +60,15 @@ export type FlattenedStandardMeasurementsForFuse = StandardMeasurement[];
 export type StandardLookupTable = {
     [key: string]: string;
 };
+
+export interface Category {
+    title: string,
+    slug: string,
+    icon: string,
+    searchTags: string[];
+}
+
+export interface Categories {
+    core: Category[],
+    featured: Category[]
+}

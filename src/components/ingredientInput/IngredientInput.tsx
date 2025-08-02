@@ -12,6 +12,8 @@ import { logger } from "../../utils/logger";
 const UNIT_SEARCH_KEYS = ['name', 'plural', 'symbol', 'aliases'];
 const INGREDIENT_SEARCH_KEYS = ['name'];
 
+const DEBUG = false;
+
 interface InputWithAutoSuggestProps {
     name: string;
     className?: string;
@@ -131,7 +133,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
             allIngredientForms,
             allIngredientPreparations
         );
-        logger.debug(`input: ${preprocessIngredientInput(input, rawUnitsList)} ===> `, parsedIngredients)
+        if (DEBUG) logger.debug(`input: ${preprocessIngredientInput(input, rawUnitsList)} ===> `, parsedIngredients)
         setValue(PARSED_INGREDIENT_NAME, parsedIngredients);
     };
 

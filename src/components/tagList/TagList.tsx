@@ -15,7 +15,7 @@ export default function TagList({ tags, onDelete }: TagListProps) {
                     <span className={styles.tag} key={index}>
                         {tag}
                         {onDelete && 
-                            <button className={styles.deleteButton} onClick={() => onDelete(index)}>
+                            <button className={styles.deleteButton} type="button" onClick={() => onDelete(index)}>
                                 <GoXCircleFill />
                             </button>
                         }

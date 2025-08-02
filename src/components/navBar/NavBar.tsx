@@ -89,8 +89,13 @@ export default function NavBar({ className }: NavBarProps) {
                     <div className={styles.navBarMain}>
                         <div className={styles.navBarStart}>
                             <div className={styles.navBarItem}>
+                                <Link className={styles.navBarLink} to={"/browse"}>
+                                    Browse
+                                </Link>
+                            </div>
+                            <div className={styles.navBarItem}>
                                 <Link className={styles.navBarLink} to={"/recipes"}>
-                                    Recipes
+                                    Search
                                 </Link>
                             </div>
                         </div>

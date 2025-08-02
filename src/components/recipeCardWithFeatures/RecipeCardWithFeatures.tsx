@@ -12,7 +12,6 @@ import Button from '../buttons/Button';
 interface RecipeCardWithFeaturesProps {
     recipe: Recipe;
     markForDelete?: boolean;
-    key: string;
     editMode?: boolean; 
     collectionMode?: boolean;
     onRemove?: (recipe_id: string) => void;

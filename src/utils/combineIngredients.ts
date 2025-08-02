@@ -2,7 +2,7 @@ import { Ingredient } from "../api/types/recipe";
 import { StandardIngredients, StandardLookupTable, StandardMeasurements } from "../api/types/standardized";
 import { logger } from "./logger";
 
-const DEBUG = true;
+const DEBUG = false;
 
 type VolumeUnit = 'teaspoon' | 'tablespoon' | 'cup' | 'milliliter' | 'liter' | 'fluid ounce';
 type WeightUnit = 'gram' | 'kilogram' | 'ounce' | 'pound';
@@ -334,7 +334,7 @@ export function normalizeAndRoundDisplayUnit(
     amount: number,
     unit: Unit | null
 ): { normalizedUnitQuantity: number; normalizedUnit: Unit | null } {
-    const DEBUG = true;
+    const DEBUG = false;
 
     if (!unit) {
         return {

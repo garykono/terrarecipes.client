@@ -1,0 +1,27 @@
+:global(section).sectionCategory {
+    margin-bottom: 16rem;
+}
+
+.sectionRecipeGridContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+}
+
+.sectionRelatedRecipesContent {
+    display: flex;
+    flex-direction: column;
+    gap: 2.4rem;
+    align-items: center;
+}
+
+.relatedRecipesOptions {
+    display: flex;
+    gap: 2.4rem;
+}
+
+.relatedRecipesLink {
+    text-decoration: underline;
+    font-size: var(--font-size-large);
+    color: var(--primary);
+}

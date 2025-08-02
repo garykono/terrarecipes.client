@@ -4,6 +4,10 @@ import Root from "../pages/root/Root";
 import { rootLoader } from "../pages/root/rootLoader";
 import HomePage from '../pages/home/HomePage';
 import { homeLoader } from "../pages/home/homeLoader";
+import BrowsePage from "../pages/browse/browsePage";
+import { browseLoader } from "../pages/browse/browseLoader";
+import BrowseCategoryPage from "../pages/browseCategory/browseCategoryPage";
+import { browseCategoryLoader } from "../pages/browseCategory/browseCategoryLoader";
 import RecipesPage from '../pages/recipes/RecipesPage'
 import { recipesLoader } from "../pages/recipes/recipesLoader";
 import SingleRecipePage from '../pages/singleRecipe/SingleRecipePage'
@@ -44,6 +48,20 @@ export const appRouter = createBrowserRouter([
                 errorElement:<GlobalErrorDisplay />,
             },
             {
+                path: '/browse',
+                element: <BrowsePage />,
+                loader: browseLoader,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/browse/:group?/:category',
+                element: <BrowseCategoryPage />,
+                loader: browseCategoryLoader,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
                 path: '/recipes/:page?/:search?',
                 element: <RecipesPage />,
                 loader: recipesLoader,
@@ -58,7 +76,7 @@ export const appRouter = createBrowserRouter([
                 errorElement:<GlobalErrorDisplay />,
             },
             {
-                path: '/createRecipe?',
+                path: '/createRecipe',
                 element: <RecipeEditPage mode="create"/>,
                 loader: undefined,
                 hydrateFallbackElement: <LoadingScreen />,
