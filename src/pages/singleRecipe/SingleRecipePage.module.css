@@ -27,8 +27,7 @@
 }
 
 .recipe {
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    /* background-color: var(--primary-light); */
+    background-color: var(--background-cards);
 }
 
 .overviewWrapper {

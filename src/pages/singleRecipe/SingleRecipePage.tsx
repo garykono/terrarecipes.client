@@ -126,6 +126,9 @@ function SingleRecipePage() {
     }
 
     const recipeActions: ToolbarAction[] = [];
+    // Grocery list
+    recipeActions.push({ label: "Grocery List", icon: "🛒", to: `/groceryList/recipe/${recipe._id}` });
+    
     if (user) {
         // Edit Recipe
         if (user && user.recipes.some(r => r._id === recipe._id)) {
@@ -135,9 +138,6 @@ function SingleRecipePage() {
                 to: `/editRecipe/${recipe._id}`
             });
         }
-
-        // Grocery list
-        recipeActions.push({ label: "Grocery List", icon: "🛒", to: `/groceryList/recipe/${recipe._id}` });
 
         // Add to collection
         const collectionItems = user.collections.map((collection) => ({
@@ -165,7 +165,7 @@ function SingleRecipePage() {
             )}
 
             <div className="container">
-                <div className={`card card--padded ${styles.recipe}`}>
+                <div className={`card--padded ${styles.recipe}`}>
                     <div className={`${styles.sectionOverview}`}>
                         <div className={styles.overviewWrapper}>
                             <div className={styles.textOverview}>
