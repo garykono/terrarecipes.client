@@ -16,7 +16,7 @@ export default function FeaturedRecipe({ recipe, className }: FeaturedRecipeProp
             />
             <div className={styles.recipeBody}>
                 <div className={styles.recipeContent}>
-                    <h2 className={`heading-secondary ${styles.recipeTitle}`}>{recipe.name}</h2>
+                    <h2 className={`section-title ${styles.recipeTitle}`}>{recipe.name}</h2>
                     <p className={`text ${styles.recipeDescription}`}>{recipe.description}</p>
                 </div>
                 <div className={styles.recipeButtonLink}>

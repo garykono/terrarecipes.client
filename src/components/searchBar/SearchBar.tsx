@@ -1,5 +1,5 @@
+import styles from './SearchBar.module.css';
 import { SubmitHandler, useForm } from "react-hook-form";
-import './SearchBar.css';
 
 interface SearchBarProps {
     initialSearchTerm: string | undefined;
@@ -22,7 +22,7 @@ function SearchBar({ initialSearchTerm, placeholder, onSearch, className }: Sear
     }
 
     return (
-        <form className={`search-bar ${className}`} onSubmit={handleSubmit(onSubmit)}>
+        <form className={`${styles.searchBar} ${className}`} onSubmit={handleSubmit(onSubmit)}>
             <div className="field">
                 {/* <label className="label mr-4">Search: </label> */}
                 <div className="control">

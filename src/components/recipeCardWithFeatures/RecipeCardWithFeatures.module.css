@@ -15,7 +15,7 @@
 }
 
 .managementIcon {
-    width: 2.0rem;
-    height: 2.0rem;
+    width: var(--font-size-subsection-title);
+    height: var(--font-size-subsection-title);
     cursor: pointer;
 }

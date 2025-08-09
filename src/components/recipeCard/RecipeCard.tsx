@@ -8,7 +8,7 @@ interface RecipeCardProps {
 
 function RecipeCard({ recipe, className }: RecipeCardProps) {
     return (
-        <div className={`box ${styles.recipeCard} ${className}`}>
+        <div className={`card ${styles.recipeCard} ${className}`}>
             <img 
                 className={styles.img}
                 style={recipe.markForDelete? { opacity: 0.5 } : {}}

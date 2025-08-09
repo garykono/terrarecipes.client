@@ -9,21 +9,25 @@ type WeightUnit = 'gram' | 'kilogram' | 'ounce' | 'pound';
 type Unit = VolumeUnit | WeightUnit;
 
 interface ValidatedIngredient {
-    quantity: number;
     standardUnit: Unit | null;
+    mainCategory: string;
+    requiredStandardQuantity: number;
+    optionalStandardQuantity: number;
+    hasOptionalIngredientInThisList: boolean;
 }
 
-interface NormalizedAndValidatedIngredient extends ValidatedIngredient {
-    normalizedUnitQuantity: number;
-    normalizedUnit: Unit | null;
+interface NormalizedIngredient extends ValidatedIngredient {
+    normalizedRequiredUnitQuantity: number;
+    normalizedRequiredUnit: Unit | null;
+}
+
+interface NormalizedAndNamedIngredient extends NormalizedIngredient {
+    name: string;
 }
 
 export interface CombinedIngredients {
     standardizedIngredients: {
-        [key: string]: NormalizedAndValidatedIngredient
-    },
-    optionalStandardizedIngredients: {
-        [key: string]: NormalizedAndValidatedIngredient
+        [key: string]: NormalizedIngredient
     },
     miscellaneous: string[]
 }
@@ -49,16 +53,12 @@ export function combineIngredients({
         logger.error("Missing one or more standardized lists. All ingredients set to miscellaneous.")
         return {
             standardizedIngredients: {},
-            optionalStandardizedIngredients: {},
             miscellaneous: uncombinedIngredients.map(ingredient => ingredient.text)
         } as CombinedIngredients;
     }
 
     const validatedIngredients = {
         standardizedIngredients: {} as {
-            [key: string]: ValidatedIngredient
-        },
-        optionalStandardizedIngredients: {} as {
             [key: string]: ValidatedIngredient
         },
         miscellaneous: [] as string[]
@@ -78,7 +78,7 @@ export function combineIngredients({
             const parsedUnit = parsedIngredient.unit;
             const parsedIngredientName = parsedIngredient.ingredient;
             const parsedIngredientRawText = parsedIngredient.raw;
-            const isOptional = parsedIngredient.isOptional;
+            const isOptional = parsedIngredient.isOptional ? true : false;
             const optionalQuantity = parsedIngredient.optionalQuantity;
             const isSubstitute = parsedIngredient.isSubstitute;
 
@@ -98,6 +98,9 @@ export function combineIngredients({
             const ingredientInfo = standardIngredients[standardName];
             if (DEBUG) logger.debug("standard ingredient's info: ", ingredientInfo)
             const standardUnit = ingredientInfo.standardUnit as Unit;
+
+            // Get the ingredient's main category
+            const mainCategory = ingredientInfo.mainCategory;
 
             // If the quantity was not optional, calculate it. Otherwise, it will be treated as 0.
             let convertedUnitAmount = 0;
@@ -138,28 +141,40 @@ export function combineIngredients({
                 } else {
                     if (DEBUG) logger.debug(`${parsedIngredientName} didn't have a standard unit, so it is already converted!`)
                 }
-            }
+            }            
 
             // Calculate the standard quantity
-            const listToAddTo = isOptional ? validatedIngredients.optionalStandardizedIngredients : validatedIngredients.standardizedIngredients;
-            const standardUnitQuantity = listToAddTo[standardName]?.quantity || 0 + convertedUnitAmount;
+            const validatedAndStandardizedIngredientsList = validatedIngredients.standardizedIngredients;
+            if (!validatedAndStandardizedIngredientsList[standardName]) {
+                validatedAndStandardizedIngredientsList[standardName] = {
+                    standardUnit,
+                    mainCategory,
+                    requiredStandardQuantity: 0,
+                    optionalStandardQuantity: 0,
+                    hasOptionalIngredientInThisList: false
+                }
+            }
+            const previousStandardUnitAmount = isOptional 
+                ?  validatedAndStandardizedIngredientsList[standardName].optionalStandardQuantity
+                : validatedAndStandardizedIngredientsList[standardName].requiredStandardQuantity;
+            const updatedStandardUnitAmount = previousStandardUnitAmount + convertedUnitAmount;
+
+            if (isOptional) validatedAndStandardizedIngredientsList[standardName].hasOptionalIngredientInThisList = true;
 
             // Add/update entry for ingredient in appropriate list
-            listToAddTo[standardName] =  {
-                quantity: (listToAddTo[standardName]?.quantity || 0) + convertedUnitAmount,
-                standardUnit: standardUnit
-            }
+            validatedAndStandardizedIngredientsList[standardName][isOptional ? 'optionalStandardQuantity' : 'requiredStandardQuantity'] = 
+                previousStandardUnitAmount + updatedStandardUnitAmount;
 
             successfulAttemptsToCombine++;
-            if (DEBUG) logger.debug(`'${parsedIngredientName}' was added to ${isOptional ? "optional" : "validated"} ingredients.`)
-            if (DEBUG) logger.debug("previous amount: ", listToAddTo[standardName]?.quantity || 0)
-            if (DEBUG) logger.debug("new amount: ", (standardUnitQuantity) + convertedUnitAmount)
+            if (DEBUG) logger.debug(`'${parsedIngredientName}' was added as ${isOptional ? "optional" : "validated"} ingredient.`)
+            if (DEBUG) logger.debug("previous amount: ", previousStandardUnitAmount)
+            if (DEBUG) logger.debug("new amount: ", updatedStandardUnitAmount)
         })
     })
+    
     // For each standardized ingredient, if the quantity is large for the standard unit, convert to a larger unit
     const combinedIngredients = {
         standardizedIngredients: {},
-        optionalStandardizedIngredients: {},
         miscellaneous: []
     } as CombinedIngredients;
 
@@ -167,13 +182,6 @@ export function combineIngredients({
     Object.keys(validatedIngredients.standardizedIngredients).forEach(ingredientName => {
         const validatedIngredient = validatedIngredients.standardizedIngredients[ingredientName];
         const listAddedTo = combinedIngredients.standardizedIngredients;
-        normalizeAndAddStandardizedIngredient(ingredientName, validatedIngredient, listAddedTo)
-    })
-
-    // Normalize and add optional ingredients
-    Object.keys(validatedIngredients.optionalStandardizedIngredients).forEach(ingredientName => {
-        const validatedIngredient = validatedIngredients.optionalStandardizedIngredients[ingredientName];
-        const listAddedTo = combinedIngredients.optionalStandardizedIngredients;
         normalizeAndAddStandardizedIngredient(ingredientName, validatedIngredient, listAddedTo)
     })
 
@@ -197,19 +205,49 @@ function normalizeAndAddStandardizedIngredient(
         [key: string]: {}
     }
 ) {
+    // For now, only normalize and round for the required amounts
     const { normalizedUnitQuantity, normalizedUnit } = normalizeAndRoundDisplayUnit(
-        validatedIngredient.quantity, 
+        validatedIngredient.requiredStandardQuantity, 
         validatedIngredient.standardUnit
     );
     if (DEBUG) {
         logger.debug(`${ingredientName} normalization: 
-            ${validatedIngredient.quantity} ${validatedIngredient.standardUnit} => ${normalizedUnitQuantity} ${normalizedUnit}`);
+            ${validatedIngredient.requiredStandardQuantity} ${validatedIngredient.standardUnit} => ${normalizedUnitQuantity} ${normalizedUnit}`);
     }
     listAddedTo[ingredientName] = {
         ...validatedIngredient,
-        normalizedUnitQuantity,
-        normalizedUnit
+        normalizedRequiredUnitQuantity: normalizedUnitQuantity,
+        normalizedRequiredUnit: normalizedUnit
     }
+}
+
+export interface CategorizedAndCombinedIngredients {
+    //category
+    standardizedIngredients: {
+        // Category
+        [key: string]: NormalizedAndNamedIngredient[]
+    };
+    miscellaneousIngredients: string[];
+}
+
+export function categorizeAndCombineIngredients(combinedIngredients: CombinedIngredients) {
+    const categorizedAndCombinedIngredients = {
+        standardizedIngredients: {}
+    } as CategorizedAndCombinedIngredients;
+    Object.keys(combinedIngredients.standardizedIngredients).forEach(ingredientName => {
+        const ingredientData = combinedIngredients.standardizedIngredients[ingredientName];
+        const category = ingredientData.mainCategory;
+        if (!categorizedAndCombinedIngredients.standardizedIngredients[category]) {
+            categorizedAndCombinedIngredients.standardizedIngredients[category] = [];
+        }
+
+        categorizedAndCombinedIngredients.standardizedIngredients[category].push({
+            ...ingredientData,
+            name: ingredientName,
+        })
+    })
+    categorizedAndCombinedIngredients.miscellaneousIngredients = combinedIngredients.miscellaneous;
+    return categorizedAndCombinedIngredients;
 }
 
 

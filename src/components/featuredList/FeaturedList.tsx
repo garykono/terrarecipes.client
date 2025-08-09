@@ -34,7 +34,7 @@ export default function FeaturedList({
     return (
         <div className={`${styles.featuredList} ${className || ""}`}>
             <div className={styles.header}>
-                <h2 className={`${styles.title} heading-tertiary`}>{title}</h2>
+                <h2 className={`section-title ${styles.title}`}>{title}</h2>
                 {moreButton &&
                     <button className="button button--full" onClick={onClick}>{buttonTitle}</button>
                 }

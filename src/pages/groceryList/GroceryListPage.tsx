@@ -1,11 +1,12 @@
-import styles from './GroceryListPage.module.css';import { useEffect, useState } from 'react';
+import styles from './GroceryListPage.module.css';
+import { Fragment, useEffect, useState } from 'react';
 import { useLoaderData, useRouteLoaderData } from 'react-router';
 import { GroceryListLoaderResult } from './groceryListLoader';
 import { RootLoaderResult } from '../root/rootLoader';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import BasicHero from '../../components/basicHero/BasicHero';
 import { Ingredient } from '../../api/types/recipe';
-import { combineIngredients, CombinedIngredients } from '../../utils/combineIngredients';
+import { combineIngredients, CombinedIngredients, categorizeAndCombineIngredients, CategorizedAndCombinedIngredients } from '../../utils/combineIngredients';
 import { StandardMeasurements } from '../../api/types/standardized';
 import { formatWithUnicodeFraction } from '../../utils/helpers';
 
@@ -13,12 +14,24 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
     // const navigate = useNavigate();
     const { standardIngredients, standardMeasurements, standardIngredientsLookupTable, standardMeasurementsLookupTable } = useRouteLoaderData('root') as RootLoaderResult;
     const { name, recipes } = useLoaderData() as GroceryListLoaderResult;
-    const [ingredientsList, setIngredientsList] = useState<CombinedIngredients>({
+    const [ingredientsList, setIngredientsList] = useState<CategorizedAndCombinedIngredients>({
         standardizedIngredients: {},
-        optionalStandardizedIngredients: {},
-        miscellaneous: []
+        miscellaneousIngredients: []
     });
     const [error, setError] = useState(null);
+
+    const categoryColors: Record<string, string> = {
+        "🥕 Vegetables": 'var(--category-color-vegetables)',
+        "🍎 Fruits": 'var(--category-color-fruits)',
+        "🌾 Grains & Legumes": 'var(--category-color-grains)',
+        "🥛 Dairy & Eggs": 'var(--category-color-dairy)',
+        "🍖 Meat & Seafood": 'var(--category-color-meat-and-seafood)',
+        "🧂 Seasonings & Spices": 'var(--category-color-seasonings-and-spices)',
+        "🍞 Baking Ingredients": 'var(--category-color-baking)',
+        "🫒 Oils & Vinegars": 'var(--category-color-oils-and-vinegars)',
+        "🍷 Wines": 'var(--category-color-wines)',
+        "❓ Uncategorized": 'var(--category-color-uncategorized)'
+    };
 
     if (!recipes) {
         const e = new Error();
@@ -32,12 +45,16 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                 return recipe.ingredients.filter(ingredient => !ingredient.isSection)
             });
             // Combine similar ingredients
-            setIngredientsList(combineIngredients({ 
+            const combinedIngredients = combineIngredients({ 
                 uncombinedIngredients: uncombinedIngredientsList, 
                 standardIngredients,
                 standardIngredientsLookupTable,
                 standardMeasurementsLookupTable
-            }));
+            });
+            
+            // Break the ingredients into categories
+            const categorizedAndCombinedIngredients = categorizeAndCombineIngredients(combinedIngredients)
+            setIngredientsList(categorizedAndCombinedIngredients)
         }
     }, [])
     
@@ -48,53 +65,88 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
 
     return (
         <div className="page-recipe">
-            <BasicHero title='Grocery List' />
-
             <div className="container">
-                <div className={styles.groceryList}>
-                    <h1 className="heading-primary">Shopping List for {`${mode}: ${name}`}</h1>
+                <div className={`${styles.groceryList}`}>
+                    <section className={styles.header}>
+                        <header className={styles.header}>
+                            <h1 
+                                className={`page-title underlined-title ${styles.recipeTitle}`}
+                                style={{ "--category-color": "var(--grey)" } as React.CSSProperties}
+                            >
+                                🛒 Grocery List
+                            </h1>
+                            <p className={`subsection-title ${styles.for}`}><span className="text">For:</span>{' ' + name}</p>
+                            <div className={styles.actionLine}>
+                                <p><span>Servings:</span>{' 4'}</p>
+                                <p>🌱 Vegetarian</p>
+                            </div>
+                        </header>
+                    </section>
 
-                    <ul className={styles.ingredientsList}>
-                        {Object.keys(ingredientsList.standardizedIngredients).map((ingredientName, index) => {
-                            const ingredient = ingredientsList.standardizedIngredients[ingredientName];
-                            return <li key={index} className={styles.ingredientListItem}>
-                                <>
-                                    <span className={styles.ingredientAmount}>
-                                        {`${getFormattedQuantityAndUnitLabel(ingredient.normalizedUnitQuantity, ingredient.normalizedUnit, standardMeasurements)} `}
-                                    </span>
-                                    <span className={styles.ingredientText}>
-                                        {(ingredient.quantity > 1 && standardIngredients) ? 
-                                            standardIngredients[ingredientName].plural : ingredientName}
-                                    </span>
-                                </>
-                            </li>
-                        })}
-                        {Object.keys(ingredientsList.optionalStandardizedIngredients).map((ingredientName, index) => {
-                            const ingredient = ingredientsList.optionalStandardizedIngredients[ingredientName];
-                            return <li key={index} className={styles.ingredientListItem}>
-                                <>
-                                    <span>(Optional) </span>
-                                    <span className={styles.ingredientAmount}>
-                                        {`${getFormattedQuantityAndUnitLabel(ingredient.normalizedUnitQuantity, ingredient.normalizedUnit, standardMeasurements)} `}
-                                    </span>
-                                    <span className={styles.ingredientText}>
-                                        {(ingredient.quantity > 1 && standardIngredients) ? 
-                                            standardIngredients[ingredientName].plural : ingredientName}
-                                    </span>
-                                </>
-                            </li>
-                        })}
-                    </ul>
+                    <section className="standardizedIngredientsSection">
+                        <div className={`grid grid--cols-3 ${styles.ingredientsList}`}>
+                            {Object.keys(ingredientsList.standardizedIngredients).map((categoryName, index) => {
+                                const categoryIngredients = ingredientsList.standardizedIngredients[categoryName];
+                                return (
+                                    <div 
+                                        key={index}
+                                        className={`card card--grocery-category left-border-gradient ${styles.categoryIngredientSection}`} 
+                                        style={{ "--category-color": categoryColors[categoryName] } as React.CSSProperties}
+                                    >
+                                        <h3 className={`subsection-title underlined-title ${styles.categoryTitle}`}>{categoryName}</h3>
+                                        {categoryIngredients.map((ingredient, key) => {
+                                            return (
+                                                <ul key={key}>
+                                                    {ingredient.normalizedRequiredUnitQuantity > 0 &&
+                                                        <li key={key} className={styles.ingredientListItem}>
+                                                            <input type="checkbox" className={styles.ingredientCheckbox} />
+                                                            <span className={styles.ingredientAmount}>
+                                                                {`${getFormattedQuantityAndUnitLabel(
+                                                                    ingredient.normalizedRequiredUnitQuantity, 
+                                                                    ingredient.normalizedRequiredUnit, 
+                                                                    standardMeasurements,
+                                                                    ingredient.hasOptionalIngredientInThisList
+                                                                )} `}
+                                                            </span>
+                                                            <span className={styles.ingredientText}>
+                                                                {(ingredient.normalizedRequiredUnitQuantity > 1 && standardIngredients) ? 
+                                                                    standardIngredients[ingredient.name].plural : ingredient.name}
+                                                            </span>
+                                                        </li>
+                                                    }
+                                                    {ingredient.hasOptionalIngredientInThisList &&
+                                                        <li key={key} className={styles.ingredientListItem}>
+                                                            <input type="checkbox" className={styles.ingredientCheckbox} />
+                                                            <span className={styles.ingredientAmount}>
+                                                                {ingredient.normalizedRequiredUnitQuantity > 0 ? 'Optional: more ' : 'Optional: '}
+                                                            </span>
+                                                            <span className={styles.ingredientText}>
+                                                                {(ingredient.normalizedRequiredUnitQuantity > 1 && standardIngredients) ? 
+                                                                    standardIngredients[ingredient.name].plural : ingredient.name}
+                                                            </span>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </section>
 
-                    <h2 className="heading-tertiary">Miscellaneous Ingredients:</h2>
+                    <section className={`${styles.miscellaneousSection}`}>
+                        <h2 className={`section-title ${styles.miscellaneousTitle}`}>Miscellaneous Ingredients:</h2>
 
-                    <ul className={styles.ingredientsList}>
-                        {ingredientsList.miscellaneous.map((ingredientText, index) => (
-                            <li key={index} className={styles.ingredientListItem}>
-                                {ingredientText}
-                            </li>
-                        ))}
-                    </ul>
+                        <ul className={''}>
+                            {ingredientsList.miscellaneousIngredients.map((ingredientText, index) => (
+                                <li key={index} className={styles.ingredientListItem}>
+                                    <input type="checkbox" className={styles.ingredientCheckbox} />
+                                    {ingredientText}
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
                 </div>
             </div>
         </div>
@@ -104,7 +156,8 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
 function getFormattedQuantityAndUnitLabel(
     quantity: number,
     unit: string | null,
-    standardMeasurements: StandardMeasurements | null
+    standardMeasurements: StandardMeasurements | null,
+    hasOptionalIngredientInThisList: boolean
 ): string {
     let label = "";
     // Quantity

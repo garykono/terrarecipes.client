@@ -17,44 +17,100 @@
     gap: 0.8rem;
 }
 
-.sectionHeading {
-    margin-top: 2.4rem;
-    margin-bottom: 1.6rem;
+.toolbarMessage {
+    margin: var(--space-xs) 0 var(--space-md) 0;
+    text-align: right;
+}
+
+.sectionOverview {
+    margin-bottom: var(--space-xl);
+}
+
+.recipe {
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    /* background-color: var(--primary-light); */
+}
+
+.overviewWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg)
 }
 
 .author {
     font-size: 2.0rem;
 }
 
-.sectionDescription {
-    margin-bottom: 4.8em;
-}
-
-.sectionImage {
-    margin-bottom: 6.4rem;
+.description {
+    margin-top: 1.2rem;
 }
 
 .recipeImage {
-    width: 50%;
+    display: block;
+    margin: auto;
+    max-width: 60rem;
     overflow: hidden;
     object-fit: cover;
 }
 
-.sectionIngredients {
+.quickInfoList {
+    display: flex;
+    gap: var(--space-md);
+    list-style: none;
+    margin: auto;
+}
+
+.sectionIngredientsAndDirections {
     margin-bottom: 6.4rem;
+}
+
+.ingredientsAndDirectionsWrapper {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--space-xl);
+    align-items: start;
+}
+
+.ingredientsWrapper, 
+.directionsWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md)
+}
+
+.ingredientsWrapper {
+    position: sticky;
+    top: calc(var(--nav-bar-height) + 1rem); /* how far from top when stuck */
+}
+
+.ingredientsTitle,
+.directionsTitle {
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
 }
 
 .ingredientsList,
 .directionsList {
+    list-style-position: inside; /* Bring marker inside the content box */
     display: flex;
     flex-direction: column;
     font-size: 1.8rem;
-    line-height: 1.6;
 }
 
 .ingredientsList {
-    margin: 2.4rem 0 0 1.2rem;
-    gap: 1.4rem;
+    gap: var(--space-sm);
+}
+
+.directionsList {
+    gap: var(--space-md);
+}
+
+.ingredientsList li {
+    line-height: var(--line-height-normal);
+}
+
+.directionsList li {
+    line-height: var(--line-height-loose);
 }
 
 .listItemIsSection {
@@ -63,15 +119,50 @@
     text-decoration: underline;
 }
 
-.directionsList {
-    margin: 2.4rem 0 0 0;
-    gap: 2.4rem;
-}
-
-.sectionDirections {
-    margin-bottom: 6.4rem;
-}
-
 .sectionTags {
     margin-bottom: 2.4rem;
+}
+
+
+/**************************/
+/* Below 944px (Tablets) */
+/**************************/
+@media(max-width: 59em) {
+    .ingredientsAndDirectionsWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xl);
+    }
+
+    .ingredientsWrapper, 
+    .directionsWrapper {
+        width: 100%;
+    }
+    
+}
+
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    .recipeImage {
+        width: 100%;
+    }
+    .quickInfoList {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: var(--space-xxl);
+    }
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    .quickInfoList {
+        display: grid;
+        column-gap: var(--space-lg);
+    }
 }

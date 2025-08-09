@@ -47,7 +47,7 @@
 .modalCardContent {
     display: flex;
     flex-direction: column;
-    gap: 6.8rem;
+    gap: var(--space-xl);
 
     padding: 3.6rem 3.2rem;
     font-size: 1.6rem;

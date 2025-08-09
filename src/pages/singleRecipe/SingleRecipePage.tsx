@@ -8,6 +8,9 @@ import { RootLoaderResult } from '../root/rootLoader';
 import { SingleRecipeLoaderResult } from './singleRecipeLoader';
 import { Ingredient, Direction } from '../../api/types/recipe';
 import FormMessage from '../../components/formMessage/FormMessage';
+import RelatedLinks from '../../components/relatedLinks/RelatedLinks';
+import Toolbar, { ToolbarAction } from '../../components/toolbar/Toolbar';
+import Dropdown from '../../components/dropdown/Dropdown';
 
 function SingleRecipePage() {
     const navigate = useNavigate();
@@ -88,7 +91,7 @@ function SingleRecipePage() {
                     onClick={() => setAddToCollectionDropdownButtonStatus(
                         addToCollectionDropdownButtonStatus === "" ? "dropdown--is-active" : ""
                     )}>
-                    <span>+ Add to Collection</span>
+                    <span>Add to Collection</span>
                 </button>
             </div>
             <div className="dropdown-menu">
@@ -108,6 +111,7 @@ function SingleRecipePage() {
                     }
                 </div>
             </div>
+            <FormMessage message={addToCollectionStatus} />
         </div>
     )
 
@@ -121,85 +125,113 @@ function SingleRecipePage() {
         return <GlobalErrorDisplay error={e} />
     }
 
+    const recipeActions: ToolbarAction[] = [];
+    if (user) {
+        // Edit Recipe
+        if (user && user.recipes.some(r => r._id === recipe._id)) {
+            recipeActions.push({
+                label: "Edit Recipe",
+                icon: "✏️", // optional
+                to: `/editRecipe/${recipe._id}`
+            });
+        }
+
+        // Grocery list
+        recipeActions.push({ label: "Grocery List", icon: "🛒", to: `/groceryList/recipe/${recipe._id}` });
+
+        // Add to collection
+        const collectionItems = user.collections.map((collection) => ({
+            id: collection._id,
+            label: collection.name,
+            onClick: () => handleAddToCollection(collection._id),
+        })) ?? [];
+        recipeActions.push({ 
+            element: <Dropdown 
+                label={'Add to Collection'} 
+                items={collectionItems} 
+                triggerClassName='toolbar--button'
+                noItemsMessage='Create a collection and it will show up here!'
+            />
+        })
+    }
+
     return (
         <div className="page-recipe">
             {user && (
                 <div className="container">
-                    <div className={`${styles.recipeManagementButtonsContainer}`}>
-                        <div className={styles.recipeManagementButtons}>
-                            <Link to={`/groceryList/recipe/${recipe._id}`}>
-                                <button className="button button--full">
-                                    Make Grocery List
-                                </button>
-                            </Link>
-                            {user.recipes.map(recipe => recipe._id).includes(recipe._id) &&
-                                <Link to={`/editRecipe/${recipe._id}`}>
-                                    <button className="button">
-                                        Edit Recipe
-                                    </button>
-                                </Link>
-                            }
-                            <div className={styles.addToCollection}>
-                                {addToCollectionDropdownButton}
-                                
-                                <FormMessage message={addToCollectionStatus} />
-                            </div>
-                        </div>
-                    </div>
+                    <Toolbar actions={recipeActions} />
+                    <FormMessage className={styles.toolbarMessage} message={addToCollectionStatus} />
                 </div>
             )}
 
-            <div className={styles.sectionHeading}>
-                <div className="container">
-                    <h1 className="heading-primary">{recipe.name}</h1>
-                    {/* <div className={styles.author}>
-                        by <span className={styles.authorText}>
-                            {recipe.author? recipe.author.username : 'deleted-user'}
-                        </span>
-                    </div> */}
-                </div>
-            </div>
+            <div className="container">
+                <div className={`card card--padded ${styles.recipe}`}>
+                    <div className={`${styles.sectionOverview}`}>
+                        <div className={styles.overviewWrapper}>
+                            <div className={styles.textOverview}>
+                            <h1 className="page-title">{recipe.name}</h1>
+                                {/* <div className={styles.author}>
+                                    by <span className={styles.authorText}>
+                                        {recipe.author? recipe.author.username : 'deleted-user'}
+                                    </span>
+                                </div> */}
 
-            <div className={styles.sectionDescription}>
-                <div className="container">
-                    <div className={styles.control}>
-                        <p className="text">{recipe.description}</p>
+                                <div className={styles.description}>
+                                    <p className="description">{recipe.description}</p>
+                                </div>
+                            </div>
+
+                            <img 
+                                className={styles.recipeImage}
+                                src={recipe.image? recipe.image : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
+                            />
+
+                            <ul className={styles.quickInfoList}>
+                                <li>⭐ 4.7 (12)</li>
+                                <li>⏱ 45 min</li>
+                                <li>🍽 4 servings</li>
+                                <li>🌱 Vegetarian</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className={`section ${styles.sectionIngredientsAndDirections}`}>
+                        <div className={styles.ingredientsAndDirectionsWrapper}>
+                            <div className={`card card--padded ${styles.ingredientsWrapper}`}>
+                                <h2 
+                                    className={`heading-secondary underlined-title ${styles.ingredientsTitle}`}
+                                    style={{ "--category-color": 'var(--primary-dark)' } as React.CSSProperties}
+                                >
+                                    Ingredients
+                                </h2>
+                                <ul className={styles.ingredientsList}>
+                                    {renderListWithSections(recipe.ingredients)}
+                                </ul>
+                            </div>
+                            <div className={`card card--padded ${styles.directionsWrapper}`}>
+                                <h2 
+                                    className={`heading-secondary underlined-title ${styles.ingredientsTitle}`}
+                                    style={{ "--category-color": 'var(--primary-dark)' } as React.CSSProperties}
+                                >
+                                    Directions
+                                </h2>
+                                <ol className={styles.directionsList}>
+                                    {renderListWithSections(recipe.directions)}
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.sectionTags}>
+                        <TagList tags={recipe.tags} />
                     </div>
                 </div>
-            </div>
-
-            <div className={styles.sectionImage}>
-                <div className="container">
-                    <img 
-                        className={styles.recipeImage}
-                        src={recipe.image? recipe.image : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
-                    />
-                </div>
-            </div>
-
-            <div className={styles.sectionIngredients}>
-                <div className="container">
-                    <h2 className="heading-secondary">Ingredients</h2>
-                    <ul className={styles.ingredientsList}>
-                        {renderListWithSections(recipe.ingredients)}
-                    </ul>
-                </div>
-            </div>
-            
-            <div className={styles.sectionDirections}>
-                <div className="container">
-                    <h2 className="heading-secondary">Directions</h2>
-                    <div className={styles.control}>
-                        <ol className={styles.directionsList}>
-                            {renderListWithSections(recipe.directions)}
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <div className={styles.sectionTags}>
-                <div className="container">
-                    <TagList tags={recipe.tags} />
+                
+                <div className={`section ${styles.sectionRelatedLinks}`}>
+                        <RelatedLinks links={[
+                            { label: "Home (Placeholder)", to: "/"},
+                            { label: "Browse (Placeholder)", to: "/browse"}
+                        ]}/>
                 </div>
             </div>
         </div>

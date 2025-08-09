@@ -1,0 +1,9 @@
+.searchBar {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.search-button {
+    
+}

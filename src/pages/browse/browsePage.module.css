@@ -28,9 +28,8 @@
 .featuredLists {
     display: flex;
     flex-direction: column;
-    gap: 6.4rem;
+    gap: var(--space-xxl);
 }
 
 .featuredList {
-    margin-bottom: 16rem;
 }

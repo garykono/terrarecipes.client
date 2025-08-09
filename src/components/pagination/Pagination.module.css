@@ -2,15 +2,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 3.6rem;
-    padding: 2rem 0;
-    margin: 2rem 0;
+    gap: var(--space-lg);
+    padding: var(--space-sm) 0;
+    margin: var(--space-sm) 0;
 }
 
 .pageList {
     display: flex;
     align-items: center;
-    gap: 1.6rem;
+    gap: var(--space-sm);
     list-style-type: none;
 }
 
@@ -18,8 +18,8 @@
     background-color: #fff;
     color: var(--primary-dark);
     border: 1px solid var(--primary-dark);
-    height: 48px;
-    width: 48px;
+    height: 4.8rem;
+    width: 4.8rem;
     border-radius: 50%;
     cursor: pointer;
 
@@ -69,6 +69,6 @@
 }
 
 .paginationEllipsis {
-    font-size: 2rem;
+    font-size: var(--font-size-subsection-title);
     color: var(--grey-dark);
 }

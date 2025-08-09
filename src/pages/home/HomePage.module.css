@@ -1,3 +1,5 @@
-.homePage {
-    background-color: var(--primary-background);
+.recipeSections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl)
 }

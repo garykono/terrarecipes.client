@@ -2,23 +2,24 @@
 
 export interface StandardIngredient {
     name: string;
-    standardUnit?: string;
     acceptableMassUnits: string[];
     acceptableVolumeUnits: string[];
     acceptableCountUnits: string[];
-    plural: string;
     aliases: string[];
-    categories: string[];
-    forms: string[];
-    defaultForm: string;
-    substitutes: string[];
-    intensity: string;
-    storage: string;
-    shelfLifeMonths: number;
-    commonPreparations: string[];
-    notes: string;
-    tags: string[];
     averagePriceUSDPerUnit: number;
+    categories: string[];
+    commonPreparations: string[];
+    defaultForm: string;
+    forms: string[];
+    intensity: string;
+    mainCategory: string;
+    notes: string;
+    plural: string;
+    shelfLifeMonths: number;
+    standardUnit?: string;
+    storage: string;
+    substitutes: string[];
+    tags: string[];
     treatOuncesAsVolume: boolean;
 }
 

@@ -48,10 +48,12 @@ function HomePage () {
     return (
         <div className={styles.homePage}>
             <BasicHero title='Home Page' text='A simple way to manage recipes. More features coming!' />
-            {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />}
-            <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
-            <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
-            <HomePageFeaturedList listInfo={featuredListsData["onePot"]} />
+            <div className={styles.recipeSections}>
+                {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />}
+                <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
+                <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
+                <HomePageFeaturedList listInfo={featuredListsData["onePot"]} />
+            </div>
         </div>
     );
 }
