@@ -137,6 +137,11 @@
     .directionsWrapper {
         width: 100%;
     }
+
+    .ingredientsWrapper {
+        position: static;
+        top: auto;
+    }
     
 }
 

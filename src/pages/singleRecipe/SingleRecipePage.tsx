@@ -157,12 +157,10 @@ function SingleRecipePage() {
 
     return (
         <div className="page-recipe">
-            {user && (
-                <div className="container">
-                    <Toolbar actions={recipeActions} />
-                    <FormMessage className={styles.toolbarMessage} message={addToCollectionStatus} />
-                </div>
-            )}
+            <div className="container">
+                <Toolbar actions={recipeActions} />
+                <FormMessage className={styles.toolbarMessage} message={addToCollectionStatus} />
+            </div>
 
             <div className="container">
                 <div className={`card--padded ${styles.recipe}`}>
