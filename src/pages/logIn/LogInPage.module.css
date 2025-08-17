@@ -27,11 +27,6 @@
     gap: 1.6rem;
 }
 
-.signupButton {
-    color: var(--grey);
-    background-color: #eee;
-}
-
 .forgotPasswordLink,
 .forgotPasswordLink:link,
 .forgotPasswordLink.visited {

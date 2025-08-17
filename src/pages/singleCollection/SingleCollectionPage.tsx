@@ -8,6 +8,7 @@ import { SingleCollectionLoaderResult } from './singleCollectionLoader';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { Recipe } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
+import Toolbar, { ToolbarAction } from '../../components/toolbar/Toolbar';
 
 function SingleCollectionPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
@@ -29,52 +30,54 @@ function SingleCollectionPage() {
         setTotalPages(Math.ceil(numUserRecipes / numResults));
     }, [page])
 
-    const renderedRecipeCards = recipesToShow.map(recipe => {
-        return <RecipeCardWithFeatures key={recipe._id} recipe={recipe} />;
-    })
-
     if (!collection) {
         const e = new Error();
         e.name = 'NoID';
         return <GlobalErrorDisplay error={e} />
     }
 
+    const collectionActions: ToolbarAction[] = [];
+    if (collection) {
+        collectionActions.push({ label: "Make Grocery List", icon: "🛒", to: `/groceryList/collection/${collection._id}` });
+    }
+    
+    if (user) {
+        // Edit Recipe
+        if (user.collections.map(collection => collection._id).includes(collection._id)) {
+            collectionActions.push({
+                label: "Edit Collection",
+                icon: "✏️", // optional
+                to: `/editCollection/${collection._id}`
+            });
+        }
+    }
+
+    const renderedRecipeCards = recipesToShow.map(recipe => {
+        return <RecipeCardWithFeatures key={recipe._id} recipe={recipe} />;
+    })
+
     return (
         <div className="page-single-collection">
             <div className="container">
-                    <div className={styles.firstSection}>
-                        <div className={styles.info}>
-                            <div className="heading-tertiary">Collection:</div>
-                            <h1 className="heading-primary">{collection.name}</h1>
-                            <p className={`text ${styles.description}`}>{collection.description}</p>    
-                        </div>
+                <Toolbar actions={collectionActions} />
+                
+                <div className={styles.firstSection}>
+                    <div className={styles.info}>
+                        <div className="heading-tertiary">Collection:</div>
+                        <h1 className="heading-primary">{collection.name}</h1>
+                        <p className={`text ${styles.description}`}>{collection.description}</p>    
+                    </div>
+                </div>                    
 
-                        <div className={styles.buttons}>
-                            <Link to={`/groceryList/collection/${collection._id}`}>
-                                <button className="button button--full">
-                                    Make Grocery List
-                                </button>
-                            </Link>
-                            {user && user.collections.map(collection => collection._id).includes(collection._id) && 
-                                <button 
-                                    className={`button ${styles.editButton}`} 
-                                    onClick={() => navigate(`/editCollection/${collection._id}`)}
-                                >
-                                    Edit Collection
-                                </button>
-                            }
-                        </div>
-                    </div>                    
-
-                    <CardList list={renderedRecipeCards} className={styles.cardList} />
-                    <Pagination 
-                            currentPage={page} 
-                            onFirstPageButtonClicked={() => navigate(`/collection/${collection._id}/${1}`)}
-                            onPreviousPageButtonClicked={() => navigate(`/collection/${collection._id}/${page - 1}`)} 
-                            onNextPageButtonClicked={() => navigate(`/collection/${collection._id}/${page + 1}`)}
-                            onLastPageButtonClicked={() => navigate(`/collection/${collection._id}/${totalPages}`)}
-                            numPages={totalPages} 
-                        />
+                <CardList list={renderedRecipeCards} className={styles.cardList} />
+                <Pagination 
+                        currentPage={page} 
+                        onFirstPageButtonClicked={() => navigate(`/collection/${collection._id}/${1}`)}
+                        onPreviousPageButtonClicked={() => navigate(`/collection/${collection._id}/${page - 1}`)} 
+                        onNextPageButtonClicked={() => navigate(`/collection/${collection._id}/${page + 1}`)}
+                        onLastPageButtonClicked={() => navigate(`/collection/${collection._id}/${totalPages}`)}
+                        numPages={totalPages} 
+                    />
             </div>
         </div>
     )

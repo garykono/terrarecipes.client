@@ -1,0 +1,9 @@
+.recipeCard {
+    min-width: 10rem;
+    max-width: 30rem;
+}
+
+.recipeName {
+    font-size: var(--font-size-subsection-title);
+    font-weight: var(--font-weight-semi-bold);
+}

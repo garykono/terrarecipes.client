@@ -8,6 +8,7 @@ import FormMessage from '../../components/formMessage/FormMessage';
 import { isEmail } from '../../utils/validation';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
+import Button from '../../components/buttons/Button';
 
 function SignUpPage () {
     const revalidator = useRevalidator();
@@ -64,7 +65,7 @@ function SignUpPage () {
         <div className={styles.pageSignup}>
             <div className='container'>
                 <div className={styles.signUp}>
-                    <form className={`form form--card ${styles.form} ${styles.formSignup}`} onSubmit={handleSubmit(onSubmit)}>
+                    <form className={`form card card--form ${styles.form} ${styles.formSignup}`} onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-heading">
                             <h1 className={`form-title`}>Create an Account</h1>
                         </div>
@@ -158,9 +159,7 @@ function SignUpPage () {
                         </div>
                         <div className={`field ${styles.field}`}>
                             <p className="control">
-                                <button className={`button button--full ${styles.signupButton}`} type="submit">
-                                    Sign Up
-                                </button>
+                                <Button primary className={styles.signupButton} type="submit">Sign Up</Button>
                             </p>
                         </div>
                         {accountCreated && 

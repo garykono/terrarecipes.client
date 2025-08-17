@@ -14,8 +14,9 @@ export default function Button({ primary, danger, children, className, ...rest }
             { ...rest } 
             className={`
                 button 
-                ${primary && 'button--full'} 
+                ${primary && 'button--primary'} 
                 ${danger && 'button--danger'} 
+                ${!(primary || danger) && 'button--secondary'}
                 ${className}
             `}
         >

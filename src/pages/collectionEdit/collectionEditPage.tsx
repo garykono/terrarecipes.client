@@ -13,6 +13,7 @@ import { CollectionEditLoaderResult } from './collectionEditLoader';
 import { Recipe, RecipeWithMarkForDelete } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
 import BasicHero from '../../components/basicHero/BasicHero';
+import Button from '../../components/buttons/Button';
 
 export default function CollectionEditPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
@@ -179,12 +180,8 @@ export default function CollectionEditPage() {
                             <FormMessage className="form-message" message={errors.root.general.message} danger />
                         }
                         <div className="buttons">
-                            <button className="button" type="button" onClick={handleCancel}>
-                                Cancel
-                            </button>
-                            <button className="button button--full" type="submit">
-                                Save
-                            </button>
+                            <Button type="button" onClick={handleCancel}>Cancel</Button>
+                            <Button primary type="submit">Save</Button>
                         </div>
                     </div>
                 </form>

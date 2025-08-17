@@ -1,3 +1,4 @@
+import Button from '../buttons/Button';
 import styles from './SearchBar.module.css';
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -5,10 +6,11 @@ interface SearchBarProps {
     initialSearchTerm: string | undefined;
     placeholder?: string;
     onSearch: (search: string | undefined) => void;
+    size?: 'medium' | 'large';
     className?: string;
 }
 
-function SearchBar({ initialSearchTerm, placeholder, onSearch, className }: SearchBarProps) {
+function SearchBar({ initialSearchTerm, placeholder, onSearch, size = 'medium', className }: SearchBarProps) {
     const { register, handleSubmit, watch, setError, clearErrors, formState: { errors } } = useForm({
             mode: 'onSubmit',
             reValidateMode: 'onSubmit',
@@ -27,7 +29,7 @@ function SearchBar({ initialSearchTerm, placeholder, onSearch, className }: Sear
                 {/* <label className="label mr-4">Search: </label> */}
                 <div className="control">
                     <input 
-                        className="input"
+                        className={`input ${styles.searchInput} ${size === 'large' && styles.searchInputLarge}`}
                         type="text"
                         {...register("search", {
                             required: ""
@@ -38,9 +40,7 @@ function SearchBar({ initialSearchTerm, placeholder, onSearch, className }: Sear
             </div>
             <div className="field">
                 <div className="control">
-                    <button type="submit" className="button button--small button--full search-button">
-                        Search
-                    </button>
+                    <Button primary type="submit">Search</Button>
                 </div>
             </div>
         </form>        

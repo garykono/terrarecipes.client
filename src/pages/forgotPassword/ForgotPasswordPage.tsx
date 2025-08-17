@@ -5,6 +5,7 @@ import { forgotPassword } from '../../api/queries/usersApi';
 import { isEmail } from '../../utils/validation';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import Button from '../../components/buttons/Button';
 
 function ForgotPasswordPage() {
     const [ emailSent, setEmailSent ] = useState(false);
@@ -49,7 +50,7 @@ function ForgotPasswordPage() {
         <div className="container">
             <div className={styles.formContainer}>
                 <form 
-                    className={`form form--card ${styles.formForgotPassword}`}
+                    className={`form card card--form ${styles.formForgotPassword}`}
                     onSubmit={handleSubmit(onSubmit)}
                 >
                     <div className="form-heading">
@@ -77,9 +78,7 @@ function ForgotPasswordPage() {
                         </div>
                     </div>
                     <div className={`${styles.submitButtons}`}>
-                            <button type="submit" className="button button--full button--small submit-button ">
-                                Send Reset Link
-                            </button>
+                            <Button primary type="submit">Send Reset Link</Button>
                     </div>
                     {errors.root?.general?.message && (
                         <FormMessage message={errors.root.general.message} danger />

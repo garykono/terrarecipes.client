@@ -6,6 +6,7 @@ import { logIn } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { isEmail } from '../../utils/validation';
+import Button from '../../components/buttons/Button';
 
 function LogInPage () {
     const revalidator = useRevalidator();
@@ -60,7 +61,7 @@ function LogInPage () {
             <div className="container">
                 <div className={styles.formContainer}>
                     <form 
-                        className={`form form--card ${styles.formLogin}`}
+                        className={`form card card--form ${styles.formLogin}`}
                         onSubmit={handleSubmit(onSubmit)}
                     >
                         <div className='form-heading'>
@@ -110,11 +111,9 @@ function LogInPage () {
 
                         <div className={`${styles.submitOptions}`}>
                             <div className={`${styles.submitButtons}`}>
-                                <button type="submit" className="button button--full button--small submit-button ">
-                                    Login
-                                </button>
-                                <Link to="/signUp" className={`button button--small ${styles.signupButton}`}>
-                                    Sign Up
+                                <Button primary type="submit">Login</Button>
+                                <Link to="/signUp">
+                                    <Button>Sign Up</Button>
                                 </Link>
                             </div>
 

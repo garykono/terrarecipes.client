@@ -15,6 +15,7 @@ export default function BrowsePage() {
     const rootData = useRouteLoaderData('root') as RootLoaderResult;
 
     if (!rootData?.categories) {
+        console.log(rootData)
         const e = new Error();
         e.name = 'MissingLoaderData';
         return <GlobalErrorDisplay error={e} />
@@ -22,51 +23,55 @@ export default function BrowsePage() {
 
     const { categories } = rootData;
     const [error, setError] = useState<Error | null>(null);
-    const [featuredData, setFeaturedData] = useState<Record<string, Recipe[]>>({});
-    const [featuredRecipe, setFeaturedRecipe] = useState<Recipe>();
-    const [loading, setLoading] = useState(true);
+    // const [featuredData, setFeaturedData] = useState<Record<string, Recipe[]>>({});
+    // const [featuredRecipe, setFeaturedRecipe] = useState<Recipe>();
+    // const [loading, setLoading] = useState(true);
+
+    // useEffect(() => {
+    //     if (!categories?.featured) return;
+
+    //     let cancelled = false;
+
+    //     async function loadFeatured() {
+    //         try {
+    //             setLoading(true);
+
+    //             const results: Record<string, Recipe[]> = {};
+    //             let featuredRec = null;
+    //             for (const category of categories.featured) {
+    //                 try {
+    //                     const data = await fetchRecipes({ search: category.searchTags[0] });
+    //                     results[category.slug] = data.data.slice(0, 10) ?? [];
+    //                     // Just grabbing a placeholder recipe for now
+    //                     if (!featuredRec && results[category.slug].length > 0) featuredRec = results[category.slug][0];
+    //                 } catch (err) {
+    //                     console.error(`Error loading ${category.title}`, err);
+    //                     results[category.slug] = [];
+    //                 }
+    //             }
+
+    //             if (!cancelled) {
+    //                 setFeaturedData(results);
+    //                 if (featuredRec) {
+    //                     setFeaturedRecipe(featuredRec)
+    //                 }
+    //                 setLoading(false);
+    //             }
+    //         } catch (err) {
+    //             if (!cancelled) {
+    //                 setError(err as Error);
+    //                 setLoading(false);
+    //             }
+    //         }
+    //     }
+
+    //     loadFeatured();
+    //     return () => { cancelled = true; };
+    // }, [categories]);
 
     useEffect(() => {
-        if (!categories?.featured) return;
-
-        let cancelled = false;
-
-        async function loadFeatured() {
-            try {
-                setLoading(true);
-
-                const results: Record<string, Recipe[]> = {};
-                let featuredRec = null;
-                for (const category of categories.featured) {
-                    try {
-                        const data = await fetchRecipes({ search: category.searchTags[0] });
-                        results[category.slug] = data.data.slice(0, 10) ?? [];
-                        // Just grabbing a placeholder recipe for now
-                        if (!featuredRec && results[category.slug].length > 0) featuredRec = results[category.slug][0];
-                    } catch (err) {
-                        console.error(`Error loading ${category.title}`, err);
-                        results[category.slug] = [];
-                    }
-                }
-
-                if (!cancelled) {
-                    setFeaturedData(results);
-                    if (featuredRec) {
-                        setFeaturedRecipe(featuredRec)
-                    }
-                    setLoading(false);
-                }
-            } catch (err) {
-                if (!cancelled) {
-                    setError(err as Error);
-                    setLoading(false);
-                }
-            }
-        }
-
-        loadFeatured();
-        return () => { cancelled = true; };
-    }, [categories]);
+        console.log(categories.featured)
+    }, [])
 
     if (error) {
         return <GlobalErrorDisplay error={error} />;
@@ -74,7 +79,7 @@ export default function BrowsePage() {
 
     return (
         <div className="account-page">
-            <BasicHero title="Browse" />
+            <h2 className={`page-title ${styles.pageTitle}`}>Explore Recipes</h2>
 
             <section className={`section ${styles.sectionStaticCategories}`}>
                 <div className="container">
@@ -83,12 +88,12 @@ export default function BrowsePage() {
                             return (
                                 <li key={category.title} className={styles.categoryItem}>
                                     <Link to={`/browse/core/${category.slug}`} className={styles.categoryLink}>
-                                        <div className={styles.categoryIcon}>
+                                        <span className={styles.categoryIcon}>
                                             {category.icon}
-                                        </div>
-                                        <div className={styles.categoryTitle}>
+                                        </span>
+                                        <span className={styles.categoryTitle}>
                                             {category.title}
-                                        </div>
+                                        </span>
                                     </Link>
                                 </li>
                             )
@@ -97,27 +102,28 @@ export default function BrowsePage() {
                 </div>
             </section>
 
-            {featuredRecipe &&
-                <section className={`section ${styles.sectionStaticCategories}`}>
-                    <div className="container">
-                        <FeaturedRecipe recipe={featuredRecipe} />
-                    </div>
-                </section>
-            }
-
             <section className={`section ${styles.sectionFeaturedCategories}`}>
                 <div className="container">
-                    <div className={styles.featuredLists}>
-                        {categories.featured.map(category => (
-                            <FeaturedList
-                                key={category.slug}
-                                title={category.title}
-                                featuredList={featuredData[category.slug]}
-                                buttonTitle={`More ${category.slug} recipes`}
-                                onClick={() => navigate(`/recipes/1/${category.searchTags[0]}`)}
-                                className={styles.featuredList}
-                            />
-                        ))}
+                    <h2 className={`section-title ${styles.categoriesTitle}`}>Seasonal and Trending</h2>
+                    <div className={styles.featuredCategoriesContainer}>
+                        <div className={styles.featuredCategoriesList}>
+                            {categories.featured.map(category => {
+                                return (
+                                    <Link to={`/browse/core/${category.slug}`}>
+                                        <div className={`card ${styles.featuredCategoryCard}`}>
+                                            <span className={styles.featuredIconCircle}>
+                                                <span className={styles.featuredCategoryIcon}>
+                                                    {category.icon}
+                                                </span>
+                                            </span>
+                                            <span className={styles.featuredCategoryTitle}>
+                                                {category.title}
+                                            </span>
+                                        </div>
+                                    </Link>
+                                )
+                            })}
+                        </div>
                     </div>
                 </div>
             </section>

@@ -64,8 +64,9 @@ export type StandardLookupTable = {
 
 export interface Category {
     title: string,
-    slug: string,
     icon: string,
+    description: string,
+    slug: string,
     searchTags: string[];
 }
 

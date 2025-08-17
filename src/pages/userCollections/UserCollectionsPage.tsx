@@ -12,6 +12,7 @@ import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-h
 import { Collection } from '../../api/types/collection';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
+import Toolbar from '../../components/toolbar/Toolbar';
 
 function UserCollectionsPage() {
     const navigate = useNavigate();
@@ -219,11 +220,7 @@ function UserCollectionsPage() {
         <div className="page-user-collections">
             <BasicHero title="My Collections" />
             <div className="container">
-                <div className={styles.createCollectionButtonContainer}>
-                    <button className="button" onClick={handleCreateCollectionButtonClick}>
-                        Create New Collection
-                    </button>
-                </div>
+                <Toolbar actions={[{ label: "Create Collection", icon: "➕", onClick: handleCreateCollectionButtonClick }]} />
 
                 {successMessage !== '' &&
                     <FormMessage message={successMessage} success />

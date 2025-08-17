@@ -6,6 +6,8 @@ import RecipeCardWithFeatures from '../recipeCardWithFeatures/RecipeCardWithFeat
 import { Recipe } from '../../api/types/recipe';
 import CardList from '../cardList/CardList';
 import GlobalErrorDisplay from '../GlobalErrorDisplay';
+import Button from '../buttons/Button';
+import RecipeCard from '../recipeCard/RecipeCard';
 
 interface FeaturedListProps {
     title: string;
@@ -36,7 +38,7 @@ export default function FeaturedList({
             <div className={styles.header}>
                 <h2 className={`section-title ${styles.title}`}>{title}</h2>
                 {moreButton &&
-                    <button className="button button--full" onClick={onClick}>{buttonTitle}</button>
+                    <Button onClick={ onClick }>{buttonTitle}</Button>
                 }
             </div>
 

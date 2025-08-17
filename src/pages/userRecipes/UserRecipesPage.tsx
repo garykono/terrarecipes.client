@@ -10,6 +10,7 @@ import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import { Recipe } from '../../api/types/recipe';
 import BasicHero from '../../components/basicHero/BasicHero';
+import Toolbar from '../../components/toolbar/Toolbar';
 
 function UserRecipesPage() {
     const navigate = useNavigate();
@@ -85,15 +86,9 @@ function UserRecipesPage() {
             <BasicHero title="My Recipes" text="View and manage your uploaded recipes." />
 
             <div className='container'>
-                <div className="create-recipe">
-                    <div className={styles.createRecipe}>
-                        {showAddRecipeButton &&
-                            <Link to="/createRecipe">
-                                <button className="button button--outline">New Recipe</button>
-                            </Link>  
-                        }
-                    </div>
-                </div>
+                {showAddRecipeButton && 
+                    <Toolbar actions={[{ label: "New Recipe", icon: "➕", to: '/createRecipe' }]} /> 
+                }
             </div>
 
             <div className="container">

@@ -90,12 +90,12 @@ export default function NavBar({ className }: NavBarProps) {
                         <div className={styles.navBarStart}>
                             <div className={styles.navBarItem}>
                                 <Link className={styles.navBarLink} to={"/browse"}>
-                                    Browse
+                                    📖 Browse
                                 </Link>
                             </div>
                             <div className={styles.navBarItem}>
                                 <Link className={styles.navBarLink} to={"/recipes"}>
-                                    Search
+                                    🔍 Search
                                 </Link>
                             </div>
                         </div>

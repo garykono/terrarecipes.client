@@ -4,6 +4,21 @@
     align-items: center;
 }
 
+.searchInput {
+    border-radius: 8px; /* soft corners */
+    border: 1px solid #ccc; /* keeps it grounded */
+    padding: var(--space-xs) var(--space-sm);
+}
+
+.searchInputLarge {
+    font-size: var(--font-size-subsection-title);
+    padding: 1.2rem 1.6rem;
+}
+
+.searchInput:focus {
+    outline: none;
+}
+
 .search-button {
     
 }

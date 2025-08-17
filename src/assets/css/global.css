@@ -57,7 +57,10 @@ Default: 9px
     --primary: #51cf66;
     --primary-light: #97e2a3;
     --primary-dark: #296833;
-    --secondary: #339af0;
+    --primary-shadow-soft: #51cf6633;
+    --primary-shadow-strong: #51cf6655;
+    --neutral: #555;;
+    --neutral-dark: #333;
     --grey: #444;
     --grey-subtle: #eee;
     --grey-light: #bbb;
@@ -77,6 +80,16 @@ Default: 9px
     --category-color-oils-and-vinegars: #FF9800;
     --category-color-wines: #8E44AD;
     --category-color-uncategorized: #616161;
+
+    /* List of Different Cards colors */
+    --card-color-1: #FFB84C; /* Warm mango yellow (friendly, summer vibes) */
+    --card-color-2: #FF6F61; /* Coral red (energetic, appetizing) */
+    --card-color-3: #6C5CE7; /* Vibrant violet (playful, stands out) */
+    --card-color-4: #00B894; /* Fresh teal (clean, refreshing) */
+    --card-color-5: #55E6C1; /* Aqua mint (light, breezy) */
+    --card-color-6: #FDCB82; /* Soft peach (approachable, warm) */
+    --card-color-7: #0984E3; /* Bright blue (trustworthy, crisp) */
+    --card-color-8: #E17055; /* Spiced orange (comforting, cozy) */
 
     /* Font families */
     --font-heading: "Work Sans", sans-serif;
@@ -109,6 +122,7 @@ Default: 9px
     --space-lg: 3.2rem;
     --space-xl: 4.8rem;
     --space-xxl: 6.4rem;
+    --space-section: 9.6rem;
 
     --nav-bar-height: 9.6rem;
 }
@@ -154,7 +168,12 @@ textarea {
 }
 
 .section {
-    margin: var(--space-xxl) 0;
+    margin-top: var(--space-section);
+    margin-bottom: var(--space-section);
+}
+
+.page-top {
+    margin-top: var(--space-lg);
 }
 
 /**************************/
@@ -192,8 +211,22 @@ p, li, span, .text {
     line-height: var(--line-height-normal);
 }
 
+.text-meta {
+    font-family: var(--font-body);
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+}
+
+.text-small {
+    font-family: var(--font-body);
+    font-size: var(--font-size-tag);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+}
+
 .underlined-title {
-    border-bottom: 5px solid var(--category-color);
+    border-bottom: 5px solid var(--category-color, var(--grey-light));
 }
 
 .left-border-gradient {
@@ -233,54 +266,54 @@ p, li, span, .text {
 /* Buttons */
 /**************************/
 
-.button, .button:link, .button:visited {
-    display: inline-block;
-    text-decoration: none;
-    font-size: var(--font-size-subsection-title);
-    font-weight: var(--font-weight-semi-bold);
-    padding: var(--space-sm) var(--space-lg);
-    border-radius: 9px;
+.button {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    border-radius: 0.6rem;
+    transition: background-color 0.2s ease, transform 0.15s ease;
     cursor: pointer;
-
-    /* Put transition on original "state" */
-    transition: all 0.2s;
 }
 
-.button--small, .button--small:link, .button--small:visited {
-    font-size: var(--font-size-small);
-    padding: 1.2rem 2.4rem;
+.button:active {
+    transform: scale(0.97);
 }
 
-.button--large {
-
+.button--primary {
+    background-color: var(--category-color, var(--primary));
+    color: #fff;
+    border: none;
 }
 
-.button--full,
-.button--full:link, 
-.button--full:visited {
-    background-color: var(--primary);
+.button--primary:hover {
+    background-color: var(--category-color-dark, var(--primary-dark));
+}
+
+/* Secondary button */
+.button--secondary {
+    background-color: transparent;
+    box-sizing: border-box;
+    border: 1px solid var(--category-color, var(--neutral));
+    color: var(--category-color, var(--neutral));
+}
+
+.button--secondary:hover {
+    background-color: color-mix(in srgb, var(--category-color-dark, var(--neutral)) 10%, transparent);
     color: var(--grey);
 }
 
-.button--full:hover, 
-.button--full:active {
-    background-color: var(--primary-dark);
-    color: #fff;
+/* Frequent use secondary button that stands out a bit more */
+.button--secondary-frequent {
+    color: #444;
+    border: 1.5px solid #999;
+    background: #f5f5f2;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.button--outline,
-.button--outline:link, 
-.button--outline:link {
-    background-color: #fff;
-    color: #555;
-}
-
-.button--outline:hover, 
-.button--outline:active {
-    background-color: var(--primary-background);
-
-    /* trick to add border inside (doesn't shift all other elements) */
-    box-shadow: inset 0 0 0 3px #fff;
+.button--secondary-frequent:hover {
+    background-color: #e0dfdb;
+    color: #222;
+    border-color: #666;
 }
 
 .button--danger,
@@ -294,6 +327,20 @@ p, li, span, .text {
 .button--danger:active {
     background-color: var(--danger-dark);
     color: #fff;
+}
+
+.button--small {
+  padding: 0.6rem 1.2rem;
+  font-size: var(--font-size-meta); /* 1.4rem */
+}
+
+.button--large {
+  padding: var(--space-sm) var(--space-md); /* 1.6rem 2.4rem */
+  font-size: var(--font-size-section-title); /* 2.4rem if you want big hero buttons */
+}
+
+.button--full {
+  width: 100%;
 }
 
 .buttons {
@@ -322,6 +369,10 @@ p, li, span, .text {
 
 .card--padded {
     padding: var(--space-lg) var(--space-xl);
+}
+
+.card--form {
+    padding: var(--space-xl) var(--space-xxl);
 }
 
 .card--grocery-category {
@@ -407,10 +458,6 @@ p, li, span, .text {
 /**************************/
 /* Basic Form */
 /**************************/
-
-.form--card {
-    padding: var(--space-xl) var(--space-xxl);
-}
 
 .form {
     display: flex;

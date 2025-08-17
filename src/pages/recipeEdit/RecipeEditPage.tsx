@@ -307,11 +307,11 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                     })}
                 </ul>   
                 <div className={styles.buttons}>
-                    <button className="button button--small" type="button" onClick={() => append({ text: "" , isSection: false}) }>
+                    <button className="button button--secondary-frequent" type="button" onClick={() => append({ text: "" , isSection: false}) }>
                         Add {title}
                     </button>
                     {/* <button className="button" type="button" onClick={() => append("section:") }> */}
-                    <button className="button button--small" type="button" onClick={() => append({ text: "" , isSection: true}) }>
+                    <button className="button button--secondary-frequent" type="button" onClick={() => append({ text: "" , isSection: true}) }>
                         Add Section
                     </button>
                 </div>
@@ -397,7 +397,7 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                                 
                                             })}
                                         />
-                                        <button className="button button--outline button--small" type="button" onClick={handleCancelImageUrl}>Cancel</button>
+                                        <button className="button button--secondary-frequent" type="button" onClick={handleCancelImageUrl}>Cancel</button>
                                 </div>
                             </div>
 
@@ -446,7 +446,7 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                             {...register("tag")}
                                         />
                                         <button 
-                                            className={`button button--small ${styles.oneLineButton}`}
+                                            className={`button button--secondary-frequent button--small ${styles.oneLineButton}`}
                                             type="button"
                                             onClick={handleAddTag}>
                                                 Add Tag
@@ -473,12 +473,12 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                             <div className="field">
                                 <div className={styles.submitButtons}>
                                     {loadedRecipe && 
-                                        <button className="button" type="button" onClick={onCancel}>
+                                        <button className="button button--secondary" type="button" onClick={onCancel}>
                                             Cancel
                                         </button>
                                     }
                                     <button 
-                                        className="button button--full" 
+                                        className="button button--primary" 
                                         type="submit">
                                             {loadedRecipe? 'Save' : 'Submit Recipe'}
                                     </button>

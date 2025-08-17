@@ -5,8 +5,21 @@
 .recipes {
     display: flex;
     flex-direction: column;
-    gap: 3.2rem;
-    padding-top: 8.0rem;
+    gap: var(--space-xl);
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    background: #fafaf8; /* very light tone */
+    margin-top: var(--space-lg);
+    padding: 3rem 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.heroText {
 }
 
 .search {
@@ -21,6 +34,12 @@
     justify-content: center;
 }
 
+.results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm)
+}
+
 .resultsText {
     font-size: 1.6rem;
     color: #111;
@@ -30,9 +49,21 @@
     grid-template-columns: repeat(5, 1fr);
 }
 
-@media(max-width: 59em) {
+/**************************/
+/* Below 1200px (Landscape Tablets) */
+/**************************/
+@media (max-width: 75em) {
     .cardList {
         grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/**************************/
+/* Below 944px (Tablets) */
+/**************************/
+@media(max-width: 59em) {
+    .cardList {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
 
@@ -52,5 +83,7 @@
 
 @media (max-width: 34em) {
     .cardList.cardList {
+        grid-template-columns: repeat(1, 1fr);
+        justify-items: center;
     }
 }

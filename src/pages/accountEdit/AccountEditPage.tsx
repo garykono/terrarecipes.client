@@ -62,7 +62,7 @@ export default function AccountEditPage () {
 
         return (
             <form 
-                className={`form form--card ${styles.form} form-login`}
+                className={`form card card--form ${styles.form} form-login`}
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div className="form-heading">
@@ -118,9 +118,7 @@ export default function AccountEditPage () {
                 }
 
                 <div className={styles.buttons}>
-                    <button className="button button--full" type='submit'>
-                        Save
-                    </button>
+                    <Button primary type="submit">Save</Button>
                 </div>
 
                 
@@ -184,7 +182,7 @@ export default function AccountEditPage () {
             }
 
             return (
-                <form className={`form form--card ${styles.form}`} onSubmit={handleSubmit(onSubmit)}>
+                <form className={`form card card--form ${styles.form}`} onSubmit={handleSubmit(onSubmit)}>
                     <div className="form-heading">
                         <h1 className='form-title'>Change My Password</h1>
                     </div>
@@ -251,10 +249,8 @@ export default function AccountEditPage () {
                         </div>
                     </div>
                     
-                    <div className='buttons'>
-                        <button className="button button--full" type="submit">
-                            Submit
-                        </button>
+                    <div className={styles.buttons}>
+                        <Button primary type="submit">Submit</Button>
                     </div>
                     {successMessage !== '' &&
                         <FormMessage className='form-message' message={successMessage} success />
@@ -330,7 +326,7 @@ export default function AccountEditPage () {
 
             <section className="section section-account-delete"> 
                 <div className="container">
-                    <form className="form form--card">
+                    <form className="form card card--form">
                         <div className="account-delete">
                             <div className="form-heading">
                                 <h2 className="form-title">Account Management</h2>

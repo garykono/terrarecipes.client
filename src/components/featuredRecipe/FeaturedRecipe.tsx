@@ -1,6 +1,7 @@
 import styles from './FeaturedRecipe.module.css';
 import { Link } from "react-router-dom";
 import { Recipe } from '../../api/types/recipe';
+import Button from '../buttons/Button';
 
 interface FeaturedRecipeProps {
     recipe: Recipe
@@ -20,8 +21,9 @@ export default function FeaturedRecipe({ recipe, className }: FeaturedRecipeProp
                     <p className={`text ${styles.recipeDescription}`}>{recipe.description}</p>
                 </div>
                 <div className={styles.recipeButtonLink}>
+                    
                     <Link to={`/recipe/${recipe._id}`}>
-                        <button className="button button--full">Go to Recipe</button>
+                        <Button primary>Go to Recipe</Button>
                     </Link>
                 </div>
             </div>   

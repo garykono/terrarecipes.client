@@ -1,3 +1,20 @@
+.pageTitle {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-xl);
+}
+
+.categoriesTitle {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.sectionStaticCategories {
+    margin-top: var(--space-xxl);
+}
+
 .staticCategoryList {
     display: flex;
     justify-content: center;
@@ -24,11 +41,70 @@
 
 .categoryTitle {
     font-size: 2.4rem;
+    font-weight: var(--font-weight-regular);
+    color: var(--grey);
 }
-.featuredLists {
+
+.featuredCategoriesContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.featuredCategoriesList {
+    width: 90%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    justify-content: center;
+    column-gap: var(--space-xl);
+    row-gap: var(--space-xl);
+}
+
+.featuredCategoryCard {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xxl);
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-sm);
+    text-align: center;
+    width: 100%;
+    aspect-ratio: calc(4/3);
+    padding: var(--space-md);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.featuredCategoryCard:hover {
+    transform: scale(1.03);
+}
+
+.featuredCategoriesList > a:nth-child(1) .featuredCategoryCard { background: var(--card-color-1); }
+.featuredCategoriesList > a:nth-child(2) .featuredCategoryCard { background: var(--card-color-2); }
+.featuredCategoriesList > a:nth-child(3) .featuredCategoryCard { background: var(--card-color-3); }
+.featuredCategoriesList > a:nth-child(4) .featuredCategoryCard { background: var(--card-color-4); }
+.featuredCategoriesList > a:nth-child(5) .featuredCategoryCard { background: var(--card-color-5); }
+.featuredCategoriesList > a:nth-child(6) .featuredCategoryCard { background: var(--card-color-6); }
+.featuredCategoriesList > a:nth-child(7) .featuredCategoryCard { background: var(--card-color-7); }
+.featuredCategoriesList > a:nth-child(8) .featuredCategoryCard { background: var(--card-color-8); }
+
+/* .featuredIconCircle {
+    display: inline-flex;
+    align-items: center
+    justify-content: center
+    width: 3.6rem;
+    height: 3.6rem;
+    border-radius: 50%;
+    background-color: var(--accent-color, #f0f4ff);
+} */
+
+.featuredCategoryIcon {
+    font-size: var(--font-size-section-title);
+}
+
+.featuredCategoryTitle {
+    font-size: var(--font-size-subsection-title);
+    font-weight: var(--font-weight-bold);
+    color: white;
 }
 
 .featuredList {

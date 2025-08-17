@@ -11,6 +11,7 @@ import Button from '../buttons/Button';
 
 interface RecipeCardWithFeaturesProps {
     recipe: Recipe;
+    size?: 'lean' | 'rich';
     markForDelete?: boolean;
     editMode?: boolean; 
     collectionMode?: boolean;
@@ -22,6 +23,7 @@ interface RecipeCardWithFeaturesProps {
 
 export default function RecipeCardWithFeatures({ 
     recipe, 
+    size = 'lean',
     markForDelete,
     editMode = false, 
     collectionMode = false, 
@@ -88,7 +90,7 @@ export default function RecipeCardWithFeatures({
                 {editMode && getManagementButtons(recipe._id)}
             </div>
             <Link to={`/recipe/${recipe._id}`}>
-                <RecipeCard recipe={recipe}/>
+                <RecipeCard recipe={recipe} size={size}/>
             </Link>
             {showModal && 
                 <Modal 

@@ -6,6 +6,7 @@ import FeaturedList from "../../components/featuredList/FeaturedList";
 import { Recipe } from "../../api/types/recipe";
 import { HomeLoaderResult } from "./homeLoader";
 import BasicHero from "../../components/basicHero/BasicHero";
+import RecipeCardWithFeatures from "../../components/recipeCardWithFeatures/RecipeCardWithFeatures";
 
 function HomePage () {
     const { recipes } = useLoaderData() as HomeLoaderResult;
@@ -48,7 +49,7 @@ function HomePage () {
     return (
         <div className={styles.homePage}>
             <BasicHero title='Home Page' text='A simple way to manage recipes. More features coming!' />
-            <div className={styles.recipeSections}>
+            <div className={`page-top ${styles.recipeSections}`}>
                 {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />}
                 <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
                 <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
@@ -87,7 +88,10 @@ function HomePageFeaturedRecipe({ recipe }: { recipe: Recipe }) {
     return (
         <section className="section">
             <div className="container">
-                <FeaturedRecipe recipe={recipe} />
+                <div className={styles.featuredRecipeContainer}>
+                    <RecipeCardWithFeatures recipe={recipe} size='rich' />
+                </div>
+                {/* <FeaturedRecipe recipe={recipe} /> */}
             </div>
         </section>
     )
