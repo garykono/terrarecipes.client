@@ -1,0 +1,26 @@
+.collectionCard {
+    display: flex;
+    gap: var(--space-md);
+    width: 100%;
+}
+
+.collectionImage {
+    width: 10rem;  
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.collectionInfo {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-sm) 0;
+    gap: var(--space-xs);
+}
+
+.collectionName {
+    color: var(--color-text);
+}
+
+.collectionMetaInfo {
+    color: var(--color-text-muted);
+}

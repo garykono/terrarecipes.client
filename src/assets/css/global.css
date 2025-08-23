@@ -52,22 +52,56 @@ Default: 9px
 }
 
 :root {
-    --background: #fafaf7;
-    --background-cards: #fff;
-    --primary: #51cf66;
-    --primary-light: #97e2a3;
-    --primary-dark: #296833;
-    --primary-shadow-soft: #51cf6633;
-    --primary-shadow-strong: #51cf6655;
-    --neutral: #555;;
-    --neutral-dark: #333;
-    --grey: #444;
-    --grey-subtle: #eee;
-    --grey-light: #bbb;
-    --grey-dark: #333;
     --success: #37b24d;
     --danger: #f03e3e;
     --danger-dark: #c92a2a;
+    
+    /* Brand foundations */
+    --color-brand-primary: #2f855a;   /* primary brand green */
+    --color-brand-primary-dark: #276749;
+    --color-brand-primary-light: #A8D5BA;
+    --color-brand-primary-soft: color-mix(in srgb, var(--color-brand-primary) 5%, white);
+    --color-brand-secondary: #2b6cb0;    /* secondary blue accent */
+    --color-brand-secondary-dark: #1e4c7b;
+    --color-brand-secondary-light: #aac4df;
+
+    /* Supporting neutrals */
+    --color-neutral-100: #fdfdfc;   /* background */
+    --color-neutral-200: #f4f4f2;   /* subtle panels */
+    --color-neutral-300: #e2e2df;   /* borders, dividers */
+    --color-neutral-400: #aaa;   /* darker/hover borders and dividers */
+    --color-neutral-600: #666666;   /* muted text */
+    --color-neutral-900: #444;   /* primary text */
+
+    /* Semantic uses */
+    --color-bg: var(--color-neutral-100);
+    --color-bg-panel: var(--color-neutral-200);
+    --color-border: var(--color-neutral-300);
+    --color-border-hover: var(--color-neutral-400);
+    --color-text: var(--color-neutral-900);
+    --color-text-muted: var(--color-neutral-600);
+
+    /* Links */
+    --color-link: var(--color-brand-blue);
+    --color-link-hover: #1e4e82;
+
+    /* Buttons */
+    --color-button-primary-bg: var(--color-brand-primary);
+    --color-button-primary-hover: var(--color-brand-primary-dark);
+    --color-button-primary-text: #ffffff;
+
+    --color-button-secondary-bg: var(--color-brand-green);
+    --color-button-secondary-hover: #276749;
+    --color-button-secondary-text: #ffffff;
+
+    /* Focus states / highlights */
+    --color-focus-ring: #3182ce; /* blue focus */
+    --color-highlight: var(--color-accent-warm-light);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
 
     /* Category colors */
     --category-color-vegetables: #37b24d;
@@ -122,7 +156,7 @@ Default: 9px
     --space-lg: 3.2rem;
     --space-xl: 4.8rem;
     --space-xxl: 6.4rem;
-    --space-section: 9.6rem;
+    --space-section: 12rem;
 
     --nav-bar-height: 9.6rem;
 }
@@ -140,8 +174,8 @@ body {
     font-family: var(--font-body);
     line-height: 1;
     font-weight: var(--font-weight-regular);
-    color: var(--grey);
-    background-color: var(--background);
+    color: var(--color-text);
+    background-color: var(--color-bg);
     padding: 0.005rem;
 }
 
@@ -168,7 +202,6 @@ textarea {
 }
 
 .section {
-    margin-top: var(--space-section);
     margin-bottom: var(--space-section);
 }
 
@@ -225,8 +258,14 @@ p, li, span, .text {
     line-height: var(--line-height-normal);
 }
 
+.category-color-standard {
+    --category-color: var(--color-brand-primary-light);
+}
+
 .underlined-title {
-    border-bottom: 5px solid var(--category-color, var(--grey-light));
+    border-bottom: 5px solid var(--category-color, var(--color-border));
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-sm);
 }
 
 .left-border-gradient {
@@ -267,6 +306,7 @@ p, li, span, .text {
 /**************************/
 
 .button {
+    box-sizing: border-box;
     padding: var(--space-xs) var(--space-sm);
     font-size: var(--font-size-body);
     font-weight: var(--font-weight-medium);
@@ -280,33 +320,53 @@ p, li, span, .text {
 }
 
 .button--primary {
-    background-color: var(--category-color, var(--primary));
-    color: #fff;
+    background-color: var(--color-button-primary-bg);
+    color: var(--color-button-primary-text);
     border: none;
 }
 
 .button--primary:hover {
-    background-color: var(--category-color-dark, var(--primary-dark));
+    background-color: var(--color-button-primary-hover);
+}
+
+.button--primary-category {
+    background-color: var(--category-color, var(--color-button-primary-bg));
+}
+
+.button-primary-category:hover {
+    background-color: var(--category-color-dark, var(--color-button-primary-hover));
 }
 
 /* Secondary button */
 .button--secondary {
     background-color: transparent;
     box-sizing: border-box;
-    border: 1px solid var(--category-color, var(--neutral));
-    color: var(--category-color, var(--neutral));
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
 }
 
 .button--secondary:hover {
-    background-color: color-mix(in srgb, var(--category-color-dark, var(--neutral)) 10%, transparent);
-    color: var(--grey);
+    background-color: color-mix(in srgb, var(--color-bg-panel) 10%, transparent);
+    border: 1px solid var(--color-border-hover);
+    color: var(--color-text);
 }
+
+.button--secondary-category {
+    border: 1px solid var(--category-color, var(--color-border));
+    color: var(--category-color, var(--color-text-muted));
+}
+
+.button--secondary-category:hover {
+    border: 1px solid var(--category-color, var(--color-border));
+    color: var(--category-color, var(--color-text-muted));
+}
+
 
 /* Frequent use secondary button that stands out a bit more */
 .button--secondary-frequent {
     color: #444;
     border: 1.5px solid #999;
-    background: #f5f5f2;
+    background: var(--color-bg-panel);
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -357,11 +417,11 @@ p, li, span, .text {
     background-color: #ffffff;
     overflow: hidden;
     border-radius: 10px;
-    box-shadow: 0 2em 4em rgba(0, 0, 0, 0.07);
+    box-shadow: var(--shadow-md);
 }
 
 .card {
-    box-shadow: 0 2.4rem 4.8rem rgba(0, 0, 0, 0.15);
+    box-shadow: var(--shadow-lg);
     border-radius: 12px;
     background-color: var(--background-cards);
     overflow: hidden;
@@ -409,7 +469,7 @@ p, li, span, .text {
     display: none;
     position: absolute;
     top: 100%;
-    background-color: #f9f9f9;
+    background-color: #fff;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     /* padding: 0.8rem 0 0.8rem 0; */
     cursor: pointer;
@@ -421,7 +481,7 @@ p, li, span, .text {
 }
   
 .dropdown-content {
-    border-top: 1px solid var(--grey-light);
+    border-top: 1px solid var(--color-border);
     display: flex;
     flex-direction: column;
     margin-top: 5px;
@@ -452,7 +512,7 @@ p, li, span, .text {
 .dropdown-item:active {
     cursor: pointer;
     text-decoration: none;
-    background-color: var(--grey-subtle);
+    background-color: var(--color-bg-panel);
 }
 
 /**************************/
@@ -475,14 +535,12 @@ p, li, span, .text {
 .form-title {
     font-size: var(--font-size-page-title);
     line-height: var(--line-height-tight);
-    color: var(--grey);
     text-align: center;
 }
 
 .form-description {
     font-size: var(--font-size-body);
     line-height: var(--line-height-tight);
-    color: #666;
 }
 
 .form-message {
@@ -499,7 +557,7 @@ p, li, span, .text {
 .label {
     font-size: var(--font-size-body);
     font-weight: 600;
-    color: #666;
+    color: var(--color-text-muted);
 }
 
 .control {
@@ -537,8 +595,8 @@ p, li, span, .text {
 
 .toolbar--button {
     background: transparent;
-    border: 1px solid var(--color-border, #ddd);
-    color: var(--color-text, #333);
+    border: 1px solid var(--color-border, var(--color-border));
+    color: var(--color-text, var(--color-text-muted));
     padding: 0.8rem 1.6rem; /* 8px vertical, 16px horizontal */
     font-size: 1.4rem; /* ~14px */
     border-radius: 0.4rem;
@@ -552,8 +610,8 @@ p, li, span, .text {
 }
 
 .toolbar--button:hover {
-    background-color: var(--color-hover, #f5f5f5);
-    border-color: var(--color-border-hover, #ccc);
+    background-color: var(--color-hover, var(--color-bg-panel));
+    border-color: var(--color-border-hover, var(--color-border-hover));
 }
 
 .toolbar--button:active {

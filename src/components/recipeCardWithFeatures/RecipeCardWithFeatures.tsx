@@ -89,7 +89,7 @@ export default function RecipeCardWithFeatures({
                 }
                 {editMode && getManagementButtons(recipe._id)}
             </div>
-            <Link to={`/recipe/${recipe._id}`}>
+            <Link to={`/recipe/${recipe._id}`} className={styles.recipeLink}>
                 <RecipeCard recipe={recipe} size={size}/>
             </Link>
             {showModal && 
@@ -116,7 +116,5 @@ export default function RecipeCardWithFeatures({
                 </Modal>
             }
         </div>
-        
-        
     )
 }

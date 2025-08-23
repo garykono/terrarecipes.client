@@ -1,0 +1,96 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    height: 100%;
+}
+
+.card:hover {
+    background-color: var(--color-bg-panel);
+}
+
+.img {
+    width: 100%;  
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.previewImages {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem var(--space-sm) 2rem var(--space-sm);
+    color: var(--color-text);
+    height: 100%;
+    justify-content: space-between;
+}
+
+.mainText {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.title {
+    display: -webkit-box;
+    line-clamp: 2; /* max lines */
+    -webkit-line-clamp: 2; /* max lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-decoration: none;
+    font-size: var(--font-size-subsection-title);
+    font-weight: var(--font-weight-semi-bold);
+}
+
+.headerSecondary {
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-medium);
+    margin-top: 0.6rem;
+}
+
+.headerSecondaryIcon {
+    width: var(--space-lg);   /* circle size */
+    height: var(--space-lg);  /* circle size */
+    border-radius: 50%; /* makes it round */
+    /* background-color: var(--accent-color, var(--primary-light)); */
+}
+
+.headerSecondaryText {
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.body {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.description {
+    font-size: var(--font-size-meta);
+    line-height: var(--line-height-loose);
+    margin: 1.4rem 0;
+    display: -webkit-box;           /* Required for line clamping */
+    line-clamp: 2;
+    -webkit-line-clamp: 2;          /* Number of lines to clamp */
+    -webkit-box-orient: vertical;   /* Required for line clamping */
+    overflow: hidden;               /* Hide overflow beyond clamp */
+    text-overflow: ellipsis; 
+}
+
+.metaDataRow {
+    margin-top: var(--space-sm);
+    list-style: none;
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.metaDivide {
+    padding-top: var(--space-sm);
+    margin-top: var(--space-sm);
+    border-top: 1px solid var(--category-color, var(--color-border));
+}

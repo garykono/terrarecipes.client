@@ -333,7 +333,7 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         <div className="page-edit-recipe">
             <BasicHero title={loadedRecipe? "Edit Recipe" : "Build a Recipe"} />
 
-            <section className="section">
+            <section className="page-top section">
                 <div className="container">
                     <FormProvider {...formMethods}>
                         <form className={`form form--card ${styles.formEditRecipe}`} onSubmit={handleSubmit(onSubmit)}>

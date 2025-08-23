@@ -18,7 +18,7 @@ function AccountPage () {
         <div className="account-page">
             <BasicHero title="Account Page" />
 
-            <section className={styles.sectionEdit}>
+            <section className={`page-top ${styles.sectionEdit}`}>
                 <div className="container">
                     <div className={styles.editAccount}>
                         <Link to="/accountEdit" className="button button--full button--small">

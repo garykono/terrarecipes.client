@@ -28,6 +28,9 @@ export default function GlobalErrorDisplay({ error = useRouteError(), title, mes
             } else if (error.name === 'MissingParameters') {
                 setDisplayTitle("Missing Required Parameters")
                 setDisplayMessage("One or more required parameters were not given.")
+            }  else if (error.name === 'InvalidParameters') {
+                setDisplayTitle("Invalid Parameters")
+                setDisplayMessage("Invalid values were given for one or more parameters.")
             } else if (error.status) {
                 setDisplayTitle(`${error.status} Error.`);
 
@@ -60,7 +63,6 @@ export default function GlobalErrorDisplay({ error = useRouteError(), title, mes
 
     return (
         <div className="section">
-            {}
             <h2 className="title">{displayTitle}</h2>
             <p className="mb-2">{displayMessage}</p>
             <Link to='/'>Go Home</Link>

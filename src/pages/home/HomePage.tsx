@@ -7,6 +7,7 @@ import { Recipe } from "../../api/types/recipe";
 import { HomeLoaderResult } from "./homeLoader";
 import BasicHero from "../../components/basicHero/BasicHero";
 import RecipeCardWithFeatures from "../../components/recipeCardWithFeatures/RecipeCardWithFeatures";
+import FeaturedCluster from "../../components/featuredCluster/FeaturedCluster";
 
 function HomePage () {
     const { recipes } = useLoaderData() as HomeLoaderResult;
@@ -15,13 +16,13 @@ function HomePage () {
     const featuredListsData = 
         {
             dinner: {
-                title: "Dinner Recipes",
+                title: "Trending Now",
                 featuredList: getFeaturedRecipesList("dinner"),
                 buttonTitle: "More Dinner Recipes",
                 onClick: () => navigate(`./recipes/1/dinner`)
             },
             onePot: {
-                title: "One Pot Recipes",
+                title: "30-Minute Dinners",
                 featuredList: getFeaturedRecipesList("one pot"),
                 buttonTitle: "More One Pot Recipes",
                 onClick: () => navigate(`./recipes/1/one pot`)
@@ -33,7 +34,7 @@ function HomePage () {
                 onClick: () => navigate(`./recipes/1/sides`)
             },
             toMake: {
-                title: "Recipes to Try",
+                title: "New This Week",
                 featuredList: getFeaturedRecipesList("to make"),
                 buttonTitle: "More Recipes to Try",
                 onClick: () => navigate(`./recipes/1/to make`)
@@ -48,13 +49,34 @@ function HomePage () {
     
     return (
         <div className={styles.homePage}>
-            <BasicHero title='Home Page' text='A simple way to manage recipes. More features coming!' />
-            <div className={`page-top ${styles.recipeSections}`}>
-                {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />}
-                <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
-                <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
-                <HomePageFeaturedList listInfo={featuredListsData["onePot"]} />
-            </div>
+            <section className={`page-top section ${styles.heroSection}`}>
+                <div className={`container ${styles.heroContainer}`}>
+                    {recipes[0] && 
+                        <FeaturedCluster 
+                            title="Featured This Week" 
+                            hero={recipes[0]} 
+                            companions={recipes.slice(1, 5)} 
+                            className={styles.heroCluster}
+                        />}
+                </div>
+            </section>
+            
+            {/* {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />} */}
+            <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
+            <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
+
+            <section className={`section ${styles.secondClusterSection}`}>
+                <div className={`container ${styles.secondClusterContainer}`}>
+                    <FeaturedCluster 
+                        title="One Pot Recipes" 
+                        hero={recipes[10]} 
+                        companions={recipes.slice(11, 15)} 
+                        className={styles.heroCluster}
+                    />
+                </div>
+            </section>
+
+            <HomePageFeaturedList listInfo={featuredListsData["onePot"]} />
         </div>
     );
 }
@@ -88,9 +110,7 @@ function HomePageFeaturedRecipe({ recipe }: { recipe: Recipe }) {
     return (
         <section className="section">
             <div className="container">
-                <div className={styles.featuredRecipeContainer}>
                     <RecipeCardWithFeatures recipe={recipe} size='rich' />
-                </div>
                 {/* <FeaturedRecipe recipe={recipe} /> */}
             </div>
         </section>

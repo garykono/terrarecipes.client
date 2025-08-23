@@ -35,7 +35,10 @@ export default function FeaturedList({
 
     return (
         <div className={`${styles.featuredList} ${className || ""}`}>
-            <div className={styles.header}>
+            <div 
+                className={`${styles.header} underlined-title`}
+                style={{ "--category-color": "var(--color-brand-primary-light)" } as React.CSSProperties}
+            >
                 <h2 className={`section-title ${styles.title}`}>{title}</h2>
                 {moreButton &&
                     <Button onClick={ onClick }>{buttonTitle}</Button>
@@ -44,11 +47,11 @@ export default function FeaturedList({
 
             {featuredList.length > 0
                 ? <div className={styles.scrollWrapper}>
-                    {featuredList.map((recipe) => (
-                        <div key={recipe._id} className={styles.cardWrapper}>
-                            <RecipeCardWithFeatures recipe={recipe} />
-                        </div>
-                    ))}
+                        {featuredList.map((recipe) => (
+                            <div key={recipe._id} className={styles.cardWrapper}>
+                                <RecipeCardWithFeatures recipe={recipe} />
+                            </div>
+                        ))}
                 </div>
                 : <div className="text">There are no recipes for this category yet!</div>
             }

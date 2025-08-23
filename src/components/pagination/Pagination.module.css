@@ -16,8 +16,8 @@
 
 .paginationButton {
     background-color: #fff;
-    color: var(--primary-dark);
-    border: 1px solid var(--primary-dark);
+    color: var(--color-brand-primary);
+    border: 1px solid var(--color-brand-primary);
     height: 4.8rem;
     width: 4.8rem;
     border-radius: 50%;
@@ -29,7 +29,7 @@
 }
 
 .paginationButton:hover {
-    background-color:var(--primary-dark);
+    background-color:var(--color-brand-primary-dark);
 }
 
 .paginationButton:hover 
@@ -40,7 +40,7 @@
 .paginationButtonIcon {
     height: 2.4rem;
     width: 2.4rem;
-    stroke: var(--primary-dark);
+    stroke: var(--color-brand-primary-dark);
 }
 
 .pageLink,
@@ -64,11 +64,11 @@
 .pageLink:hover, 
 .pageLink:active, 
 .pageLink.pageLinkCurrent {
-    background-color: var(--primary-dark);
+    background-color: var(--color-brand-primary-dark);
     color: #fff;
 }
 
 .paginationEllipsis {
     font-size: var(--font-size-subsection-title);
-    color: var(--grey-dark);
+    color: var(--color-text);
 }

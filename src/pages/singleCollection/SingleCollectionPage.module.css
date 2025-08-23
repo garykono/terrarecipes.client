@@ -1,18 +1,23 @@
-.firstSection {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 3.6rem 0;
+.title {
+    padding-bottom: var(--space-xs);
 }
 
 .info {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    margin-bottom: var(--space-xxl);
+}
+
+.subInfo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.numRecipesLine {
 }
 
 .description {
-    margin-bottom: 4.8rem;
 }
 
 .buttons {

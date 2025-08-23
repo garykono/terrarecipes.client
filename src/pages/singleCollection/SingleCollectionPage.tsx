@@ -61,13 +61,14 @@ function SingleCollectionPage() {
             <div className="container">
                 <Toolbar actions={collectionActions} />
                 
-                <div className={styles.firstSection}>
-                    <div className={styles.info}>
-                        <div className="heading-tertiary">Collection:</div>
-                        <h1 className="heading-primary">{collection.name}</h1>
+                <div className={`${styles.info}`}>
+                    <h1 className={`page-title underlined-title category-color-standard ${styles.title}`}>{collection.name}</h1>
+
+                    <div className={styles.subInfo}>
+                        <p className={`subsection-title ${styles.numRecipesLine}`}>{`📖 ${collection.recipes.length} recipes`}</p>
                         <p className={`text ${styles.description}`}>{collection.description}</p>    
                     </div>
-                </div>                    
+                </div>            
 
                 <CardList list={renderedRecipeCards} className={styles.cardList} />
                 <Pagination 

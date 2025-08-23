@@ -114,7 +114,10 @@ export default function NavBar({ className }: NavBarProps) {
                             <Link to='/' className={`${styles.navMenuMobileItem}`}>Home</Link>
                         </li>
                         <li onClick={() => setShowMobileMenu(false)}>
-                            <Link to='/recipes' className={`${styles.navMenuMobileItem}`}>Recipes</Link>
+                            <Link to='/browse' className={`${styles.navMenuMobileItem}`}>Browse</Link>
+                        </li>
+                        <li onClick={() => setShowMobileMenu(false)}>
+                            <Link to='/recipes' className={`${styles.navMenuMobileItem}`}>Search</Link>
                         </li>
                         {!user && 
                             <li onClick={() => setShowMobileMenu(false)}>

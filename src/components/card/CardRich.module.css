@@ -1,0 +1,10 @@
+.card {
+}
+
+.img {
+    aspect-ratio: calc(16/10);
+}
+
+.content {
+    padding: var(--space-md);
+}

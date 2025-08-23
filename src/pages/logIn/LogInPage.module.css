@@ -1,7 +1,6 @@
 .pageLogin {
     display: flex;
     justify-content: center;
-    background-color: var(--primary-background);
 }
 
 .formContainer {
@@ -31,12 +30,12 @@
 .forgotPasswordLink:link,
 .forgotPasswordLink.visited {
     font-size: 1.2rem;
-    color: #555;
+    color: var(--color-brand-secondary);
 }
 
 .forgotPasswordLink:hover,
 .forgotPasswordLink:active {
-    color: var(--primary-dark)
+    color: var(--color-brand-secondary-dark)
 }
 
 /**************************/

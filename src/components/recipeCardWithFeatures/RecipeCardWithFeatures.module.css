@@ -1,6 +1,7 @@
 .recipeCardWithFeatures {
     display:flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .options {
@@ -18,4 +19,10 @@
     width: var(--font-size-subsection-title);
     height: var(--font-size-subsection-title);
     cursor: pointer;
+}
+
+.recipeLink {
+    flex: 1;               /* allow it to grow/shrink */
+    height: 100%;          /* fill parent height */
+    width: 100%; 
 }

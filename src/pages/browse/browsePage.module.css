@@ -42,7 +42,7 @@
 .categoryTitle {
     font-size: 2.4rem;
     font-weight: var(--font-weight-regular);
-    color: var(--grey);
+    color: var(--color-text);
 }
 
 .featuredCategoriesContainer {
@@ -108,4 +108,32 @@
 }
 
 .featuredList {
+}
+
+/**************************/
+/* Below 944px (Tablets) */
+/**************************/
+@media(max-width: 59em) {
+    .featuredCategoriesList {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+}
+
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    .featuredCategoriesList {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }

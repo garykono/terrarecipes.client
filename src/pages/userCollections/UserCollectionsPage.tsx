@@ -13,11 +13,15 @@ import { Collection } from '../../api/types/collection';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
 import Toolbar from '../../components/toolbar/Toolbar';
+import CollectionCard from '../../components/collectionCard/CollectionCard';
 
 function UserCollectionsPage() {
     const navigate = useNavigate();
     const revalidator = useRevalidator();
     const { user } = useRouteLoaderData('root');
+
+    // Collection Modification
+    const [showCollectionModificationButtons, setShowCollectionModificationButtons] = useState(false);
 
     const { register, handleSubmit, setValue, watch, setError, clearErrors, formState: { errors } } = useForm({
             mode: 'onSubmit',
@@ -178,27 +182,30 @@ function UserCollectionsPage() {
                             to={`/collection/${collection._id}`}
                             className={styles.collectionLink}
                         >
-                            <div className={styles.collectionCard}>
+                            <CollectionCard collection={collection} className={styles.collectionCard}/>
+                            {/* <div className={styles.collectionCard}>
                                 <span className={styles.collectionTitle}>
                                     {collection.name}
                                 </span>
-                            </div>
+                            </div> */}
                         </Link>
-                        
-                        <div className={styles.collectionManagementButtons}>
-                            <button 
-                                className={styles.managementButton}
-                                onClick={() => navigate(`/editCollection/${collection._id}`)}
-                            >
-                                <MdEdit />   
-                            </button>
-                            <button 
-                                className={`${styles.managementButton} js-modal-trigger`} 
-                                onClick={() => handleDeleteCollectionButtonClick(collection.name, collection._id)}
-                            >
-                                <MdDelete />      
-                            </button>                                            
-                        </div>
+
+                        {showCollectionModificationButtons && 
+                            <div className={styles.collectionManagementButtons}>
+                                <button 
+                                    className={styles.managementButton}
+                                    onClick={() => navigate(`/editCollection/${collection._id}`)}
+                                >
+                                    <MdEdit />   
+                                </button>
+                                <button 
+                                    className={`${styles.managementButton} js-modal-trigger`} 
+                                    onClick={() => handleDeleteCollectionButtonClick(collection.name, collection._id)}
+                                >
+                                    <MdDelete />      
+                                </button>                                            
+                            </div>
+                        }
                     </div>
                 );
             });
@@ -218,9 +225,14 @@ function UserCollectionsPage() {
 
     return (
         <div className="page-user-collections">
-            <BasicHero title="My Collections" />
+
             <div className="container">
-                <Toolbar actions={[{ label: "Create Collection", icon: "➕", onClick: handleCreateCollectionButtonClick }]} />
+                <Toolbar 
+                    actions={[
+                        { label: "Modify Collections", icon: "✏️", onClick: () => setShowCollectionModificationButtons(!showCollectionModificationButtons) },
+                        { label: "Create Collection", icon: "➕", onClick: handleCreateCollectionButtonClick }
+                    
+                    ]} />
 
                 {successMessage !== '' &&
                     <FormMessage message={successMessage} success />
@@ -230,6 +242,11 @@ function UserCollectionsPage() {
                 }
                     
                 <div className={styles.collections}>
+                    <h1 
+                        className={`page-title underlined-title category-color-standard ${styles.pageTitle}`}
+                    >
+                        My Collections
+                    </h1>
                     {content}
                 </div>
             </div>

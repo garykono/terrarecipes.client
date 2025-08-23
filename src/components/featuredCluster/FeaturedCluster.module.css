@@ -1,0 +1,62 @@
+:where(.featuredClusterWrapper) { /* makes this class lower precedence so passed down classes take precedence */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: 0 var(--space-lg);
+}
+
+.title {
+    padding-bottom: var(--space-xs);
+    margin-bottom: var(--space-xs);
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+}
+
+.heroRecipe {
+}
+
+.companionRecipes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    justify-items: center;
+}
+
+/**************************/
+/* Below 944px (Tablets) */
+/**************************/
+@media(max-width: 59em) {
+    .content {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .companionRecipes {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+}
+
+/**************************/
+/* Below 704px (Small Tablets) */
+/**************************/
+
+@media (max-width: 44em) {
+    .companionRecipes {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    .companionRecipes {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

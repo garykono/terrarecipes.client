@@ -9,6 +9,7 @@ type DropdownItem = {
 type DropdownProps = {
     label: React.ReactNode;
     items: DropdownItem[];
+    alignment?: "left" | "right";
     className?: string;
     triggerClassName?: string;
     noItemsMessage?: string;
@@ -17,6 +18,7 @@ type DropdownProps = {
 export default function Dropdown({ 
     label, 
     items, 
+    alignment = "left",
     className = "", 
     triggerClassName = "", 
     noItemsMessage = "" 
@@ -58,7 +60,7 @@ export default function Dropdown({
             </div>
 
             {isOpen && (
-                <div className="dropdown-menu" role="listbox">
+                <div className={`dropdown-menu ${alignment === "right" && "dropdown-menu--right"}`}  role="listbox">
                     <div className="dropdown-content">
                         {items.length > 0 ? (
                             items.map(({ id, label, onClick }) => (

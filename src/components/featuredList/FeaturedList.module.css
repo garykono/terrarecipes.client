@@ -1,30 +1,32 @@
 .featuredList {
-  display: flex;
-  flex-direction: column;
-  gap: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--space-xs);
+    margin-bottom: var(--space-xs);
 }
 
 .title {
 }
 
 .scrollWrapper {
-  display: flex;
-  gap: 1.6rem;
-  overflow-x: auto;
-  padding-bottom: 0.5rem; /* for scroll bar space */
-  scroll-snap-type: x mandatory;
+    display: flex;
+    gap: 1.6rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem; /* for scroll bar space */
+    scroll-snap-type: x mandatory;
+
 }
 
 .cardWrapper {
-  flex: 0 0 auto; /* prevent flex items from shrinking */
-  scroll-snap-align: start;
-  width: 250px; /* fixed width for consistent card sizes */
+    flex: 0 0 auto; /* prevent flex items from shrinking */
+    scroll-snap-align: start;
 }
 
 /* Hide scrollbar (WebKit)  HIDE THESE LATER WHEN I MAKE SIDE ARROWS TO NAVIGATE THROUGH THEM */
@@ -38,16 +40,17 @@
 } */
 
 /**************************/
-/* Responsive tweaks */
+/* Below 1200px (Landscape Tablets) */
 /**************************/
 @media (max-width: 44em) {
   .cardWrapper {
-    width: 200px;
   }
 }
 
+/**************************/
+/* Below 944px (Tablets) */
+/**************************/
 @media (max-width: 34em) {
   .cardWrapper {
-    width: 150px;
   }
 }

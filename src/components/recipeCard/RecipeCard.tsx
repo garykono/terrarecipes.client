@@ -1,7 +1,5 @@
-import recipeCardStyles from './RecipeCard.module.css';
-import leanStyles from './RecipeCardLean.module.css';
-import richStyles from './RecipeCardRich.module.css';
 import { RecipeWithMarkForDelete } from "../../api/types/recipe";
+import Card from '../card/Card';
 
 interface RecipeCardProps {
     recipe: RecipeWithMarkForDelete;
@@ -10,31 +8,41 @@ interface RecipeCardProps {
 }
 
 export default function RecipeCard({ recipe, size = 'lean', className }: RecipeCardProps) {
-    return (
-        <div className={`card recipeCard ${size === 'lean' ? leanStyles.recipeCard : richStyles.recipeCard } ${className}`}>
-            <img 
-                className={`${recipeCardStyles.img} ${size === 'rich' && richStyles.img}`}
-                style={recipe.markForDelete? { opacity: 0.5 } : {}}
-                src={recipe.image? recipe.image : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"}
-            />
-            <div className={`${recipeCardStyles.recipeContent} ${size === 'rich' && richStyles.recipeContent}`}>
-                <p className={`${recipeCardStyles.recipeName} ${size === 'lean' ? leanStyles.recipeName : richStyles.recipeName}`}>{recipe.name}</p>
-                {size === 'rich' && 
-                    <div className={richStyles.info}>
-                        <p className={recipeCardStyles.category}>
-                            <span className={recipeCardStyles.categoryIcon}>🍲</span>
-                            <span className={recipeCardStyles.categoryText}>{" Dinner"}</span>
-                        </p>
-                        <p className={`${richStyles.recipeDescription}`}>{recipe.description}</p>
-                    </div>
+    const metaDataItems = size === 'lean' 
+        ? [
+                {
+                    icon: "⭐",
+                    value: "4.8"
+                },
+                {
+                    icon: "⏱",
+                    value: "35 min"
                 }
-                <ul className={`${recipeCardStyles.metaDataRow} ${size === 'rich' && richStyles.metaDivide}`}>
-                    <li className="text-meta"><span>⭐ 4.8</span></li>
-                    <li className="text-meta"><span>⏱ 35 min</span></li>
-                    {/* if more attributes causes this row to take 2 lines, make small adjustments like text size to 12px, shorter labels, etc.
-                    <li className="text-meta"><span>🔥 Medium</span></li> */}
-                </ul>
-            </div>
-        </div>
+            ]
+        : [
+                {
+                    icon: "⭐",
+                    value: "4.8"
+                },
+                {
+                    icon: "⏱",
+                    value: "35 min"
+                },
+                {
+                    icon: "🔥",
+                    value: "Medium"
+                }
+
+            ]
+    return (
+        <Card
+            title={recipe.name}
+            headerSubTextIcon="🍲"
+            headerSubText="Dinner"
+            description={recipe.description}
+            metaDataItems={metaDataItems}
+            image={recipe.image}
+            size={size}
+        />
     )
 }

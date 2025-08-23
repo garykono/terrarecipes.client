@@ -312,7 +312,7 @@ export default function AccountEditPage () {
         <div className="page-account-edit">
             <BasicHero title="Account Edit Page" />
 
-            <section className="section section-account-edit">
+            <section className="page-top section section-account-edit">
                 <div className="container">
                     <AccountManagementForm />
                 </div>

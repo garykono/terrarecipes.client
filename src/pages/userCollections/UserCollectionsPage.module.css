@@ -1,3 +1,7 @@
+.pageTitle {
+    
+}
+
 .deleteCollectionModalButton {
     align-self: start;
 }
@@ -11,29 +15,23 @@
 .collections {
     display: flex;
     flex-direction: column;
-    gap: 2.0rem;
-    margin: 5.6rem 0;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-section);
 }
 
 .collection {
     display: flex;
-    gap: 0.8rem;
+    gap: var(--space-md);
+}
+
+.collectionCard:hover {
+    background-color: var(--color-bg-panel);
 }
 
 .collectionLink {
     display: flex;
     flex-grow: 1;
     max-width: 70rem;
-}
-
-.collectionCard {
-    display: flex;
-    flex-grow: 1;
-    background-color: #ffffff;
-    padding: 1.6rem 2rem;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 0 2em 4em rgba(0, 0, 0, 0.07);
 }
 
 .collectionTitle {
@@ -44,6 +42,7 @@
 
 .collectionManagementButtons {
     display: flex;
+    justify-content: end;
     align-items: center;
     gap: 0.4rem;
 }

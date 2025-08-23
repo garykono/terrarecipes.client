@@ -83,38 +83,6 @@ function SingleRecipePage() {
         })
     }
 
-    const addToCollectionDropdownButton = (
-        <div className={`dropdown ${addToCollectionDropdownButtonStatus}`}>
-            <div className="dropdown-trigger">
-                <button 
-                    className="button" 
-                    onClick={() => setAddToCollectionDropdownButtonStatus(
-                        addToCollectionDropdownButtonStatus === "" ? "dropdown--is-active" : ""
-                    )}>
-                    <span>Add to Collection</span>
-                </button>
-            </div>
-            <div className="dropdown-menu">
-                <div className="dropdown-content">
-                    {user && user.collections.length > 0 ?
-                        user.collections.map((collection) => {
-                            return (
-                                <a 
-                                    key={collection._id} 
-                                    className="dropdown-item"
-                                    onClick={() => handleAddToCollection(collection._id)}
-                                >
-                                        {collection.name}
-                                </a>
-                            );
-                        }) : <div className="dropdown-item">Create a collection and it will show up here!</div>
-                    }
-                </div>
-            </div>
-            <FormMessage message={addToCollectionStatus} />
-        </div>
-    )
-
     if (error) {
         return <GlobalErrorDisplay error={error} />;
     }
@@ -149,6 +117,7 @@ function SingleRecipePage() {
             element: <Dropdown 
                 label={'Add to Collection'} 
                 items={collectionItems} 
+                alignment="right"
                 triggerClassName='toolbar--button'
                 noItemsMessage='Create a collection and it will show up here!'
             />
