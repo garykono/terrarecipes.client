@@ -32,7 +32,7 @@ export default function FeaturedCluster({ title, hero, companions, className } :
                     <RecipeCardWithFeatures recipe={hero} size="rich" />
                 </div>
                 <div className={styles.companionRecipes}>
-                    {companions.map(recipe => <RecipeCardWithFeatures recipe={recipe} size="lean" />)}
+                    {companions.map((recipe, index) => <RecipeCardWithFeatures key={index} recipe={recipe} size="lean" />)}
                 </div>
             </div>
         </div>

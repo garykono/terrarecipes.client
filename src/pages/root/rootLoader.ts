@@ -85,13 +85,13 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
     if (standardMeasurements) flattenedStandardMeasurementsForFuse = flattenDataForFuse(standardMeasurements, "measurement");
     if (flattenedStandardIngredientsForFuse) rawIngredientsList = flattenedStandardIngredientsForFuse.flatMap(ingredient => [
         ingredient.name,
-        ...ingredient.plural,
+        ingredient.plural,
         ...ingredient.aliases
     ]);
     if (rawIngredientsList) rawIngredientsSet = new Set(rawIngredientsList);
     if (flattenedStandardMeasurementsForFuse) rawUnitsList = flattenedStandardMeasurementsForFuse.flatMap(units => [
         units.name,
-        ...units.plural,
+        units.plural,
         ...units.symbol,
         ...units.aliases
     ]);

@@ -11,14 +11,15 @@
 
 .managementButtons {
     display: flex;
-    gap: 0.2rem;
-    padding: 0.8rem 0 0.4rem 0;
+    gap: var(--space-lg);
+    justify-content: center;
+    margin: var(--space-md) 0;
 }
 
 .managementIcon {
-    width: var(--font-size-subsection-title);
-    height: var(--font-size-subsection-title);
     cursor: pointer;
+    border: none;
+    background-color: inherit;
 }
 
 .recipeLink {

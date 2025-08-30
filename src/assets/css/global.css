@@ -228,12 +228,12 @@ h1, .page-title {
 
 h2, .section-title {
     font-weight: var(--font-weight-semi-bold);
-    font-size: var(--font-size-section-title)
+    font-size: var(--font-size-section-title);
 }
 
 h3, .subsection-title {
     font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-subsection-title)
+    font-size: var(--font-size-subsection-title);
 }
 
 /* Paragraphs and general text */
@@ -256,6 +256,10 @@ p, li, span, .text {
     font-size: var(--font-size-tag);
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-normal);
+}
+
+.managementIcon {
+    font-size: var(--font-size-subsection-title);
 }
 
 .category-color-standard {

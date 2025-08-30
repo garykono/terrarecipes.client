@@ -24,6 +24,9 @@ function UserRecipesPage() {
     const [ deletedRecipeName, setDeletedRecipeName ] = useState('');
     const [ error, setError ] = useState(null);
 
+    // Collection Modification
+    const [showCollectionModificationButtons, setShowCollectionModificationButtons] = useState(false);
+
     // Show button to add recipe
     useEffect(() => {
         if(user) {
@@ -64,7 +67,7 @@ function UserRecipesPage() {
                     return <RecipeCardWithFeatures 
                         key={recipe._id} 
                         recipe={recipe}
-                        editMode={true} 
+                        editMode={showCollectionModificationButtons} 
                         setError={setError as (err: Error | null) => void}
                         setDeletedRecipeName={setDeletedRecipeName} 
                     />
@@ -87,7 +90,12 @@ function UserRecipesPage() {
 
             <div className='container'>
                 {showAddRecipeButton && 
-                    <Toolbar actions={[{ label: "New Recipe", icon: "➕", to: '/createRecipe' }]} /> 
+                    <Toolbar 
+                        actions={[
+                            { label: "Manage Recipes", icon: "✏️", onClick: () => setShowCollectionModificationButtons(!showCollectionModificationButtons) },
+                            { label: "New Recipe", icon: "➕", to: '/createRecipe' }
+                        ]} 
+                    /> 
                 }
             </div>
 

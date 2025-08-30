@@ -21,7 +21,7 @@
 
 .collection {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-lg);
 }
 
 .collectionCard:hover {
@@ -44,11 +44,10 @@
     display: flex;
     justify-content: end;
     align-items: center;
-    gap: 0.4rem;
+    gap: var(--space-lg);
 }
 
 .managementButton {
-    font-size: 1.6rem;
     cursor: pointer;
     border: none;
     background-color: inherit;

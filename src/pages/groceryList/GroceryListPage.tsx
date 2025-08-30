@@ -4,11 +4,9 @@ import { useLoaderData, useRouteLoaderData } from 'react-router';
 import { GroceryListLoaderResult } from './groceryListLoader';
 import { RootLoaderResult } from '../root/rootLoader';
 import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
-import BasicHero from '../../components/basicHero/BasicHero';
-import { Ingredient } from '../../api/types/recipe';
-import { combineIngredients, CombinedIngredients, categorizeAndCombineIngredients, CategorizedAndCombinedIngredients } from '../../utils/combineIngredients';
 import { StandardMeasurements } from '../../api/types/standardized';
 import { formatWithUnicodeFraction } from '../../utils/helpers';
+import { categorizeAndCombineIngredients, CategorizedAndCombinedIngredients, combineIngredients } from '../../utils/combineIngredients/index'
 
 export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection' }) {
     // const navigate = useNavigate();
@@ -49,6 +47,7 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                 uncombinedIngredients: uncombinedIngredientsList, 
                 standardIngredients,
                 standardIngredientsLookupTable,
+                standardMeasurements,
                 standardMeasurementsLookupTable
             });
             
@@ -85,20 +84,20 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
 
                     <section className="standardizedIngredientsSection">
                         <div className={`grid grid--cols-3 ${styles.ingredientsList}`}>
-                            {Object.keys(ingredientsList.standardizedIngredients).map((categoryName, index) => {
+                            {Object.keys(ingredientsList.standardizedIngredients).map((categoryName) => {
                                 const categoryIngredients = ingredientsList.standardizedIngredients[categoryName];
                                 return (
                                     <div 
-                                        key={index}
+                                        key={categoryName}
                                         className={`card card--grocery-category left-border-gradient ${styles.categoryIngredientSection}`} 
                                         style={{ "--category-color": categoryColors[categoryName] } as React.CSSProperties}
                                     >
                                         <h3 className={`subsection-title underlined-title ${styles.categoryTitle}`}>{categoryName}</h3>
                                         {categoryIngredients.map((ingredient, key) => {
                                             return (
-                                                <ul key={key}>
+                                                <ul key={ingredient.name}>
                                                     {ingredient.normalizedRequiredUnitQuantity > 0 &&
-                                                        <li key={key} className={styles.ingredientListItem}>
+                                                        <li key={ingredient.name + ".required"} className={styles.ingredientListItem}>
                                                             <input type="checkbox" className={styles.ingredientCheckbox} />
                                                             <span className={styles.ingredientAmount}>
                                                                 {`${getFormattedQuantityAndUnitLabel(
@@ -115,7 +114,7 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                                                         </li>
                                                     }
                                                     {ingredient.hasOptionalIngredientInThisList &&
-                                                        <li key={key} className={styles.ingredientListItem}>
+                                                        <li key={ingredient.name + ".optional"} className={styles.ingredientListItem}>
                                                             <input type="checkbox" className={styles.ingredientCheckbox} />
                                                             <span className={styles.ingredientAmount}>
                                                                 {ingredient.normalizedRequiredUnitQuantity > 0 ? 'Optional: more ' : 'Optional: '}
@@ -171,9 +170,10 @@ function getFormattedQuantityAndUnitLabel(
     if (!unit) return label;
 
     //if (unit === "fluid ounce") unit = "ounce";
-    
-    if (quantity > 1 && standardMeasurements && standardMeasurements[unit].plural) {
-        label = label + standardMeasurements[unit].plural[0];
+    if (unit === "whole") {
+        return label;
+    } else if (quantity > 1 && standardMeasurements && standardMeasurements[unit]?.plural) {
+        label = label + standardMeasurements[unit].plural;
     } else {
         label = label + unit;
     }

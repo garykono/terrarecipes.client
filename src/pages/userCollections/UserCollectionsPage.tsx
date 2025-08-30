@@ -193,16 +193,16 @@ function UserCollectionsPage() {
                         {showCollectionModificationButtons && 
                             <div className={styles.collectionManagementButtons}>
                                 <button 
-                                    className={styles.managementButton}
+                                    className={`${styles.managementButton} managementIcon `}
                                     onClick={() => navigate(`/editCollection/${collection._id}`)}
                                 >
-                                    <MdEdit />   
+                                    ✏️
                                 </button>
                                 <button 
-                                    className={`${styles.managementButton} js-modal-trigger`} 
+                                    className={`${styles.managementButton} managementIcon js-modal-trigger`} 
                                     onClick={() => handleDeleteCollectionButtonClick(collection.name, collection._id)}
                                 >
-                                    <MdDelete />      
+                                    🗑️    
                                 </button>                                            
                             </div>
                         }
@@ -229,7 +229,7 @@ function UserCollectionsPage() {
             <div className="container">
                 <Toolbar 
                     actions={[
-                        { label: "Modify Collections", icon: "✏️", onClick: () => setShowCollectionModificationButtons(!showCollectionModificationButtons) },
+                        { label: "Manage Collections", icon: "✏️", onClick: () => setShowCollectionModificationButtons(!showCollectionModificationButtons) },
                         { label: "Create Collection", icon: "➕", onClick: handleCreateCollectionButtonClick }
                     
                     ]} />

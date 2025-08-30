@@ -1,34 +1,12 @@
-import { Ingredient } from "../api/types/recipe";
-import { StandardIngredient, StandardIngredients, StandardIngredientType, StandardLookupTable, StandardMeasurements } from "../api/types/standardized";
-import { logger } from "./logger";
+import { Ingredient } from "../../api/types/recipe";
+import { StandardIngredient, StandardIngredients, StandardLookupTable, StandardMeasurements } from "../../api/types/standardized";
+import { logger } from "../logger";
+import { convertAnyUnit } from "./convert/convert-any";
+import { normalizeAndRoundDisplayUnit } from "./display/normalize";
+import { NormalizedAndNamedIngredient, NormalizedIngredient, StandardUnit, ValidatedIngredient } from "./types";
+import { Unit } from "./units";
 
 const DEBUG = false;
-
-type VolumeUnit = 'teaspoon' | 'tablespoon' | 'cup' | 'milliliter' | 'liter' | 'fluid ounce';
-type WeightUnit = 'gram' | 'kilogram' | 'ounce' | 'pound';
-type Unit = VolumeUnit | WeightUnit;
-
-interface StandardUnit {
-    name: string;
-    type: StandardIngredientType
-}
-
-interface ValidatedIngredient {
-    standardConversionUnit: Unit | null;
-    mainCategory: string;
-    requiredStandardQuantity: number;
-    optionalStandardQuantity: number;
-    hasOptionalIngredientInThisList: boolean;
-}
-
-interface NormalizedIngredient extends ValidatedIngredient {
-    normalizedRequiredUnitQuantity: number;
-    normalizedRequiredUnit: Unit | null;
-}
-
-interface NormalizedAndNamedIngredient extends NormalizedIngredient {
-    name: string;
-}
 
 export interface CombinedIngredients {
     standardizedIngredients: {
@@ -220,7 +198,7 @@ export function combineIngredients({
     Object.keys(validatedIngredients.standardizedIngredients).forEach(ingredientName => {
         const validatedIngredient = validatedIngredients.standardizedIngredients[ingredientName];
         const listAddedTo = combinedIngredients.standardizedIngredients;
-        normalizeAndAddStandardizedIngredient(ingredientName, validatedIngredient, listAddedTo)
+        normalizeAndAddStandardizedIngredient(standardIngredients[ingredientName], validatedIngredient, listAddedTo)
     })
 
     // Copy miscellaneous ingredients array
@@ -237,7 +215,7 @@ export function combineIngredients({
 }
 
 function normalizeAndAddStandardizedIngredient(
-    ingredientName: string, 
+    ingredientInfo: StandardIngredient, 
     validatedIngredient: ValidatedIngredient, 
     listAddedTo: {
         [key: string]: {}
@@ -245,14 +223,15 @@ function normalizeAndAddStandardizedIngredient(
 ) {
     // For now, only normalize and round for the required amounts
     const { normalizedUnitQuantity, normalizedUnit } = normalizeAndRoundDisplayUnit(
+        ingredientInfo,
         validatedIngredient.requiredStandardQuantity, 
         validatedIngredient.standardConversionUnit
     );
     if (DEBUG) {
-        logger.debug(`${ingredientName} normalization: 
+        logger.debug(`${ingredientInfo.name} normalization: 
             ${validatedIngredient.requiredStandardQuantity} ${validatedIngredient.standardConversionUnit} => ${normalizedUnitQuantity} ${normalizedUnit}`);
     }
-    listAddedTo[ingredientName] = {
+    listAddedTo[ingredientInfo.name] = {
         ...validatedIngredient,
         normalizedRequiredUnitQuantity: normalizedUnitQuantity,
         normalizedRequiredUnit: normalizedUnit
@@ -289,305 +268,8 @@ export function categorizeAndCombineIngredients(combinedIngredients: CombinedIng
 }
 
 
-type UnitConversionTable = {
-    [from in Unit]?: {
-        [to in Unit]?: number;
-    };
-};
-
-const unitConversionTable: UnitConversionTable = {
-    // volume
-    teaspoon: {
-        tablespoon: 1 / 3,
-        cup: 1 / 48,
-        milliliter: 4.92892,
-        "fluid ounce": 1 / 6  // 1 fl oz = 6 tsp
-    },
-    tablespoon: {
-        teaspoon: 3,
-        cup: 1 / 16,
-        milliliter: 14.7868,
-        "fluid ounce": 1 / 2  // 1 fl oz = 2 tbsp
-    },
-    cup: {
-        teaspoon: 48,
-        tablespoon: 16,
-        milliliter: 240,
-        "fluid ounce": 8  // 1 cup = 8 fl oz
-    },
-    milliliter: {
-        teaspoon: 1 / 4.92892,
-        tablespoon: 1 / 14.7868,
-        cup: 1 / 240,
-        "fluid ounce": 1 / 29.5735  // 1 fl oz = 29.5735 ml
-    },
-    liter: {
-        milliliter: 1000,
-        "fluid ounce": 1000 / 29.5735
-    },
-    "fluid ounce": {
-        teaspoon: 6,
-        tablespoon: 2,
-        cup: 1 / 8,
-        milliliter: 29.5735,
-        liter: 1 / (1000 / 29.5735)
-    },
-
-    // weight
-    gram: {
-        kilogram: 0.001,
-        ounce: 1 / 28.3495,
-        pound: 1 / 453.592
-    },
-    kilogram: {
-        gram: 1000
-    },
-    ounce: {
-        gram: 28.3495,
-        pound: 1 / 16
-    },
-    pound: {
-        gram: 453.592,
-        ounce: 16
-    }
-};
-
-type ConversionsMap = Record<string, number>;
-
-function pickCrossTable(
-    ingredientInfo: StandardIngredient,
-    form?: string | null,
-    useTrueValues = false
-): ConversionsMap {
-    if (useTrueValues) {
-        const tvForm = form ? ingredientInfo.conversions.trueValues?.[form] : undefined;
-        if (tvForm) return tvForm;
-        if (ingredientInfo.conversions.trueValues) return ingredientInfo.conversions.trueValues;
-    }
-    const cfForm = form ? ingredientInfo.conversions.crossConversionsByForm?.[form] : undefined;
-    return cfForm ?? ingredientInfo.conversions.crossConversions;
-}
-
-// per 1 standardCountUnit, how many of [unit]
-function toStandardCount(ingredientInfo: StandardIngredient, amount: number, countUnit: string): number {
-    if (!ingredientInfo.standardCountUnit) throw new Error(`No standardCountUnit for ${ingredientInfo.name}.`);
-    if (countUnit === ingredientInfo.standardCountUnit) return amount;
-    const factorPerStd = ingredientInfo.conversions.countConversions[countUnit];
-    if (factorPerStd == null) throw new Error(`No count conversion for unit "${countUnit}".`);
-    return amount / factorPerStd; // amt [unit] → stdCount
-}
-
-function fromStandardCount(ingredientInfo: StandardIngredient, stdCount: number, targetCountUnit: string): number {
-    if (!ingredientInfo.standardCountUnit) throw new Error(`No standardCountUnit for this ingredient.`);
-    if (targetCountUnit === ingredientInfo.standardCountUnit) return stdCount;
-    const factorPerStd = ingredientInfo.conversions.countConversions[targetCountUnit];
-    if (factorPerStd == null) throw new Error(`No count conversion for unit "${targetCountUnit}".`);
-    return stdCount * factorPerStd; // stdCount → target [unit]
-}
-
-function convertAnyUnit(
-    amount: number, 
-    from: StandardUnit, 
-    to: StandardUnit,
-    ingredientInfo: StandardIngredient, 
-    options?: {
-        form?: string | null;
-        useTrueValues?: boolean;
-    }
-): number {
-    const form = options?.form ?? null;
-    const useTrueValues = options?.useTrueValues ?? false;
-
-    if (DEBUG) logger.debug(`converting from ${from.name} (${from.type}) --> ${to.name} (${to.type})`);
-    
-    if (from.name === to.name && from.type === to.type) return amount;
-
-    // If the types are similar, then as long as the they aren't a count type, use convertSameType
-    if (from.type === to.type) {
-        if (from.type === "count") {
-            const stdCount = toStandardCount(ingredientInfo, amount, from.name);
-            return fromStandardCount(ingredientInfo, stdCount, to.name);
-        } else {
-            return convertSameType(amount, from.name as Unit, to.name as Unit);
-        }
-    } 
-
-    // Convert the unit to the anchors (gram for mass, milliliter for volume, or the ingredient's "standardCountUnit" for count)
-    // cross-family: normalize to anchors
-    const cross = pickCrossTable(ingredientInfo, form, useTrueValues);
-    const gPerStdDisp = cross['gram'];
-    const mlPerStdDisp = cross['milliliter'];
-
-    let stdCount: number | null = null;
-    let grams: number | null = null;
-    let mls: number | null = null;
-
-    // normalize FROM
-    if (from.type === 'count') {
-        stdCount = toStandardCount(ingredientInfo, amount, from.name);
-        if (typeof gPerStdDisp === 'number') grams = stdCount * gPerStdDisp;
-        if (typeof mlPerStdDisp === 'number') mls   = stdCount * mlPerStdDisp;
-    } else if (from.type === 'mass') {
-        grams = (from.name === 'gram') ? amount : convertSameType(amount, from.name as Unit, 'gram');
-        if (typeof gPerStdDisp === 'number' && gPerStdDisp !== 0) stdCount = grams / gPerStdDisp;
-        if (stdCount != null && typeof mlPerStdDisp === 'number') mls = stdCount * mlPerStdDisp;
-    } else { // from volume
-        mls = (from.name === 'milliliter') ? amount : convertSameType(amount, from.name as Unit, 'milliliter');
-        if (typeof mlPerStdDisp === 'number' && mlPerStdDisp !== 0) stdCount = mls / mlPerStdDisp;
-        if (stdCount != null && typeof gPerStdDisp === 'number') grams = stdCount * gPerStdDisp;
-    }
-
-    // produce TO
-    if (to.type === 'count') {
-        if (stdCount == null) {
-            if (!ingredientInfo.standardCountUnit) throw new Error(`Cannot convert to count for this ingredient.`);
-            if (grams != null && typeof gPerStdDisp === 'number' && gPerStdDisp !== 0) stdCount = grams / gPerStdDisp;
-            else if (mls != null && typeof mlPerStdDisp === 'number' && mlPerStdDisp !== 0) stdCount = mls / mlPerStdDisp;
-            else throw new Error(`No path to count (missing anchors).`);
-        }
-        return fromStandardCount(ingredientInfo, stdCount, to.name);
-    }
-
-    if (to.type === 'mass') {
-        if (grams == null) {
-            if (stdCount != null && typeof gPerStdDisp === 'number') grams = stdCount * gPerStdDisp;
-            else if (mls != null && typeof gPerStdDisp === 'number' && typeof mlPerStdDisp === 'number' && mlPerStdDisp !== 0) {
-                const cs = mls / mlPerStdDisp;
-                grams = cs * gPerStdDisp;
-            } else throw new Error(`No path to grams.`);
-        }
-        return (to.name === 'gram') ? grams : convertSameType(grams, 'gram', to.name as Unit);
-    }
-
-    // to.type === 'volume'
-    if (mls == null) {
-        if (stdCount != null && typeof mlPerStdDisp === 'number') mls = stdCount * mlPerStdDisp;
-        else if (grams != null && typeof gPerStdDisp === 'number' && gPerStdDisp !== 0 && typeof mlPerStdDisp === 'number') {
-            const cs = grams / gPerStdDisp;
-            mls = cs * mlPerStdDisp;
-        } else throw new Error(`No path to milliliters.`);
-    }
-    return (to.name === 'milliliter') ? mls : convertSameType(mls, 'milliliter', to.name as Unit);
-
-}
-
-function convertSameType(amount: number, from: Unit, to: Unit): number {
-    if (from === to) return amount;
-
-    const direct = unitConversionTable[from]?.[to];
-    if (direct) return amount * direct;
-
-    // Try indirect path (e.g., tbsp → ml → cup)
-    const intermediates = unitConversionTable[from];
-    if (!intermediates) throw new Error(`No conversion path from ${from}`);
-
-    for (const intermediate in intermediates) {
-        const midUnit = intermediate as Unit;
-        const toMid = unitConversionTable[from]?.[midUnit];
-        const fromMid = unitConversionTable[midUnit]?.[to];
-        if (toMid && fromMid) {
-            return amount * toMid * fromMid;
-        }
-    }
-
-    throw new Error(`No conversion path from ${from} to ${to}`);
-}
 
 
-type DisplayThresholds = {
-    [unit in Unit]?: { to: Unit; threshold: number }
-};
 
-const unitDisplayThresholds: DisplayThresholds = {
-    // volume (simple chain)
-    milliliter: { to: 'teaspoon', threshold: 5 },     // 5 mL = 1 tsp
-    teaspoon:   { to: 'tablespoon', threshold: 3 },   // 3 tsp = 1 tbsp
-    tablespoon: { to: 'fluid ounce', threshold: 2 },  // 2 tbsp = 1 fl oz
-    'fluid ounce': { to: 'cup', threshold: 8 },       // 8 fl oz = 1 cup
-    cup:        { to: 'liter', threshold: 4 },        // ~4 cups ≈ 1 L
-
-    // mass (simple chain)
-    gram:       { to: 'kilogram', threshold: 1000 },
-    ounce:      { to: 'pound', threshold: 16 }
-};
-
-const unitDowngradeThresholds: DisplayThresholds = {
-    // volume (reverse chain)
-    liter:        { to: 'cup', threshold: 1 },          // <1 L → cups
-    cup:          { to: 'fluid ounce', threshold: 1 },  // <1 cup → fl oz
-    'fluid ounce':{ to: 'tablespoon', threshold: 1 },   // <1 fl oz → tbsp
-    tablespoon:   { to: 'teaspoon', threshold: 1 },     // <1 tbsp → tsp
-    teaspoon:     { to: 'milliliter', threshold: 1 },   // <1 tsp → mL
-
-    // mass (reverse chain)
-    kilogram:     { to: 'gram', threshold: 0.5 },       // <0.5 kg → g
-    pound:        { to: 'ounce', threshold: 0.5 }       // <0.5 lb → oz
-};
-
-function roundToCommonFraction(value: number): number {
-    const fractions = [0, 0.25, 0.5, 0.75, 1];
-    const integer = Math.floor(value);
-    const decimal = value - integer;
-    const closest = fractions.reduce((prev, curr) =>
-        Math.abs(curr - decimal) < Math.abs(prev - decimal) ? curr : prev
-    );
-    return +(integer + closest).toFixed(2);
-}
-
-export function normalizeAndRoundDisplayUnit(
-    amount: number,
-    unit: Unit | null
-): { normalizedUnitQuantity: number; normalizedUnit: Unit | null } {
-    const DEBUG = false;
-
-    if (!unit) {
-        return {
-            normalizedUnitQuantity: roundToCommonFraction(amount),
-            normalizedUnit: unit
-        };
-    }
-
-    let currentUnit = unit;
-    let currentAmount = amount;
-
-    // Upgrade to larger units if possible
-    while (true) {
-        const rule = unitDisplayThresholds[currentUnit];
-        if (!rule) break;
-
-        const { to, threshold } = rule;
-        if (currentAmount < threshold) break;
-
-        const conversionRate = unitConversionTable[currentUnit]?.[to];
-        if (!conversionRate) break;
-
-        if (DEBUG) logger.debug(`converted ${currentAmount} ${currentUnit} => ${currentAmount * conversionRate} ${to} `)
-        currentAmount = currentAmount * conversionRate;
-        currentUnit = to;
-    }
-
-    // Downgrade to smaller units if below threshold
-    while (true) {
-        const rule = unitDowngradeThresholds[currentUnit];
-        if (!rule) break;
-
-        const { to, threshold } = rule;
-        if (currentAmount >= threshold) break;
-
-        const conversionRate = unitConversionTable[currentUnit]?.[to];
-        if (!conversionRate) break;
-
-        if (DEBUG) logger.debug(`converted ${currentAmount} ${currentUnit} => ${currentAmount * conversionRate} ${to} `)
-        currentAmount = currentAmount * conversionRate;
-        currentUnit = to;
-    }
-
-    const roundedAmount = roundToCommonFraction(currentAmount);
-
-    return {
-        normalizedUnitQuantity: roundedAmount,
-        normalizedUnit: currentUnit
-    };
-}
 
 

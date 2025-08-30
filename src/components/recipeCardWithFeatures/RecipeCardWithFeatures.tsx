@@ -1,6 +1,6 @@
 import styles from './RecipeCardWithFeatures.module.css';
 import { useState, useEffect, useContext, Fragment } from 'react';
-import { Link, useNavigate, useRevalidator } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useRevalidator } from 'react-router-dom';
 import { MdEdit, MdDelete, MdOutlineAddCircle, MdOutlineRemoveCircle } from "react-icons/md";
 import { deleteRecipeById } from '../../api/queries/recipesApi';
 import RecipeCard from '../recipeCard/RecipeCard'
@@ -33,6 +33,7 @@ export default function RecipeCardWithFeatures({
     className
     }: RecipeCardWithFeaturesProps
 ) {
+    const navigate = useNavigate();
     const revalidator = useRevalidator();
     const [showModal, setShowModal] = useState(false);
     const [recipeIdToDelete, setRecipeIdToDelete] = useState("");
@@ -67,13 +68,18 @@ export default function RecipeCardWithFeatures({
     function getManagementButtons(recipeId: string) {
         return (
             <div className={`${styles.managementButtons}`}>
-                <Link to={`/editRecipe/${recipeId}`}>
-                    <MdEdit className={styles.managementIcon} />
-                </Link>
-                <MdDelete 
-                    className={`${styles.managementIcon} js-modal-trigger`}
-                    onClick={() => handleDeleteRecipeButtonClick(recipeId)}>
-                </MdDelete>
+                <button 
+                    className={`${styles.managementIcon} managementIcon`}
+                    onClick={() => navigate(`/editRecipe/${recipeId}`)}
+                >
+                    ✏️
+                </button>
+                <button 
+                    className={`${styles.managementIcon} managementIcon js-modal-trigger`}
+                    onClick={() => handleDeleteRecipeButtonClick(recipeId)}
+                >
+                    🗑️
+                </button>
             </div>
         );
     }
@@ -87,11 +93,11 @@ export default function RecipeCardWithFeatures({
                         : <MdOutlineRemoveCircle onClick={() => onRemove(recipe._id)} className={styles.managementIcon} /> 
                     )
                 }
-                {editMode && getManagementButtons(recipe._id)}
             </div>
             <Link to={`/recipe/${recipe._id}`} className={styles.recipeLink}>
                 <RecipeCard recipe={recipe} size={size}/>
             </Link>
+            {editMode && getManagementButtons(recipe._id)}
             {showModal && 
                 <Modal 
                     onClose={handleModalClose} 
