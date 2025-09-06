@@ -1,4 +1,7 @@
-.hero {
+.bannerHero, .underlineHero {
+}
+
+.bannerHero {
     background-color: var(--color-brand-primary-light);
     padding: 4.8rem 1.6rem;
     display: flex;
@@ -6,6 +9,10 @@
     gap: 2.4rem;
     align-items: center;
     text-align: center;
+}
+
+.underlineHero {
+    margin-bottom: var(--space-lg);
 }
 
 .heroText {

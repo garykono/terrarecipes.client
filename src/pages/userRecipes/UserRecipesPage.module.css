@@ -2,10 +2,8 @@
     background-color: var(--primary-background);
 }
 
-.createRecipe {
-    display: flex;
-    justify-content: end;
-    margin: 3.6rem 0;
+.search {
+    margin: var(--space-sm) 0 var(--space-xs) 0;
 }
 
 .recipes {

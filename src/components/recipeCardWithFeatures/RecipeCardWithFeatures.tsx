@@ -95,7 +95,7 @@ export default function RecipeCardWithFeatures({
                 }
             </div>
             <Link to={`/recipe/${recipe._id}`} className={styles.recipeLink}>
-                <RecipeCard recipe={recipe} size={size}/>
+                <RecipeCard recipe={recipe} size={size} hoverable={true} />
             </Link>
             {editMode && getManagementButtons(recipe._id)}
             {showModal && 

@@ -69,10 +69,6 @@ export default function BrowsePage() {
     //     return () => { cancelled = true; };
     // }, [categories]);
 
-    useEffect(() => {
-        console.log(categories.featured)
-    }, [])
-
     if (error) {
         return <GlobalErrorDisplay error={error} />;
     }
@@ -107,9 +103,9 @@ export default function BrowsePage() {
                     <h2 className={`section-title ${styles.categoriesTitle}`}>Seasonal and Trending</h2>
                     <div className={styles.featuredCategoriesContainer}>
                         <div className={styles.featuredCategoriesList}>
-                            {categories.featured.map(category => {
+                            {categories.featured.map((category, index) => {
                                 return (
-                                    <Link to={`/browse/core/${category.slug}`}>
+                                    <Link to={`/browse/core/${category.slug}`} key={index}>
                                         <div className={`card ${styles.featuredCategoryCard}`}>
                                             <span className={styles.featuredIconCircle}>
                                                 <span className={styles.featuredCategoryIcon}>

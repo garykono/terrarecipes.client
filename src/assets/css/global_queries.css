@@ -44,7 +44,17 @@ Instead, 1rem = 1em = 16px */
 /**************************/
 
 @media (max-width: 34em) {
-    
+    .container {
+        padding: 0 var(--space-sm);
+    }
+
+    .card--padded {
+        padding: var(--space-lg) var(--space-lg);
+    }
+
+    .card--form {
+        padding: var(--space-lg) var(--space-lg);
+    }
 }
 
 

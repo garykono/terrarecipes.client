@@ -82,7 +82,7 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                         </header>
                     </section>
 
-                    <section className="standardizedIngredientsSection">
+                    <section className="section standardizedIngredientsSection">
                         <div className={`grid grid--cols-3 ${styles.ingredientsList}`}>
                             {Object.keys(ingredientsList.standardizedIngredients).map((categoryName) => {
                                 const categoryIngredients = ingredientsList.standardizedIngredients[categoryName];
@@ -95,37 +95,46 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                                         <h3 className={`subsection-title underlined-title ${styles.categoryTitle}`}>{categoryName}</h3>
                                         {categoryIngredients.map((ingredient, key) => {
                                             return (
-                                                <ul key={ingredient.name}>
+                                                <li key={ingredient.name} className={styles.ingredientListItem}>
+                                                    <input type="checkbox" className={styles.ingredientCheckbox} />
                                                     {ingredient.normalizedRequiredUnitQuantity > 0 &&
-                                                        <li key={ingredient.name + ".required"} className={styles.ingredientListItem}>
-                                                            <input type="checkbox" className={styles.ingredientCheckbox} />
                                                             <span className={styles.ingredientAmount}>
                                                                 {`${getFormattedQuantityAndUnitLabel(
                                                                     ingredient.normalizedRequiredUnitQuantity, 
-                                                                    ingredient.normalizedRequiredUnit, 
+                                                                    ingredient.normalizedUnit, 
                                                                     standardMeasurements,
-                                                                    ingredient.hasOptionalIngredientInThisList
                                                                 )} `}
                                                             </span>
-                                                            <span className={styles.ingredientText}>
-                                                                {(ingredient.normalizedRequiredUnitQuantity > 1 && standardIngredients) ? 
-                                                                    standardIngredients[ingredient.name].plural : ingredient.name}
-                                                            </span>
-                                                        </li>
                                                     }
-                                                    {ingredient.hasOptionalIngredientInThisList &&
-                                                        <li key={ingredient.name + ".optional"} className={styles.ingredientListItem}>
-                                                            <input type="checkbox" className={styles.ingredientCheckbox} />
-                                                            <span className={styles.ingredientAmount}>
-                                                                {ingredient.normalizedRequiredUnitQuantity > 0 ? 'Optional: more ' : 'Optional: '}
-                                                            </span>
-                                                            <span className={styles.ingredientText}>
-                                                                {(ingredient.normalizedRequiredUnitQuantity > 1 && standardIngredients) ? 
-                                                                    standardIngredients[ingredient.name].plural : ingredient.name}
-                                                            </span>
-                                                        </li>
+                                                    <span className={styles.ingredientText}>
+                                                        {`${(ingredient.normalizedRequiredUnitQuantity > 1 && standardIngredients) ? 
+                                                                    standardIngredients[ingredient.name].plural : ingredient.name}`}
+                                                    </span>
+                                                    {(ingredient.optionalStandardQuantity > 0 || ingredient.hasArbitraryOptionalAmount) &&
+                                                        <span className={styles.optionalIngredient}>
+                                                            {' - ('}
+                                                            {ingredient.optionalStandardQuantity > 0 &&
+                                                                (ingredient.normalizedRequiredUnitQuantity <= 0 
+                                                                    ? 'optional: '
+                                                                    : '+'
+                                                                ) +
+                                                                (ingredient.optionalStandardQuantity > 0 ?
+                                                                    `${getFormattedQuantityAndUnitLabel(
+                                                                        ingredient.normalizedOptionalUnitQuantity, 
+                                                                        ingredient.normalizedUnit, 
+                                                                        standardMeasurements
+                                                                    )}` : ""
+                                                                ) +
+                                                                (ingredient.normalizedRequiredUnitQuantity > 0 ? ' optional' : "")
+                                                            }
+                                                            {(ingredient.optionalStandardQuantity > 0 && ingredient.hasArbitraryOptionalAmount) &&
+                                                                "; "
+                                                            }
+                                                            {ingredient.hasArbitraryOptionalAmount && '+ optional to taste'}
+                                                            {')'}
+                                                        </span>
                                                     }
-                                                </ul>
+                                                </li>
                                             )
                                         })}
                                     </div>
@@ -134,18 +143,20 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                         </div>
                     </section>
 
-                    <section className={`${styles.miscellaneousSection}`}>
-                        <h2 className={`section-title ${styles.miscellaneousTitle}`}>Miscellaneous Ingredients:</h2>
+                    {ingredientsList.miscellaneousIngredients.length > 0 &&
+                        <section className={`section ${styles.miscellaneousSection}`}>
+                            <h2 className={`section-title ${styles.miscellaneousTitle}`}>Miscellaneous Ingredients:</h2>
 
-                        <ul className={''}>
-                            {ingredientsList.miscellaneousIngredients.map((ingredientText, index) => (
-                                <li key={index} className={styles.ingredientListItem}>
-                                    <input type="checkbox" className={styles.ingredientCheckbox} />
-                                    {ingredientText}
-                                </li>
-                            ))}
-                        </ul>
-                    </section>
+                            <ul className={''}>
+                                {ingredientsList.miscellaneousIngredients.map((ingredientText, index) => (
+                                    <li key={index} className={styles.ingredientListItem}>
+                                        <input type="checkbox" className={styles.ingredientCheckbox} />
+                                        {ingredientText}
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    }
                 </div>
             </div>
         </div>
@@ -155,8 +166,7 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
 function getFormattedQuantityAndUnitLabel(
     quantity: number,
     unit: string | null,
-    standardMeasurements: StandardMeasurements | null,
-    hasOptionalIngredientInThisList: boolean
+    standardMeasurements: StandardMeasurements | null
 ): string {
     let label = "";
     // Quantity

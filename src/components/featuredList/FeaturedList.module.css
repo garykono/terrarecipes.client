@@ -19,9 +19,13 @@
     display: flex;
     gap: 1.6rem;
     overflow-x: auto;
-    padding-bottom: 0.5rem; /* for scroll bar space */
+    overflow-y: visible;
     scroll-snap-type: x mandatory;
-
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;    /* or 'mandatory' if you want harder snaps */
+    padding-bottom: 0.5rem; /* for scroll bar space */
+    contain: inline-size; /* Fixes some min-width calculation from the scroll component being passed all the way up to the page min width, affecting weird default screen size loading on mobile */
 }
 
 .cardWrapper {

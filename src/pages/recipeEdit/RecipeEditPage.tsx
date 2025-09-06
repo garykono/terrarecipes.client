@@ -1,7 +1,7 @@
 import styles from './RecipeEditPage.module.css';
 import { useState, useContext, useEffect, useMemo, Ref, useRef } from 'react';
 import { useNavigate, useLoaderData, useRouteLoaderData, useRevalidator } from 'react-router-dom';
-import { useForm, useFieldArray, RegisterOptions, ChangeHandler, UseFieldArrayRemove, UseFormRegister, FieldValues, FormProvider } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch, UseFieldArrayRemove, UseFormRegister, FormProvider, useFormContext } from 'react-hook-form';
 import { GoXCircleFill, GoArrowUp, GoArrowDown } from 'react-icons/go';
 import { createRecipe, editRecipeById } from '../../api/queries/recipesApi';
 import TagList from '../../components/tagList/TagList'
@@ -14,32 +14,41 @@ import { RootLoaderResult } from '../root/rootLoader';
 import BasicHero from '../../components/basicHero/BasicHero';
 import DeleteButton from '../../components/buttons/DeleteButton';
 import IngredientInput from '../../components/ingredientInput/IngredientInput'
+import RecipeCard from '../../components/recipeCard/RecipeCard';
 
 
-function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
+export interface FormData {
+    name: string;
+    description: string;
+    image: string;
+    servings: number;
+    prepTimeMin: number;
+    cookTimeMin: number;
+    restTimeMin: number;
+    ingredients: Ingredient[];
+    directions: Direction[];
+    tag: string;
+    tags: { value: string }[];
+    difficulty: "easy" | "medium" | "hard";
+    credit: string | null;
+}
+
+export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
     const navigate = useNavigate();
     const revalidator = useRevalidator();
     const { user } 
         = useRouteLoaderData('root') as RootLoaderResult;
     const { loadedRecipe } = mode === 'edit' ? useLoaderData() as RecipeEditLoaderResult : { loadedRecipe: null};
 
-
-    
-    interface FormData {
-        name: string;
-        description: string;
-        image: string;
-        ingredients: Ingredient[];
-        directions: Direction[];
-        tag: string;
-        tags: { value: string }[];
-    }
-
     const formMethods = useForm<FormData>({
         defaultValues: {
             name: loadedRecipe? loadedRecipe.name : "",
             description: loadedRecipe? loadedRecipe.description : "",
             image: loadedRecipe? loadedRecipe.image : "",
+            servings: loadedRecipe? loadedRecipe.servings : undefined,
+            prepTimeMin: loadedRecipe? loadedRecipe.prepTimeMin : undefined,
+            cookTimeMin: loadedRecipe? loadedRecipe.cookTimeMin : undefined,
+            restTimeMin: loadedRecipe? loadedRecipe.restTimeMin : undefined,
             // Format the loaded recipe into objects { text: '', isSection: false }, which are how we will manage an ingredient
             // in useFieldArray
             ingredients: loadedRecipe? loadedRecipe.ingredients : [
@@ -67,10 +76,21 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                 },
             ],
             tag: "",
-            tags: loadedRecipe? loadedRecipe.tags.map(tag => ({ value: tag })) : []
+            tags: loadedRecipe? loadedRecipe.tags.map(tag => ({ value: tag })) : [],
+            difficulty: loadedRecipe? loadedRecipe.difficulty : undefined,
+            credit: loadedRecipe? loadedRecipe.credit : undefined,
         }
     });
     const { register, control, handleSubmit, getValues, setValue, setError, clearErrors, setFocus, formState: { errors } } = formMethods;
+
+
+
+    const prep = useWatch({ control, name: "prepTimeMin", defaultValue: 0 }) ?? 0;
+    const cook = useWatch({ control, name: "cookTimeMin", defaultValue: 0 }) ?? 0;
+    const rest = useWatch({ control, name: "restTimeMin", defaultValue: 0 }) ?? 0;
+
+    const total = (prep ?? 0) + (cook ?? 0) + (rest ?? 0);
+    const displayTotal = total || (loadedRecipe ? loadedRecipe.totalTimeMin : 0);
 
     const { fields: ingredientsField, 
             append: appendIngredient, 
@@ -159,8 +179,8 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
 
     function handleEnterKeyOnTagField(e: React.KeyboardEvent<HTMLInputElement>) {
         if (e.key === "Enter") {
-            e.preventDefault(); // prevent form submit
-            handleAddTag(); // Pass the value to your add handler
+            e.preventDefault();
+            handleAddTag();
         }
     }
 
@@ -194,11 +214,31 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         }
     }
 
-    function buildRecipe({ name, description, image, ingredients, directions, tags }: FormData) {
+    function buildRecipe({ 
+        name, 
+        description, 
+        image, 
+        servings,
+        prepTimeMin,
+        cookTimeMin,
+        restTimeMin,
+        ingredients, 
+        directions, 
+        tags,
+        difficulty,
+        credit,
+    }: FormData) {
+        // let totalMin = 0;
+        // [prepTimeMin, cookTimeMin, restTimeMin].forEach(time => totalMin = (time ? time : 0))
+
         return {
             name,
             description,
             image,
+            servings,
+            prepTimeMin,
+            cookTimeMin,
+            restTimeMin,
             ingredients: ingredients.filter(ingredient => ingredient.text !== ""),
             directions: directions.filter(direction => direction.text !== ""),
             // Tags -- Add no duplicates in future and sort before it goes in database
@@ -206,7 +246,9 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                 return tag !== "";
             }).sort((a, b) => {
                 return a.localeCompare(b);
-            })
+            }),
+            difficulty,
+            credit,
         } as UnvalidatedRecipe;
     }
 
@@ -335,161 +377,376 @@ function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
 
             <section className="page-top section">
                 <div className="container">
-                    <FormProvider {...formMethods}>
-                        <form className={`form form--card ${styles.formEditRecipe}`} onSubmit={handleSubmit(onSubmit)}>
-                            <div className="field">
-                                <label className="label">Recipe Name:</label>
-                                <div className="control">
-                                    <input 
-                                        className="input" 
-                                        placeholder="ex. Beef Stew"
-                                        type="text"
-                                        {...register("name", {
-                                            required: "Recipe must have a name.",
-                                            minLength: {
-                                                value: 5,
-                                                message: "Name must be at least 5 characters."
-                                            },
+                    <div className={styles.pageWrapper}>
+                        <FormProvider {...formMethods}>
+                            <form className={`form card card--form ${styles.formEditRecipe}`} onSubmit={handleSubmit(onSubmit)}>
+                                <div className="field">
+                                    <label className="label">Recipe Name:</label>
+                                    <div className="control">
+                                        <input 
+                                            className="input" 
+                                            placeholder="ex. Beef Stew"
+                                            type="text"
+                                            {...register("name", {
+                                                required: "Recipe must have a name.",
+                                                minLength: {
+                                                    value: 5,
+                                                    message: "Name must be at least 5 characters."
+                                                },
+                                                maxLength: {
+                                                    value: 50,
+                                                    message: "Name must be 50 characters or less."
+                                                }
+                                            })}
+                                        />
+                                        {errors.name?.message && (
+                                            <FormMessage className='form-message' message={errors.name.message} danger />
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="field">
+                                    <label className="label">Recipe Description:</label>
+                                    <textarea
+                                        className="textarea"
+                                        placeholder="Enter a description for this recipe. You could include flavors, taste, inspiration, etc."
+                                        rows={5}
+                                        {...register("description", {
                                             maxLength: {
-                                                value: 50,
-                                                message: "Name must be 50 characters or less."
+                                                value: 300,
+                                                message: "Recipe description must be 300 or less characters."
                                             }
                                         })}
                                     />
-                                    {errors.name?.message && (
-                                        <FormMessage className='form-message' message={errors.name.message} danger />
+                                    {errors.description?.message && (
+                                        <FormMessage className='form-message' message={errors.description.message} danger />
                                     )}
                                 </div>
-                            </div>
-                            <div className="field">
-                                <label className="label">Recipe Description:</label>
-                                <textarea
-                                    className="textarea"
-                                    placeholder="Enter a description for this recipe. You could include flavors, taste, inspiration, etc."
-                                    rows={5}
-                                    {...register("description", {
-                                        maxLength: {
-                                            value: 300,
-                                            message: "Recipe description must be 300 or less characters."
-                                        }
-                                    })}
-                                />
-                                {errors.description?.message && (
-                                    <FormMessage className='form-message' message={errors.description.message} danger />
-                                )}
-                            </div>
 
-                            <div className="field">
-                                <label className="label">Recipe Image:</label>
-                                <div className="image is-square">
-                                    <img 
-                                        src={getValues('image')? getValues('image') : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
-                                        className={styles.recipeImage}
+                                <div className="field">
+                                    {/* <label className="label">Recipe Image:</label> */}
+                                    <div className={`image is-square ${styles.imageContainer}`}>
+                                        <img 
+                                            src={getValues('image')? getValues('image') : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
+                                            className={styles.recipeImage}
+                                        />
+                                    </div>
+                                    <label className="label">Image URL:</label>
+                                    <div className={`field ${styles.fieldGroup}`}>
+                                            <input 
+                                                className="input" 
+                                                placeholder={"ex. https://www.cookingclassy.com/wp-content/uploads/2022/07/grilled-steak-15.jpg"} 
+                                                type="text"
+                                                {...register("image", {
+                                                })}
+                                            />
+                                            <button className="button button--secondary-frequent" type="button" onClick={handleCancelImageUrl}>Cancel</button>
+                                    </div>
+                                </div>
+
+                                <div className={styles.firstMeta}>
+                                    <div className="field">
+                                        <label className="label">Servings:</label>
+                                        <div className={`control ${styles.metaInputControl}`}>
+                                            <input 
+                                                className="input" 
+                                                placeholder="0"
+                                                type="number"
+                                                {...register("servings", {
+                                                    valueAsNumber: true,
+                                                    required: "Please enter the servings required.",
+                                                    min: {
+                                                        value: 1,
+                                                        message: "Recipe must make at least 1 serving."
+                                                    },
+                                                    max: {
+                                                        value: 1000,
+                                                        message: "Recipe cannot exceed 1000 servings."
+                                                    }
+                                                })}
+                                            />
+                                            {errors.servings?.message && (
+                                                <FormMessage className='form-message' message={errors.servings.message} danger />
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className={styles.metaTimeWrapper}>
+                                        <div className={styles.metaTimeGroup}>
+                                            <div className="field">
+                                                <label className="label">{"Prep Time (mins):"}</label>
+                                                <div className={`control ${styles.metaInputControl}`}>
+                                                    <input 
+                                                        className="input" 
+                                                        placeholder="0"
+                                                        type="number"
+                                                        {...register("prepTimeMin", {
+                                                            valueAsNumber: true,
+                                                            min: {
+                                                                value: 0,
+                                                                message: "Time must be more than 0 min."
+                                                            },
+                                                            max: {
+                                                                value: 1000,
+                                                                message: "Recipe cannot exceed 1000 mins."
+                                                            }
+                                                        })}
+                                                    />
+                                                    {errors.prepTimeMin?.message && (
+                                                        <FormMessage className='form-message' message={errors.prepTimeMin.message} danger />
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="field">
+                                                <label className="label">{"Cook Time (mins):"}</label>
+                                                <div className={`control ${styles.metaInputControl}`}>
+                                                    <input 
+                                                        className="input" 
+                                                        placeholder="0"
+                                                        type="number"
+                                                        {...register("cookTimeMin", {
+                                                            valueAsNumber: true,
+                                                            min: {
+                                                                value: 0,
+                                                                message: "Time must be more than 0 min."
+                                                            },
+                                                            max: {
+                                                                value: 1000,
+                                                                message: "Recipe cannot exceed 1000 mins."
+                                                            }
+                                                        })}
+                                                    />
+                                                    {errors.cookTimeMin?.message && (
+                                                        <FormMessage className='form-message' message={errors.cookTimeMin.message} danger />
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="field">
+                                                <label className="label">{"Rest Time (mins):"}</label>
+                                                <div className={`control ${styles.metaInputControl}`}>
+                                                    <input 
+                                                        className="input" 
+                                                        placeholder="0"
+                                                        type="number"
+                                                        {...register("restTimeMin", {
+                                                            valueAsNumber: true,
+                                                            min: {
+                                                                value: 0,
+                                                                message: "Time must be more than 0 min."
+                                                            },
+                                                            max: {
+                                                                value: 1000,
+                                                                message: "Recipe cannot exceed 1000 mins."
+                                                            }
+                                                        })}
+                                                    />
+                                                    {errors.restTimeMin?.message && (
+                                                        <FormMessage className='form-message' message={errors.restTimeMin.message} danger />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className={styles.totalTime}>
+                                            <p className={`text`}>Total Time: </p>
+                                            <p className={`subsection-title`}>{displayTotal} min</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="field">
+                                    <label className="label">Ingredients</label>
+                                    <div className="control">
+                                        <FieldArrayList 
+                                            fieldArrayName="ingredients"
+                                            title={"Ingredient"}
+                                            field={ingredientsField}
+                                            isInput={true}
+                                            register={register}
+                                            append={appendIngredient} 
+                                            remove={removeIngredient} 
+                                            swap={swapIngredients}
+                                        />
+                                    </div>
+                                    {errors.ingredients?.root?.message && 
+                                        <FormMessage className='form-message' message={errors.ingredients.root.message}  danger/>
+                                    }
+                                </div>
+
+                                <div className="field">
+                                    <label className="label">Directions:</label>
+                                    <FieldArrayList 
+                                        fieldArrayName="directions"
+                                        title={"Direction"}
+                                        field={directionsField}
+                                        isInput={false}
+                                        register={register}
+                                        append={appendDirection} 
+                                        remove={removeDirection} 
+                                        swap={swapDirections} 
                                     />
                                 </div>
-                                <label className="label">Image URL:</label>
-                                <div className={`field ${styles.fieldGroup}`}>
+
+                                <div className="field">
+                                    <label className="label">Tag: </label>
+                                    <div className="control">
+                                        <div className={styles.fieldGroup}>
+                                            <input 
+                                                className="input"  
+                                                placeholder="ex. breakfast"
+                                                type="text"
+                                                onKeyDown={handleEnterKeyOnTagField}
+                                                {...register("tag")}
+                                            />
+                                            <button 
+                                                className={`button button--secondary-frequent button--small ${styles.oneLineButton}`}
+                                                type="button"
+                                                onClick={handleAddTag}>
+                                                    Add Tag
+                                            </button>
+                                        </div>
+                                        {errors.tag?.message && (
+                                                    <FormMessage className='form-message' message={errors.tag.message} danger />
+                                                )}
+                                        {/* {tagsField.map((item, index) => {
+                                            return <input 
+                                                key={index} 
+                                                type="hidden"
+                                                {...register(`tags.${index}` as keyof FormData)}
+                                            />
+                                        })} */}
+                                        <div className={styles.tagListContainer}>
+                                            <TagList tags={getValues('tags').map(tagObj => tagObj.value)} onDelete={removeTag} />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="field">
+                                    <label className="label">Difficulty:</label>
+                                    <div className="control">
+
+                                    <div className={styles.radioInputs}>
+                                        <label className={`text ${styles.radioLabel}`}>
+                                            <input 
+                                                type="radio"
+                                                value="easy"
+                                                {...register("difficulty", {
+                                                    required: true,
+                                                })}
+                                            />
+                                            Easy
+                                        </label>
+                                        <label className={`text ${styles.radioLabel}`}>
+                                            <input 
+                                                type="radio"
+                                                value="medium"
+                                                {...register("difficulty", {
+                                                    required: true,
+                                                })}
+                                            />
+                                            Medium
+                                        </label>
+                                        <label className={`text ${styles.radioLabel}`}>
+                                            <input 
+                                                type="radio"
+                                                value="hard"
+                                                {...register("difficulty", {
+                                                    required: true,
+                                                })}
+                                            />
+                                            Hard
+                                        </label>
+                                    </div>
+                                    {errors.difficulty?.message && (
+                                        <FormMessage className='form-message' message={errors.difficulty.message} danger />
+                                    )}
+                                    </div>
+                                </div>
+
+                                <div className="field">
+                                    <label className="label"><span>{"Credit (if applicable):"}</span></label>
+                                    <div className="control">
                                         <input 
                                             className="input" 
-                                            placeholder={"ex. https://www.cookingclassy.com/wp-content/uploads/2022/07/grilled-steak-15.jpg"} 
+                                            placeholder="Website URL, author, etc."
                                             type="text"
-                                            {...register("image", {
-                                                
+                                            {...register("credit", {
+                                                maxLength: {
+                                                    value: 200,
+                                                    message: "Credit source can't exceed 200 chars."
+                                                }
                                             })}
                                         />
-                                        <button className="button button--secondary-frequent" type="button" onClick={handleCancelImageUrl}>Cancel</button>
+                                        {errors.credit?.message && (
+                                            <FormMessage className='form-message' message={errors.credit.message} danger />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="field">
-                                <label className="label">Ingredients:</label>
-                                <div className="control">
-                                    <FieldArrayList 
-                                        fieldArrayName="ingredients"
-                                        title={"Ingredient"}
-                                        field={ingredientsField}
-                                        isInput={true}
-                                        register={register}
-                                        append={appendIngredient} 
-                                        remove={removeIngredient} 
-                                        swap={swapIngredients}
-                                    />
-                                </div>
-                                {errors.ingredients?.root?.message && 
-                                    <FormMessage className='form-message' message={errors.ingredients.root.message}  danger/>
-                                }
-                            </div>
+                                {/* <p className="mb-3 has-text-weight-bold">{onSubmitStatus ? `${onSubmitStatus}` : ""}</p> */}
 
-                            <div className="field">
-                                <label className="label">Directions:</label>
-                                <FieldArrayList 
-                                    fieldArrayName="directions"
-                                    title={"Direction"}
-                                    field={directionsField}
-                                    isInput={false}
-                                    register={register}
-                                    append={appendDirection} 
-                                    remove={removeDirection} 
-                                    swap={swapDirections} 
-                                />
-                            </div>
-
-                            <div className="field">
-                                <label className="label">Tag: </label>
-                                <div className="control">
-                                    <div className={styles.fieldGroup}>
-                                        <input 
-                                            className="input"  
-                                            placeholder="ex. breakfast"
-                                            type="text"
-                                            onKeyDown={handleEnterKeyOnTagField}
-                                            {...register("tag")}
-                                        />
+                                <div className="field">
+                                    <div className={styles.submitButtons}>
+                                        {loadedRecipe && 
+                                            <button className="button button--secondary" type="button" onClick={onCancel}>
+                                                Cancel
+                                            </button>
+                                        }
                                         <button 
-                                            className={`button button--secondary-frequent button--small ${styles.oneLineButton}`}
-                                            type="button"
-                                            onClick={handleAddTag}>
-                                                Add Tag
+                                            className="button button--primary" 
+                                            type="submit">
+                                                {loadedRecipe? 'Save' : 'Submit Recipe'}
                                         </button>
                                     </div>
-                                    {errors.tag?.message && (
-                                                <FormMessage className='form-message' message={errors.tag.message} danger />
-                                            )}
-                                    {/* {tagsField.map((item, index) => {
-                                        return <input 
-                                            key={index} 
-                                            type="hidden"
-                                            {...register(`tags.${index}` as keyof FormData)}
-                                        />
-                                    })} */}
-                                    <div className={styles.tagListContainer}>
-                                        <TagList tags={getValues('tags').map(tagObj => tagObj.value)} onDelete={removeTag} />
-                                    </div>
                                 </div>
-                            </div>
-
-                            {/* <p className="mb-3 has-text-weight-bold">{onSubmitStatus ? `${onSubmitStatus}` : ""}</p> */}
-
-                            <div className="field">
-                                <div className={styles.submitButtons}>
-                                    {loadedRecipe && 
-                                        <button className="button button--secondary" type="button" onClick={onCancel}>
-                                            Cancel
-                                        </button>
-                                    }
-                                    <button 
-                                        className="button button--primary" 
-                                        type="submit">
-                                            {loadedRecipe? 'Save' : 'Submit Recipe'}
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </FormProvider>
+                            </form>
+                            <aside className={styles.previewAside}>
+                                <PreviewPane fallback={loadedRecipe} />
+                            </aside>
+                        </FormProvider>
+                    </div>
                 </div>
             </section>
         </div>
     );
 }
 
-export default RecipeEditPage;
+function PreviewPane({ fallback }: { fallback?: any }) {
+    const { control } = useFormContext<FormData>();
+
+    // watch the whole form (simple) – or list specific names if you want fewer re-renders
+    const w = (useWatch({ control }) as Partial<FormData>) || {};
+
+    // numbers (guard against string values)
+    const servings = Number(w.servings ?? fallback?.servings ?? 0) || 0;
+    const prep     = Number(w.prepTimeMin ?? fallback?.prepTimeMin ?? 0) || 0;
+    const cook     = Number(w.cookTimeMin ?? fallback?.cookTimeMin ?? 0) || 0;
+    const rest     = Number(w.restTimeMin ?? fallback?.restTimeMin ?? 0) || 0;
+    const total    = prep + cook + rest;
+
+    // tags are objects in the form; map to strings for the card
+    const tags = (w.tags ?? fallback?.tags ?? [])
+        .map((t: any) => (typeof t === "string" ? t : t?.value))
+        .filter(Boolean);
+
+    // shape the object your RecipeCard expects
+    const recipeForCard = {
+        name: w.name ?? fallback?.name ?? "",
+        description: w.description ?? fallback?.description ?? "",
+        image: w.image ?? fallback?.image ?? "",
+        servings,
+        prepTimeMin: prep,
+        cookTimeMin: cook,
+        restTimeMin: rest,
+        totalTimeMin: total || Number(fallback?.totalTimeMin ?? 0) || 0,
+        ingredients: (w.ingredients ?? fallback?.ingredients ?? []).filter((i: any) => i?.text?.trim?.()),
+        directions: (w.directions ?? fallback?.directions ?? []).filter((d: any) => d?.text?.trim?.()),
+        tags,
+        difficulty: w.difficulty ?? fallback?.difficulty,
+        credit: w.credit ?? fallback?.credit,
+    };
+
+    return (
+        <div className={styles.previewPane}>
+            <h3 className={styles.previewTitle}>Preview</h3>
+            <RecipeCard recipe={recipeForCard as UnvalidatedRecipe} />
+        </div>
+    );
+}

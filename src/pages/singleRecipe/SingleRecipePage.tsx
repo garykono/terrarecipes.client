@@ -155,9 +155,10 @@ function SingleRecipePage() {
 
                             <ul className={styles.quickInfoList}>
                                 <li>⭐ 4.7 (12)</li>
-                                <li>⏱ 45 min</li>
-                                <li>🍽 4 servings</li>
-                                <li>🌱 Vegetarian</li>
+                                {recipe.totalTimeMin && <li>⏱ {recipe.totalTimeMin} min</li>}
+                                {recipe.servings && <li>🍽 {recipe.servings} servings</li>}
+                                {recipe.difficulty && <li>🔥 {recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1)}</li>}
+                                {/* <li>🌱 Vegetarian</li> */}
                             </ul>
                         </div>
                     </div>

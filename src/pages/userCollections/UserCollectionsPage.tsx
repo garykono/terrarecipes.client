@@ -231,25 +231,30 @@ function UserCollectionsPage() {
                     actions={[
                         { label: "Manage Collections", icon: "✏️", onClick: () => setShowCollectionModificationButtons(!showCollectionModificationButtons) },
                         { label: "Create Collection", icon: "➕", onClick: handleCreateCollectionButtonClick }
-                    
-                    ]} />
+                    ]} 
+                />
+            </div>
 
-                {successMessage !== '' &&
-                    <FormMessage message={successMessage} success />
-                }
-                {dangerMessage !== '' &&
-                    <FormMessage message={dangerMessage} danger />
-                }
-                    
-                <div className={styles.collections}>
-                    <h1 
-                        className={`page-title underlined-title category-color-standard ${styles.pageTitle}`}
-                    >
-                        My Collections
-                    </h1>
-                    {content}
+            {successMessage !== '' &&
+                <FormMessage message={successMessage} success />
+            }
+            {dangerMessage !== '' &&
+                <FormMessage message={dangerMessage} danger />
+            }
+                
+            <div className={styles.collectionsPage}>
+                <BasicHero
+                    title="My Collections"
+                    variant="underline"
+                />
+
+                <div className="container">
+                    <div className={styles.collections}>
+                        {content}
+                    </div>
                 </div>
             </div>
+
             {showCreateCollectionModal && createCollectionModal}
             {showDeleteCollectionModal && deleteCollectionModal}
         </div>

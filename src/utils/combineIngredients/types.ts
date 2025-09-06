@@ -1,24 +1,24 @@
-import { StandardIngredientType } from "../../api/types/standardized";
 import { Unit } from "./units";
 
 export type Family = 'volume' | 'mass' | 'count';
 
 export interface StandardUnit {
     name: string;
-    type: StandardIngredientType
+    type: Family
 }
 
 export interface ValidatedIngredient {
-    standardConversionUnit: Unit | null;
+    standardConversionUnit: StandardUnit;
     mainCategory: string;
     requiredStandardQuantity: number;
     optionalStandardQuantity: number;
-    hasOptionalIngredientInThisList: boolean;
+    hasArbitraryOptionalAmount: boolean;
 }
 
 export interface NormalizedIngredient extends ValidatedIngredient {
     normalizedRequiredUnitQuantity: number;
-    normalizedRequiredUnit: Unit | null;
+    normalizedOptionalUnitQuantity: number;
+    normalizedUnit: Unit | null;
 }
 
 export interface NormalizedAndNamedIngredient extends NormalizedIngredient {

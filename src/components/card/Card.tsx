@@ -8,13 +8,14 @@ interface CardProps {
     headerSubText?: string;
     description?: string;
     metaDataItems?: {
-        icon: string;
-        value: string;
+        icon: string | undefined;
+        value: string | undefined;
     }[];
     image?: string;
     previewImages?: string[];
     previewMode?: boolean;
     size: "lean" | "rich";
+    hoverable?: boolean;
     className?: string;
 }
 
@@ -28,6 +29,7 @@ export default function Card({
     description, 
     metaDataItems, 
     size = "lean",
+    hoverable = false,
     className 
 }: CardProps) {
     const imageContent = previewMode && previewImages
@@ -42,7 +44,12 @@ export default function Card({
             />
 
     return (
-        <div className={`card ${styles.card} ${size === 'lean' ? leanStyles.card : richStyles.card } ${className}`}>
+        <div className={`
+            card ${styles.card} 
+            ${size === 'lean' ? leanStyles.card : richStyles.card } 
+            ${hoverable && styles.hoverable}
+            ${className}`
+        }>
             {imageContent}
             <div className={`${styles.content} ${size === 'rich' && richStyles.recipeContent}`}>
                 <div className={styles.mainText}>
@@ -63,9 +70,11 @@ export default function Card({
                 </div>
                 {metaDataItems && 
                     <ul className={`${styles.metaDataRow} ${size === 'rich' && styles.metaDivide}`}>
-                        {metaDataItems.map((item, index) => (
-                            <li key={index} className="text-meta"><span>{`${item.icon} ${item.value}`}</span></li>
-                        ))}
+                        {metaDataItems.map((item, index) => {
+                            if (item.icon && item.value) {
+                                return <li key={index} className="text-meta"><span>{`${item.icon} ${item.value}`}</span></li>
+                            }
+                        })}
                         {/* if more attributes causes this row to take 2 lines, make small adjustments like text size to 12px, shorter labels, etc.
                         <li className="text-meta"><span>🔥 Medium</span></li> */}
                     </ul>

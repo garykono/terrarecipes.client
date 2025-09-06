@@ -86,8 +86,6 @@ function UserRecipesPage() {
 
     return (
         <div className={styles.pageUserRecipes}>
-            <BasicHero title="My Recipes" text="View and manage your uploaded recipes." />
-
             <div className='container'>
                 {showAddRecipeButton && 
                     <Toolbar 
@@ -98,6 +96,8 @@ function UserRecipesPage() {
                     /> 
                 }
             </div>
+
+            <BasicHero title="My Recipes" text="View and manage your uploaded recipes." variant="underline" />
 
             <div className="container">
                 <div className={styles.recipes}>

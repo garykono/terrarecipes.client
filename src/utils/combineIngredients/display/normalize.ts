@@ -14,11 +14,10 @@ const DEBUG = false;
  * pick the best display unit with chooseDisplayUnit, then normalize (upgrade/downgrade chain)
  * and snap to kitchen-friendly fractions.
  */
-export function normalizeAndRoundDisplayUnit(
+export function normalizeDisplayUnit(
     ingredientInfo: StandardIngredient,
-    amountInStandard: number,
-    _unitIgnored: Unit | null // kept for backward compatibility; not used anymore
-): { normalizedUnitQuantity: number; normalizedUnit: Unit | null } {
+    amountInStandard: number
+): { normalizedUnitQuantity: number; normalizedUnit: Unit } {
     // 1) Build totals (anchors) from the standardConversionUnit
     const totals = buildTotalsFromStandard(ingredientInfo, amountInStandard);
 
@@ -53,7 +52,7 @@ function buildTotalsFromStandard(ingredientInfo: StandardIngredient, amount: num
     return { countStd: amount };
 }
 
-/** Uses your unitConversionTable with a clear error if no path exists. */
+/** Uses unitConversionTable with a clear error if no path exists. */
 function convertSameTypeSafe(amount: number, from: Unit, to: Unit): number {
     if (from === to) return amount;
 
@@ -72,7 +71,7 @@ function convertSameTypeSafe(amount: number, from: Unit, to: Unit): number {
     throw new Error(`No conversion path from ${from} to ${to}`);
 }
 
-/** Your existing polishing step (upgrade/downgrade chain + fraction snap), factored out for reuse. */
+/** Existing polishing step (upgrade/downgrade chain + fraction snap), factored out for reuse. */
 function polishWithThresholds(
     amount: number,
     unit: Unit
@@ -111,17 +110,6 @@ function polishWithThresholds(
         currentAmount = currentAmount * conversionRate;
         currentUnit = to;
     }
-
-    const roundedAmount = roundToCommonFraction(currentAmount);
-    return { normalizedUnitQuantity: roundedAmount, normalizedUnit: currentUnit };
+    return { normalizedUnitQuantity: currentAmount, normalizedUnit: currentUnit as Unit };
 }
 
-function roundToCommonFraction(value: number): number {
-    const fractions = [0, 0.25, 0.5, 0.75, 1];
-    const integer = Math.floor(value);
-    const decimal = value - integer;
-    const closest = fractions.reduce((prev, curr) =>
-        Math.abs(curr - decimal) < Math.abs(prev - decimal) ? curr : prev
-    );
-    return +(integer + closest).toFixed(2);
-}

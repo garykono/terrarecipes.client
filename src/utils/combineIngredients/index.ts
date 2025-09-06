@@ -1,8 +1,9 @@
 import { Ingredient } from "../../api/types/recipe";
-import { StandardIngredient, StandardIngredients, StandardLookupTable, StandardMeasurements } from "../../api/types/standardized";
+import { StandardIngredient, StandardIngredients, StandardLookupTable, StandardMeasurement, StandardMeasurements } from "../../api/types/standardized";
 import { logger } from "../logger";
 import { convertAnyUnit } from "./convert/convert-any";
-import { normalizeAndRoundDisplayUnit } from "./display/normalize";
+import { normalizeDisplayUnit } from "./display/normalize";
+import { roundToCommonFraction } from "./display/roundToCommonFraction";
 import { NormalizedAndNamedIngredient, NormalizedIngredient, StandardUnit, ValidatedIngredient } from "./types";
 import { Unit } from "./units";
 
@@ -59,13 +60,13 @@ export function combineIngredients({
         
         ingredient.parsed.forEach(parsedIngredient => {
             if (DEBUG) logger.debug("ingredient: ", parsedIngredient)
-            const parsedQuantity = parsedIngredient.quantity;
+            let parsedQuantity = parsedIngredient.quantity;
             const parsedUnit = parsedIngredient.unit;
             const parsedIngredientName = parsedIngredient.ingredient;
             const parsedIngredientRawText = parsedIngredient.raw;
             const isOptional = parsedIngredient.isOptional ? true : false;
-            const optionalQuantity = parsedIngredient.optionalQuantity;
             const isSubstitute = parsedIngredient.isSubstitute;
+            const optionalQuantity = parsedIngredient.optionalQuantity;
 
             // Ignore substitutions for now
             if (isSubstitute) return
@@ -79,6 +80,22 @@ export function combineIngredients({
                 return;
             }
 
+            let convertedUnitAmount = 0;
+            if (!parsedIngredientName) {
+                if (DEBUG) logger.debug(`This ingredient is missing a parsed field: 'name', so no conversion possible. Adding to miscellaneous ingredients`)
+                validatedIngredients.miscellaneous.push(parsedIngredientRawText);
+                return;
+            }
+            if (!parsedQuantity) {
+                if (!optionalQuantity) {
+                    logger.debug(`This ingredient is missing a parsed field: 'quantity' and is not an optional ingredient, so unable to convert. Adding to miscellaneous ingredients.`)
+                    validatedIngredients.miscellaneous.push(parsedIngredientRawText);
+                    return;    
+                } else {
+                    parsedQuantity = 0;
+                }
+            }
+
             // Get the ingredient's standard measurement unit
             const ingredientInfo = standardIngredients[standardName];
             if (DEBUG) logger.debug("standard ingredient's info: ", ingredientInfo)
@@ -87,86 +104,78 @@ export function combineIngredients({
             const standardConversionUnitInfo = standardMeasurements[standardConversionUnitName];
             /* This is the unit that all instances of this ingredient in the uncombined ingredients list will be converted -TO-
             in order to combine them */
-            let standardConversionUnit : StandardUnit | undefined;
+            let standardConversionUnit : StandardUnit;
             
             if (standardConversionUnitName && standardConversionUnitInfo) {
                 standardConversionUnit = {
                     name: standardConversionUnitName,
                     type: standardConversionUnitInfo.type
                 }
-            }
+            } else {
+                if (DEBUG) logger.debug(`Couldn't derive a standard conversion unit from ${parsedIngredientName} so no conversion possible. 
+                    standardConversionUnitName = ${standardConversionUnitName};
+                    standardConversionUnitInfo = ${standardConversionUnitInfo}
+                    Adding to miscellaneous ingredients.`)
+                validatedIngredients.miscellaneous.push(parsedIngredientRawText);
+                return;
+            } 
 
             // Get the ingredient's main category
             const mainCategory = ingredientInfo.mainCategory;
-
-            // If the quantity was not optional, calculate it. Otherwise, it will be treated as 0.
-            let convertedUnitAmount = 0;
+            
+            // Do a lookup to get the parsed measurement unit's standard name
+            // This is the unit that we are converting -FROM- for this instance of the ingredient
+            let standardNameOfParsedUnit: Unit | undefined;
+            // If the quantity is optional, then this ingredient will not need a conversion
             if (!optionalQuantity) {
-                // Convert to ingredient's standard unit
-                if (!parsedIngredientName || !parsedQuantity) {
-                    if (DEBUG) logger.debug("This ingredient is missing a parsed field, so no conversion possible. Adding to miscellaneous ingredients.")
+                if (parsedUnit) {
+                    standardNameOfParsedUnit = standardMeasurementsLookupTable[parsedUnit]
+                } else {  
+                    standardNameOfParsedUnit = "whole";
+                } 
+
+                
+                // Convert ounce to fluid ounce in the case that that is what this ingredient should default to
+                if (standardNameOfParsedUnit === "ounce" && ingredientInfo.treatOuncesAsVolume) {
+                    standardNameOfParsedUnit = "fluid ounce";
+                }
+
+                // Derive a fully standardized unit (with its type, ex. "mass" or "volume") from the parsed unit
+                let standardParsedUnitMeasurementInfo: StandardMeasurement| undefined = standardMeasurements[standardNameOfParsedUnit];
+
+                let standardParsedUnit : StandardUnit;
+                if (standardNameOfParsedUnit && standardParsedUnitMeasurementInfo) {
+                    standardParsedUnit = {
+                        name: standardParsedUnitMeasurementInfo.name,
+                        type: standardParsedUnitMeasurementInfo.type
+                    }
+                } else {
+                    if (DEBUG) logger.debug("Could not find a standardized unit match for parsed unit. Adding to miscellaneous.");
                     validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                     return;
                 }
-                
-                convertedUnitAmount = parsedQuantity;
-                if (standardConversionUnit) {
-                    if (!parsedUnit) {
-                        if (DEBUG) logger.debug("This ingredient must be converted to a standard unit but no parsed unit was given. Adding to miscellaneous.");
-                        validatedIngredients.miscellaneous.push(parsedIngredientRawText);
-                        return;
-                    }
 
-                    // Do a lookup to get the parsed measurement unit's standard name
-                    // This is the unit that we are converting -FROM- for this instance of the ingredient
-                    let standardNameOfParsedUnit = standardMeasurementsLookupTable[parsedUnit];
-
-                    // Convert ounce to fluid ounce in the case that that is what this ingredient should default to
-                    if (standardNameOfParsedUnit === "ounce" && ingredientInfo.treatOuncesAsVolume) {
-                        standardNameOfParsedUnit = "fluid ounce";
-                    }
-
-                    /* THIS IS WHERE THE NEW CONVERSION LOGIC GOES */
-                    //1) Find the type of the parsed unit's measurement
-                    let standardParsedUnitMeasurementInfo = standardMeasurements[standardNameOfParsedUnit];
-
-                    let standardParsedUnit : StandardUnit | undefined;
-                    if (standardNameOfParsedUnit && standardParsedUnitMeasurementInfo) {
-                        standardParsedUnit = {
-                            name: standardNameOfParsedUnit,
-                            type: standardParsedUnitMeasurementInfo.type
-                        }
-                    }
-                    if (!standardParsedUnit) {
-                        if (DEBUG) logger.debug("Could not find a standardized unit match for parsed unit. Adding to miscellaneous.");
-                            validatedIngredients.miscellaneous.push(parsedIngredientRawText);
-                        return;
-                    }
-
-                    // convert to standard unit
-                    if (DEBUG) logger.debug("standard unit: ", standardParsedUnit)
-                        try {
-                            convertedUnitAmount = convertAnyUnit(parsedQuantity, standardParsedUnit, standardConversionUnit, ingredientInfo);
-                            if (DEBUG) logger.debug(`conversion successful.`);
-                        } catch (e) {
-                            logger.debug(e, " Adding to miscellaneous.")
-                            validatedIngredients.miscellaneous.push(parsedIngredientRawText);
-                            return;
-                        }
-                } else {
-                    if (DEBUG) logger.debug(`${parsedIngredientName} doesn't have a standard conversion unit.`)
-                }
-            }            
+                // convert to standard unit
+                if (DEBUG) logger.debug("standard unit: ", standardParsedUnit)
+                try {
+                    convertedUnitAmount = convertAnyUnit(parsedQuantity, standardParsedUnit, standardConversionUnit, ingredientInfo);
+                    if (DEBUG) logger.debug(`conversion successful.`);
+                } catch (e) {
+                    logger.debug(e, " Adding to miscellaneous.")
+                    validatedIngredients.miscellaneous.push(parsedIngredientRawText);
+                    return;
+                } 
+            }
 
             // Calculate the standard quantity
             const validatedAndStandardizedIngredientsList = validatedIngredients.standardizedIngredients;
             if (!validatedAndStandardizedIngredientsList[standardName]) {
                 validatedAndStandardizedIngredientsList[standardName] = {
-                    standardConversionUnit: ingredientInfo.standardConversionUnit as Unit,
+                    standardConversionUnit,
                     mainCategory,
                     requiredStandardQuantity: 0,
                     optionalStandardQuantity: 0,
-                    hasOptionalIngredientInThisList: false
+                    hasArbitraryOptionalAmount: false
                 }
             }
             const previousStandardUnitAmount = isOptional 
@@ -174,7 +183,7 @@ export function combineIngredients({
                 : validatedAndStandardizedIngredientsList[standardName].requiredStandardQuantity;
             const updatedStandardUnitAmount = previousStandardUnitAmount + convertedUnitAmount;
 
-            if (isOptional) validatedAndStandardizedIngredientsList[standardName].hasOptionalIngredientInThisList = true;
+            if (optionalQuantity) validatedAndStandardizedIngredientsList[standardName].hasArbitraryOptionalAmount = true;
 
             // Add/update entry for ingredient in appropriate list
             validatedAndStandardizedIngredientsList[standardName][isOptional ? 'optionalStandardQuantity' : 'requiredStandardQuantity'] = 
@@ -194,11 +203,10 @@ export function combineIngredients({
     } as CombinedIngredients;
 
     // Normalize and add standardized ingredients
-    console.log("standardized ingredients: ", validatedIngredients)
     Object.keys(validatedIngredients.standardizedIngredients).forEach(ingredientName => {
         const validatedIngredient = validatedIngredients.standardizedIngredients[ingredientName];
         const listAddedTo = combinedIngredients.standardizedIngredients;
-        normalizeAndAddStandardizedIngredient(standardIngredients[ingredientName], validatedIngredient, listAddedTo)
+        normalizeAndAddStandardizedIngredient(standardIngredients[ingredientName], validatedIngredient, standardMeasurements, listAddedTo)
     })
 
     // Copy miscellaneous ingredients array
@@ -217,24 +225,45 @@ export function combineIngredients({
 function normalizeAndAddStandardizedIngredient(
     ingredientInfo: StandardIngredient, 
     validatedIngredient: ValidatedIngredient, 
+    standardMeasurements: StandardMeasurements,
     listAddedTo: {
         [key: string]: {}
     }
 ) {
-    // For now, only normalize and round for the required amounts
-    const { normalizedUnitQuantity, normalizedUnit } = normalizeAndRoundDisplayUnit(
+    // Get normalization quantity and unit for the required amount and then round it
+    const { normalizedUnitQuantity, normalizedUnit } = normalizeDisplayUnit(
         ingredientInfo,
-        validatedIngredient.requiredStandardQuantity, 
-        validatedIngredient.standardConversionUnit
+        validatedIngredient.requiredStandardQuantity
     );
+
+    // For the optional amount, if there is a normalized unit from the required amount, then convert to optional amount to that unit
+    const normalizedRequiredUnitQuantity = convertAnyUnit(
+        validatedIngredient.optionalStandardQuantity, 
+        validatedIngredient.standardConversionUnit, 
+        {
+            name: normalizedUnit,
+            type: standardMeasurements[normalizedUnit].type
+        }, 
+        ingredientInfo
+    );
+
+    // Rounding for display
+    const normalizedAndRoundedUnitQuantity = normalizedUnitQuantity >= 1 
+        ? roundToCommonFraction(normalizedUnitQuantity)
+        : normalizedUnitQuantity;
+    const normalizedOptionalUnitQuantity = normalizedRequiredUnitQuantity >= 1 
+        ? roundToCommonFraction(normalizedRequiredUnitQuantity)
+        : normalizedRequiredUnitQuantity;
+
     if (DEBUG) {
         logger.debug(`${ingredientInfo.name} normalization: 
             ${validatedIngredient.requiredStandardQuantity} ${validatedIngredient.standardConversionUnit} => ${normalizedUnitQuantity} ${normalizedUnit}`);
     }
     listAddedTo[ingredientInfo.name] = {
         ...validatedIngredient,
-        normalizedRequiredUnitQuantity: normalizedUnitQuantity,
-        normalizedRequiredUnit: normalizedUnit
+        normalizedRequiredUnitQuantity: normalizedAndRoundedUnitQuantity,
+        normalizedOptionalUnitQuantity,
+        normalizedUnit: normalizedUnit
     }
 }
 

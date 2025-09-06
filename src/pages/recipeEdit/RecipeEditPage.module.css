@@ -1,11 +1,55 @@
+.pageWrapper {
+    display: flex;
+    gap: var(--space-md);
+}
+
+.formContainer {
+    width: 75%;
+}
+
 .formEditRecipe {
-    gap: 5.2rem;
+    gap: var(--space-xxl);
+}
+
+.imageContainer {
+    margin-bottom: var(--space-xs);
 }
 
 .recipeImage {
     width: 20%;  
     object-fit: cover;
     aspect-ratio: 1;
+}
+
+.firstMeta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xxl);
+}
+
+.metaInputControl {
+    max-width: 8rem;
+}
+
+.metaInput::placeholder {
+    color: var(--color-text-muted);
+}
+
+.metaTimeWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.metaTimeGroup {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.totalTime {
+    display: flex;
+    gap: var(--space-xs);
 }
 
 .fieldGroup {
@@ -78,9 +122,39 @@
     margin-top: 1.6rem;
 }
 
+.radioInputs {
+    display: flex;
+    gap: var(--space-xxl);
+}
+
+.radioLabel {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 .submitButtons {
     display: flex;
     justify-content: center;
     gap: 1.6rem;
     margin: 7rem 0 1.2rem 0;
+}
+
+.previewAside {
+    position: sticky;
+    top: calc(var(--nav-bar-height) + 1rem);
+    max-height: calc(100vh - 5rem);
+    overflow: auto;
+}
+
+.previewPane {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.previewTitle {
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-semi-bold);
+    text-transform: uppercase;
 }

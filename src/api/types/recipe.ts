@@ -19,12 +19,20 @@ export interface UnvalidatedRecipe {
     name: string;
     description: string;
     image: string;
+    servings: number;
+    prepTimeMin: number;
+    cookTimeMin: number;
+    restTimeMin: number;
+    totalTimeMin: number;
     ingredients: Ingredient[];
     directions: Direction[];
     tags: string[];
+    difficulty: "easy" | "medium" | "hard";
+    credit: string | undefined;
 }
 
 export interface Recipe extends UnvalidatedRecipe {
+    totalTimeMin: number;
     _id: string;
     author: {
         _id: string;

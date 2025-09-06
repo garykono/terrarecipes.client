@@ -5,7 +5,7 @@
     height: 100%;
 }
 
-.card:hover {
+.hoverable:hover {
     background-color: var(--color-bg-panel);
 }
 

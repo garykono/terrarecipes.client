@@ -12,6 +12,7 @@ function RecipesPage() {
     const navigate = useNavigate();
     const { recipes, totalPages, page, search } = useLoaderData() as RecipesLoaderResult;
     const previousSearchTerm = search?.replace('-', ' ');
+    const searchSlug = search ? search : "";
 
     return (
         <div className={styles.recipePage}>
@@ -45,10 +46,10 @@ function RecipesPage() {
                         {recipes.length > 0 &&
                             <Pagination 
                                 currentPage={page} 
-                                onFirstPageButtonClicked={() => navigate(`/recipes/${1}/${search}`)}
-                                onPreviousPageButtonClicked={() => navigate(`/recipes/${page - 1}/${search}`)} 
-                                onNextPageButtonClicked={() => navigate(`/recipes/${page + 1}/${search}`)}
-                                onLastPageButtonClicked={() => navigate(`/recipes/${totalPages}/${search}`)}
+                                onFirstPageButtonClicked={() => navigate(`/recipes/${1}/${searchSlug}`)}
+                                onPreviousPageButtonClicked={() => navigate(`/recipes/${page - 1}/${searchSlug}`)} 
+                                onNextPageButtonClicked={() => navigate(`/recipes/${page + 1}/${searchSlug}`)}
+                                onLastPageButtonClicked={() => navigate(`/recipes/${totalPages}/${searchSlug}`)}
                                 numPages={totalPages} 
                             />
                         }

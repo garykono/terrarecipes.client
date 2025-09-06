@@ -106,15 +106,4 @@ function HomePageFeaturedList({ listInfo }: HomePageFeaturedListProps) {
     )
 }
 
-function HomePageFeaturedRecipe({ recipe }: { recipe: Recipe }) {
-    return (
-        <section className="section">
-            <div className="container">
-                    <RecipeCardWithFeatures recipe={recipe} size='rich' />
-                {/* <FeaturedRecipe recipe={recipe} /> */}
-            </div>
-        </section>
-    )
-}
-
 export default HomePage;
