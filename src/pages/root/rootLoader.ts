@@ -4,7 +4,8 @@ import { StandardIngredients, StandardMeasurements, StandardLookupTable, Standar
     FlattenedStandardIngredientsForFuse, FlattenedStandardMeasurementsForFuse,
     IngredientForms,
     IngredientPreparations,
-    Categories
+    Categories,
+    Tags
 } from '../../api/types/standardized';
 import { getUserInfo } from '../../api/queries/usersApi';
 import { getStaticFiles, StaticFilesData } from '../../api/queries/staticApi';
@@ -29,6 +30,7 @@ export interface RootLoaderResult {
     allIngredientForms: IngredientForms | null;
     allIngredientPreparations: IngredientPreparations | null;
     categories: Categories | null;
+    tags: Tags | null;
 }
 
 export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResult> {
@@ -46,6 +48,7 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
     let allIngredientForms = null;
     let allIngredientPreparations = null;
     let categories = null;
+    let tags = null;
 
     await getUserInfo()
         .then(response => {
@@ -69,6 +72,7 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
             allIngredientForms = data.ingredientForms;
             allIngredientPreparations = data.ingredientPreparations;
             categories = data.categories;
+            tags = data.tags;
         })
         .catch(err => {
             if (err.status) {
@@ -110,6 +114,7 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
         rawUnitsList,
         allIngredientForms,
         allIngredientPreparations,
-        categories
+        categories,
+        tags
     }
 }

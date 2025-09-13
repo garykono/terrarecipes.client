@@ -111,3 +111,8 @@ export function findLongestWholePhraseMatch(input: string, phrases: Set<string>)
 
     return match;
 }
+
+export function toIntOrNull(v: unknown) {
+    const n = typeof v === "string" ? parseInt(v, 10) : Number(v);
+    return Number.isFinite(n) ? n : null;
+};

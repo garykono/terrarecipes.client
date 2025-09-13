@@ -1,0 +1,53 @@
+.chip { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.4rem; 
+}
+
+.chipButton {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1.0rem;
+    font-size: var(--font-size-meta);
+    white-space: nowrap;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+
+.chipButton:hover { 
+    border-color: var(--color-brand-primary); 
+} 
+
+.chipButton:focus { 
+    outline: none; 
+    box-shadow: 0 0 0 2px var(--color-brand-primary-light); 
+}
+
+.chipSelected .chipButton {
+    border-color: var(--color-brand-primary);
+    background: var(--color-brand-primary-soft);
+    color: var(--color-brand-primary); 
+}
+
+.chipDisabled .chipButton {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.chipCheck {
+    width: 14px;
+    height: 14px;
+}
+
+.chipRemoveIcon {
+    font-size: 1.6rem;
+}
+
+.chipRemove:hover { 
+    background: var(--color-bg);
+}

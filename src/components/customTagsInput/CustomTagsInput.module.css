@@ -1,0 +1,29 @@
+.customTags { 
+}
+
+.customTagsTitle { 
+    display: block; 
+    font-weight: var(--font-weight-semi-bold);
+    margin-bottom: 0.6rem; 
+}
+
+.customTagsWrap { 
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.customTagsChips { 
+    display:flex; 
+    flex-wrap:wrap; 
+    gap: var(--space-sm); 
+    align-items:center; 
+}
+.customTagsInput { 
+}
+
+.customTagsError { 
+    color:#b91c1c; 
+    font-size:12px;
+    margin-top:4px; 
+}

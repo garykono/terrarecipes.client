@@ -14,6 +14,7 @@ import FeaturedRecipe from '../../components/featuredRecipe/FeaturedRecipe';
 
 export default function BrowseCategoryPage() {
     const { categoryData } = useLoaderData() as BrowseCategoryLoaderResult;
+    console.log(categoryData)
     const { categoryInfo, recipes } = categoryData;    
 
     const [error, setError] = useState<Error | null>(null);

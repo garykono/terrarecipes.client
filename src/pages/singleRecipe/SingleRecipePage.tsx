@@ -21,6 +21,10 @@ function SingleRecipePage() {
     const [addToCollectionStatus, setAddToCollectionStatus] = useState("");
     const [error, setError] = useState(null);
 
+    const tags: string[] = Array.isArray(recipe?.tags)
+        ? recipe.tags
+        : Object.values(recipe?.tags?.facets ?? {}).flat().concat(recipe?.tags?.custom ?? []);
+
     const handleAddToCollection = async (collectionId: string) => {
         if (!recipe) return;
 
@@ -157,7 +161,7 @@ function SingleRecipePage() {
                                 <li>⭐ 4.7 (12)</li>
                                 {recipe.totalTimeMin && <li>⏱ {recipe.totalTimeMin} min</li>}
                                 {recipe.servings && <li>🍽 {recipe.servings} servings</li>}
-                                {recipe.difficulty && <li>🔥 {recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1)}</li>}
+                                {/* {recipe.difficulty && <li>🔥 {recipe.difficulty.charAt(0).toUpperCase() + recipe.difficulty.slice(1)}</li>} */}
                                 {/* <li>🌱 Vegetarian</li> */}
                             </ul>
                         </div>
@@ -191,7 +195,7 @@ function SingleRecipePage() {
                     </div>
 
                     <div className={styles.sectionTags}>
-                        <TagList tags={recipe.tags} />
+                        <TagList tags={tags} />
                     </div>
                 </div>
                 

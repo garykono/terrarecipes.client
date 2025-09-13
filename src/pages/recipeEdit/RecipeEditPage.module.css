@@ -118,19 +118,11 @@
     white-space: nowrap;
 }
 
-.tagListContainer {
-    margin-top: 1.6rem;
-}
-
-.radioInputs {
+.collapsibleBody {
     display: flex;
-    gap: var(--space-xxl);
-}
-
-.radioLabel {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+    flex-direction: column;
+    gap: var(--space-xl);
+    margin-top: var(--space-md);
 }
 
 .submitButtons {

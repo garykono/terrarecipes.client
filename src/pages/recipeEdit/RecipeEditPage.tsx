@@ -1,7 +1,7 @@
 import styles from './RecipeEditPage.module.css';
 import { useState, useContext, useEffect, useMemo, Ref, useRef } from 'react';
 import { useNavigate, useLoaderData, useRouteLoaderData, useRevalidator } from 'react-router-dom';
-import { useForm, useFieldArray, useWatch, UseFieldArrayRemove, UseFormRegister, FormProvider, useFormContext } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch, UseFieldArrayRemove, UseFormRegister, FormProvider, useFormContext, Controller, Path } from 'react-hook-form';
 import { GoXCircleFill, GoArrowUp, GoArrowDown } from 'react-icons/go';
 import { createRecipe, editRecipeById } from '../../api/queries/recipesApi';
 import TagList from '../../components/tagList/TagList'
@@ -15,7 +15,33 @@ import BasicHero from '../../components/basicHero/BasicHero';
 import DeleteButton from '../../components/buttons/DeleteButton';
 import IngredientInput from '../../components/ingredientInput/IngredientInput'
 import RecipeCard from '../../components/recipeCard/RecipeCard';
+import { FacetChipPicker } from '../../components/facetChipPicker/FacetChipPicker';
+import { CollapsibleSection } from '../../components/collapsibleSection/CollapsibleSection';
+import { CustomTagsInput } from '../../components/customTagsInput/CustomTagsInput';
+import { TERM_TO_ID } from '../../components/customTagsInput/TermToIdMap';
+import { toIntOrNull } from '../../utils/helpers';
+import { getPrefix } from '../../utils/tagHelpers';
 
+const FACET_KEYS = [
+    "meal",
+    "course",
+    "time",
+    "difficulty",
+    "dishType",
+    "method",
+    "protein",
+    "diet",
+    "cuisine",
+    "appliance",
+    "season",
+    "occasion",
+    "flavor",
+] as const;
+
+type FacetKey = typeof FACET_KEYS[number];
+type FacetPath<K extends FacetKey> = `tags.facets.${K}`;
+const facetPath = <K extends FacetKey>(k: K) => `tags.facets.${k}` as FacetPath<K>;
+type FacetValues = Partial<Record<FacetKey, string[]>>;
 
 export interface FormData {
     name: string;
@@ -28,17 +54,23 @@ export interface FormData {
     ingredients: Ingredient[];
     directions: Direction[];
     tag: string;
-    tags: { value: string }[];
-    difficulty: "easy" | "medium" | "hard";
+    tags: {
+        facets: FacetValues;
+        custom: string[];
+    };
     credit: string | null;
 }
 
 export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
     const navigate = useNavigate();
     const revalidator = useRevalidator();
-    const { user } 
+    const { user, tags } 
         = useRouteLoaderData('root') as RootLoaderResult;
     const { loadedRecipe } = mode === 'edit' ? useLoaderData() as RecipeEditLoaderResult : { loadedRecipe: null};
+
+    const essentialTagIds = ["meal", "course", "difficulty"] as FacetKey[];
+    const styleAndIdentityTagIds = ["dishType", "cuisine", "method", "diet"] as FacetKey[];
+    const moreTagIds = ["season", "occasion", "flavor"] as FacetKey[];
 
     const formMethods = useForm<FormData>({
         defaultValues: {
@@ -56,7 +88,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                     text: '', 
                     isSection: false
                 },
-                { 
+                {
                     text: '', 
                     isSection: false
                 },
@@ -76,8 +108,13 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                 },
             ],
             tag: "",
-            tags: loadedRecipe? loadedRecipe.tags.map(tag => ({ value: tag })) : [],
-            difficulty: loadedRecipe? loadedRecipe.difficulty : undefined,
+            tags: 
+            loadedRecipe 
+                ? loadedRecipe.tags
+                : {
+                    facets: Object.fromEntries(FACET_KEYS.map((key) => [key, []])),
+                    custom: []
+                },
             credit: loadedRecipe? loadedRecipe.credit : undefined,
         }
     });
@@ -122,65 +159,12 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                 name: "directions"
             });
 
-    const { fields: tagsField, 
-            append: appendTag, 
-            remove: removeTag } 
-            = useFieldArray({ 
-                control, 
-                // There is a nasty bug that can happen here where typescript can't locate the name in the FormData interface if it's
-                // an array of primitives, so when using useFieldArray, wrap primitives in an object
-                name: "tags",
-                rules: {
-                    validate: {
-                        lastTagMinLength:
-                            (tags) => {
-                                if (tags.length > 0 && tags[tags.length - 1].value.trim().length < 3) {
-                                    return 'A tag must be at least 3 characters.';
-                                }
-                            },
-                        lastTagMaxLength:
-                            (tags) => {
-                                if (tags.length > 0 && tags[tags.length - 1].value.trim().length > 15) {
-                                    return 'A tag must be 15 characters or less.';
-                                }
-                            }
-                    }
-                }
-            });
-
     // Reload previous image if cancel button for image url is pressed
     const handleCancelImageUrl = () => {
         if(loadedRecipe === null) {
             setValue("image", "");
         } else {
             setValue("image", loadedRecipe.image);
-        }
-    }
-
-    const tagInputRef = useRef<HTMLInputElement>(null);
-
-    const handleAddTag = async () => {
-        const tagValue = getValues('tag');
-        if (tagValue.trim().length < 3) {
-            setError('tag', { message: 'Tags must be at least 3 characters.'})
-            return;
-        } else if (tagValue.trimEnd().length > 15) {
-            setError('tag', { message: 'Tags must be 15 characters or less.'})
-            return;
-        } else {
-            appendTag({ value: tagValue });
-            clearErrors('tag');
-            setValue('tag', "");
-            requestAnimationFrame(() => {
-                tagInputRef.current?.focus(); // keep cursor in input
-            });
-        }
-    }
-
-    function handleEnterKeyOnTagField(e: React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            handleAddTag();
         }
     }
 
@@ -225,7 +209,6 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         ingredients, 
         directions, 
         tags,
-        difficulty,
         credit,
     }: FormData) {
         // let totalMin = 0;
@@ -236,18 +219,13 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
             description,
             image,
             servings,
-            prepTimeMin,
-            cookTimeMin,
-            restTimeMin,
+            prepTimeMin: toIntOrNull(prepTimeMin),
+            cookTimeMin: toIntOrNull(cookTimeMin),
+            restTimeMin: toIntOrNull(restTimeMin),
             ingredients: ingredients.filter(ingredient => ingredient.text !== ""),
             directions: directions.filter(direction => direction.text !== ""),
             // Tags -- Add no duplicates in future and sort before it goes in database
-            tags: tags.map(tagObj => tagObj.value).filter((tag) => {
-                return tag !== "";
-            }).sort((a, b) => {
-                return a.localeCompare(b);
-            }),
-            difficulty,
+            tags,
             credit,
         } as UnvalidatedRecipe;
     }
@@ -360,12 +338,72 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                 </>
         )
     }
+    
+    function TagSection({
+        id
+    }: { id: FacetKey}) {
+        if (!tags) {
+            const e = new Error();
+            e.name = 'MissingLoaderData';
+            e.message = 'Could not properly load required data: tags';
+            setError("root.other", e)
+            return;
+        }
+
+        const tagInfo = tags?.facets[id];
+        let desc = tagInfo.multi ? `Select all that apply. ` : "Select one."
+        if (tagInfo.multi && tagInfo.requirement.max) desc += `(Up to ${tagInfo.requirement.max})` 
+
+        return (
+            <Controller
+                name={facetPath(id)}
+                control={control}
+                render={({ field, fieldState }) => (
+                    <div className="field">
+                        <FacetChipPicker
+                            title={
+                                <label className="label">{tagInfo.label}</label>
+                            }
+                            description={<p className="text">{desc}</p>}
+                            options={tags.facets[id].options}
+                            multi={tags.facets[id].multi}
+                            value={field.value ?? []}
+                            onChange={field.onChange}
+                            minSelected={tagInfo.requirement.min || undefined}
+                            maxSelected={tagInfo.requirement.max || undefined}
+                        />
+
+                        {fieldState.error?.message && (
+                            <FormMessage className='form-message' message={fieldState.error.message} danger />
+                        )}
+                    </div>
+                )}
+                rules={{
+                    validate: (value) => {
+                        if (value && tagInfo.requirement.min && value.length < tagInfo.requirement.min) {
+                            return "Please select at least one option.";
+                        } else if (value && tagInfo.requirement.max && value.length > tagInfo.requirement.max) {
+                            return `Please select ${tagInfo.requirement.max} options at most.`;
+                        }
+                    }
+                }}
+            />
+        )
+    }
 
     if (!user) {
         const e = new Error();
         e.name = 'NotLoggedIn';
         return <GlobalErrorDisplay error={e} />
     }
+
+    if (!tags) {
+        const e = new Error();
+        e.name = 'MissingLoaderData';
+        e.message = 'Could not properly load required data: tags';
+        return <GlobalErrorDisplay error={e} />
+    }
+
 
     if (errors.root?.other) {
         return <GlobalErrorDisplay error={errors.root.other} />;
@@ -566,7 +604,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                         />
                                     </div>
                                     {errors.ingredients?.root?.message && 
-                                        <FormMessage className='form-message' message={errors.ingredients.root.message}  danger/>
+                                        <FormMessage className='form-message' message={errors.ingredients.root.message} danger/>
                                     }
                                 </div>
 
@@ -584,81 +622,70 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                     />
                                 </div>
 
-                                <div className="field">
-                                    <label className="label">Tag: </label>
-                                    <div className="control">
-                                        <div className={styles.fieldGroup}>
-                                            <input 
-                                                className="input"  
-                                                placeholder="ex. breakfast"
-                                                type="text"
-                                                onKeyDown={handleEnterKeyOnTagField}
-                                                {...register("tag")}
-                                            />
-                                            <button 
-                                                className={`button button--secondary-frequent button--small ${styles.oneLineButton}`}
-                                                type="button"
-                                                onClick={handleAddTag}>
-                                                    Add Tag
-                                            </button>
-                                        </div>
-                                        {errors.tag?.message && (
-                                                    <FormMessage className='form-message' message={errors.tag.message} danger />
-                                                )}
-                                        {/* {tagsField.map((item, index) => {
-                                            return <input 
-                                                key={index} 
-                                                type="hidden"
-                                                {...register(`tags.${index}` as keyof FormData)}
-                                            />
-                                        })} */}
-                                        <div className={styles.tagListContainer}>
-                                            <TagList tags={getValues('tags').map(tagObj => tagObj.value)} onDelete={removeTag} />
-                                        </div>
-                                    </div>
+                                <div className={styles.collapsibleBody}>
+                                    {essentialTagIds.map(id => (
+                                        <TagSection id={id} key={`facet-section-${id}`}/>
+                                    ))}
                                 </div>
 
-                                <div className="field">
-                                    <label className="label">Difficulty:</label>
-                                    <div className="control">
-
-                                    <div className={styles.radioInputs}>
-                                        <label className={`text ${styles.radioLabel}`}>
-                                            <input 
-                                                type="radio"
-                                                value="easy"
-                                                {...register("difficulty", {
-                                                    required: true,
-                                                })}
-                                            />
-                                            Easy
-                                        </label>
-                                        <label className={`text ${styles.radioLabel}`}>
-                                            <input 
-                                                type="radio"
-                                                value="medium"
-                                                {...register("difficulty", {
-                                                    required: true,
-                                                })}
-                                            />
-                                            Medium
-                                        </label>
-                                        <label className={`text ${styles.radioLabel}`}>
-                                            <input 
-                                                type="radio"
-                                                value="hard"
-                                                {...register("difficulty", {
-                                                    required: true,
-                                                })}
-                                            />
-                                            Hard
-                                        </label>
+                                <CollapsibleSection
+                                    title={
+                                        <h2 className="section-title">{"Style and Identity"}</h2>
+                                    }
+                                >
+                                    <div className={styles.collapsibleBody}>
+                                        {styleAndIdentityTagIds.map(id => (
+                                            <TagSection id={id} key={`facet-section-${id}`}/>
+                                        ))}
                                     </div>
-                                    {errors.difficulty?.message && (
-                                        <FormMessage className='form-message' message={errors.difficulty.message} danger />
+                                </CollapsibleSection>
+
+                                <CollapsibleSection
+                                    title={
+                                        <h2 className="section-title">{"More Tags"}</h2>
+                                    }
+                                >
+                                    <div className={styles.collapsibleBody}>
+                                        {moreTagIds.map(id => (
+                                            <TagSection id={id} key={`facet-section-${id}`}/>
+                                        ))}
+                                    </div>
+                                </CollapsibleSection>
+
+                                <Controller
+                                    name="tags.custom"
+                                    control={control}
+                                    render={({ field: { value = [], onChange } }) => (
+                                        <CustomTagsInput
+                                            title={<h2 className="section-title">{"Custom Tags"}</h2>}
+                                            value={value}
+                                            onChange={onChange}
+                                            // Optional: auto-promote known labels to facet IDs
+                                            tryPromoteLabelToFacetId={(raw) => TERM_TO_ID.get(raw.trim().toLowerCase()) ?? null}
+                                            onPromoteFacetId={(id) => {
+                                                const prefix = getPrefix(id) as FacetKey;
+                                                const tagInfo = tags.facets[prefix];
+                                                if (!tagInfo) return; // unknown facet prefix → ignore; let it fall back to custom if you want
+
+                                                // Read current array from RHF (default to empty array)
+                                                const pathInRHF = facetPath(prefix as FacetKey)
+                                                const current = (getValues(pathInRHF) ?? []) as string[];
+
+                                                let next: string[];
+
+                                                if (tagInfo.multi) {
+                                                    // Multi: add if not present
+                                                    next = current.includes(id) ? current : [...current, id];
+                                                } else {
+                                                    // Single: replace with just this id
+                                                    next = current.length === 1 && current[0] === id ? current : [id];
+                                                }
+
+                                                setValue(pathInRHF, next, { shouldDirty: true, shouldValidate: true });
+                                            }}
+                                        />
                                     )}
-                                    </div>
-                                </div>
+                                />
 
                                 <div className="field">
                                     <label className="label"><span>{"Credit (if applicable):"}</span></label>
@@ -723,8 +750,6 @@ function PreviewPane({ fallback }: { fallback?: any }) {
 
     // tags are objects in the form; map to strings for the card
     const tags = (w.tags ?? fallback?.tags ?? [])
-        .map((t: any) => (typeof t === "string" ? t : t?.value))
-        .filter(Boolean);
 
     // shape the object your RecipeCard expects
     const recipeForCard = {
@@ -739,7 +764,6 @@ function PreviewPane({ fallback }: { fallback?: any }) {
         ingredients: (w.ingredients ?? fallback?.ingredients ?? []).filter((i: any) => i?.text?.trim?.()),
         directions: (w.directions ?? fallback?.directions ?? []).filter((d: any) => d?.text?.trim?.()),
         tags,
-        difficulty: w.difficulty ?? fallback?.difficulty,
         credit: w.credit ?? fallback?.credit,
     };
 

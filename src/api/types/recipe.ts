@@ -15,6 +15,13 @@ export interface Direction {
     isSection: boolean;
 }
 
+export interface Tags {
+    facets: {
+        [key: string]: string[]
+    },
+    custom: string[]
+}
+
 export interface UnvalidatedRecipe {
     name: string;
     description: string;
@@ -23,11 +30,9 @@ export interface UnvalidatedRecipe {
     prepTimeMin: number;
     cookTimeMin: number;
     restTimeMin: number;
-    totalTimeMin: number;
     ingredients: Ingredient[];
     directions: Direction[];
-    tags: string[];
-    difficulty: "easy" | "medium" | "hard";
+    tags: Tags;
     credit: string | undefined;
 }
 

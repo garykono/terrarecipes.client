@@ -8,6 +8,7 @@ import { HomeLoaderResult } from "./homeLoader";
 import BasicHero from "../../components/basicHero/BasicHero";
 import RecipeCardWithFeatures from "../../components/recipeCardWithFeatures/RecipeCardWithFeatures";
 import FeaturedCluster from "../../components/featuredCluster/FeaturedCluster";
+import { shavePrefix } from "../../utils/tagHelpers";
 
 function HomePage () {
     const { recipes } = useLoaderData() as HomeLoaderResult;
@@ -43,7 +44,11 @@ function HomePage () {
 
     function getFeaturedRecipesList(tag: string) {
         return recipes.filter((recipe: Recipe) => {
-            return recipe.tags.includes(tag);
+            const flattenedTags = Array.isArray(recipe?.tags)
+                ? recipe.tags
+                : Object.values(recipe.tags.facets).flat().map(shavePrefix).concat(recipe.tags.custom);
+            
+            return flattenedTags.includes(tag);
         }).slice(0, 4);
     }
     

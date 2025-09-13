@@ -88,3 +88,23 @@ export interface Categories {
     core: Category[],
     featured: Category[]
 }
+
+export interface StandardTags {
+    facets: {
+        [key: string]: {
+            id: string;
+            label: string;
+            multi: boolean;
+            requirement: {
+                min?: number;
+                max?: number;
+            }
+            options: {
+                id: string;
+                label: string;
+                isActive: boolean;
+                sort: number;
+            }[]
+        }
+    },
+}

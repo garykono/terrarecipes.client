@@ -1,0 +1,47 @@
+.collapsible { 
+    border-top: 1px solid #e5e7eb; 
+    padding-top: 10px; 
+    margin-bottom: 14px; 
+}
+
+.collapsibleHeader { 
+    display: flex; 
+    align-items: baseline; 
+    gap: 12px; 
+    justify-content: space-between; 
+}
+
+.collapsibleToggle {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 8px;
+  background: none; 
+  border: none; 
+  cursor: pointer;
+  font-size: 14px; 
+  font-weight: 600; 
+  padding: 4px 0; 
+  color: #111827;
+}
+
+.collapsibleToggle:hover { 
+    text-decoration: underline; 
+}
+.collapsibleChevron { 
+    width: 1em; 
+}
+.collapsibleTitle { 
+    line-height: 1; 
+}
+
+.collapsibleDescription { 
+    font-size: 12px; color: #6b7280; 
+}
+
+.collapsibleBody { 
+    margin-top: 10px; 
+}
+
+.collapsibleBody.is-closed { 
+    display: none; 
+}

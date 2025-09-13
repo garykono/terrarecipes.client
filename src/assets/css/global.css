@@ -81,6 +81,9 @@ Default: 9px
     --color-text: var(--color-neutral-900);
     --color-text-muted: var(--color-neutral-600);
 
+    --color-danger: #f03e3e;
+    --color-danger-dark: #c92a2a;
+
     /* Links */
     --color-link: var(--color-brand-blue);
     --color-link-hover: #1e4e82;
@@ -577,7 +580,7 @@ p, li, span, .text {
     max-width: 50rem;
 }
 
-.input, .textarea {
+input, textarea, .input, .textarea {
     width: 100%;
     background-color: #fff;
     font-size: var(--font-size-body);
@@ -591,11 +594,11 @@ input::placeholder, textarea::placeholder {
     color: var(--color-text-muted);
 }
 
-.input {
+input, .input {
     padding: var(--space-xs) var(--space-sm);
 }
 
-.textarea {
+textarea, .textarea {
     padding: 1.2rem var(--space-sm);
 }
 
