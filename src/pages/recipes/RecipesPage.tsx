@@ -11,7 +11,7 @@ import BasicHero from '../../components/basicHero/BasicHero';
 function RecipesPage() {
     const navigate = useNavigate();
     const { recipes, totalPages, page, search } = useLoaderData() as RecipesLoaderResult;
-    const previousSearchTerm = search?.replace('-', ' ');
+    const previousSearchTerm = search;
     const searchSlug = search ? search : "";
 
     return (

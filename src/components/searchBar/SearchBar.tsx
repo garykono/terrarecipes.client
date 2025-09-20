@@ -20,7 +20,7 @@ function SearchBar({ initialSearchTerm, placeholder, onSearch, size = 'medium', 
         });    
     
     const onSubmit: SubmitHandler<{ search: string | undefined}> = ({ search }: { search: string | undefined}) => {
-        onSearch(search ? search.trim().toLowerCase().replace(' ', '-') : "");
+        onSearch(search ? search.trim().toLowerCase() : "");
     }
 
     return (
