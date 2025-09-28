@@ -25,16 +25,17 @@ import { getPrefix } from '../../utils/tagHelpers';
 const FACET_KEYS = [
     "meal",
     "course",
-    "time",
+    "theme",
     "difficulty",
     "dishType",
-    "method",
-    "protein",
+    "ingredientGroup",
     "diet",
-    "cuisine",
-    "appliance",
-    "season",
     "occasion",
+    "cuisine",
+    "season",
+    "temperature",
+    "method",
+    "appliance",
     "flavor",
 ] as const;
 
@@ -68,9 +69,9 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         = useRouteLoaderData('root') as RootLoaderResult;
     const { loadedRecipe } = mode === 'edit' ? useLoaderData() as RecipeEditLoaderResult : { loadedRecipe: null};
 
-    const essentialTagIds = ["meal", "course", "difficulty"] as FacetKey[];
-    const styleAndIdentityTagIds = ["dishType", "cuisine", "method", "diet"] as FacetKey[];
-    const moreTagIds = ["season", "occasion", "flavor"] as FacetKey[];
+    const essentialTagIds = ["meal", "course", "theme", "ingredientGroup", "difficulty"] as FacetKey[];
+    const styleAndIdentityTagIds = ["dishType", "diet", "occasion", "cuisine"] as FacetKey[];
+    const moreTagIds = [ "season", "temperature", "method", "appliance", "flavor"] as FacetKey[];
 
     const formMethods = useForm<FormData>({
         defaultValues: {
