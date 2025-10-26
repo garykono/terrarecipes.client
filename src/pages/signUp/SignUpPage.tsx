@@ -6,11 +6,11 @@ import { useForm } from 'react-hook-form';
 import { signUp } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import { isEmail } from '../../utils/validation';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import Button from '../../components/buttons/Button';
 
-function SignUpPage () {
+export default function SignUpPage () {
     const revalidator = useRevalidator();
     const navigate = useNavigate();
 
@@ -49,7 +49,7 @@ function SignUpPage () {
                 revalidator.revalidate();
                 reset();
                 setAccountCreated(true);
-                // navigate('/');
+                navigate('/logIn');
             })
             .catch(err => {
                 setAccountCreated(false);
@@ -177,5 +177,3 @@ function SignUpPage () {
         </div>
     );
 }
-
-export default SignUpPage;

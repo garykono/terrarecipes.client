@@ -1,14 +1,8 @@
 import { Link, useNavigate, useRouteLoaderData } from 'react-router';
 import styles from './browsePage.module.css';
 import { useEffect, useState } from 'react';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
-import BasicHero from '../../components/basicHero/BasicHero';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
-import FeaturedList from '../../components/featuredList/FeaturedList';
-import { Category } from '../../api/types/standardized';
-import { fetchRecipes } from '../../api/queries/recipesApi';
-import { Recipe } from '../../api/types/recipe';
-import FeaturedRecipe from '../../components/featuredRecipe/FeaturedRecipe';
 
 export default function BrowsePage() {
     const navigate = useNavigate();
@@ -105,7 +99,7 @@ export default function BrowsePage() {
                         <div className={styles.featuredCategoriesList}>
                             {categories.featured.map((category, index) => {
                                 return (
-                                    <Link to={`/browse/core/${category.slug}`} key={index}>
+                                    <Link to={`/browse/featured/${category.slug}`} key={index}>
                                         <div className={`card ${styles.featuredCategoryCard}`}>
                                             <span className={styles.featuredIconCircle}>
                                                 <span className={styles.featuredCategoryIcon}>

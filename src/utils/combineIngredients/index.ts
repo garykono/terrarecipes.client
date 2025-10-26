@@ -88,7 +88,7 @@ export function combineIngredients({
             }
             if (!parsedQuantity) {
                 if (!optionalQuantity) {
-                    logger.debug(`This ingredient is missing a parsed field: 'quantity' and is not an optional ingredient, so unable to convert. Adding to miscellaneous ingredients.`)
+                    if (DEBUG) logger.debug(`This ingredient is missing a parsed field: 'quantity' and is not an optional ingredient, so unable to convert. Adding to miscellaneous ingredients.`)
                     validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                     return;    
                 } else {
@@ -161,7 +161,7 @@ export function combineIngredients({
                     convertedUnitAmount = convertAnyUnit(parsedQuantity, standardParsedUnit, standardConversionUnit, ingredientInfo);
                     if (DEBUG) logger.debug(`conversion successful.`);
                 } catch (e) {
-                    logger.debug(e, " Adding to miscellaneous.")
+                    if (DEBUG) logger.debug(e, " Adding to miscellaneous.")
                     validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                     return;
                 } 

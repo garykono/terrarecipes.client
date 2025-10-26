@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useLoaderData, useRouteLoaderData } from 'react-router';
 import { GroceryListLoaderResult } from './groceryListLoader';
 import { RootLoaderResult } from '../root/rootLoader';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { StandardMeasurements } from '../../api/types/standardized';
 import { formatWithUnicodeFraction } from '../../utils/helpers';
 import { categorizeAndCombineIngredients, CategorizedAndCombinedIngredients, combineIngredients } from '../../utils/combineIngredients/index'
@@ -97,43 +97,45 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                                             return (
                                                 <li key={ingredient.name} className={styles.ingredientListItem}>
                                                     <input type="checkbox" className={styles.ingredientCheckbox} />
-                                                    {ingredient.normalizedRequiredUnitQuantity > 0 &&
-                                                            <span className={styles.ingredientAmount}>
-                                                                {`${getFormattedQuantityAndUnitLabel(
-                                                                    ingredient.normalizedRequiredUnitQuantity, 
-                                                                    ingredient.normalizedUnit, 
-                                                                    standardMeasurements,
-                                                                )} `}
-                                                            </span>
-                                                    }
-                                                    <span className={styles.ingredientText}>
-                                                        {`${(ingredient.normalizedRequiredUnitQuantity > 1 && standardIngredients) ? 
-                                                                    standardIngredients[ingredient.name].plural : ingredient.name}`}
-                                                    </span>
-                                                    {(ingredient.optionalStandardQuantity > 0 || ingredient.hasArbitraryOptionalAmount) &&
-                                                        <span className={styles.optionalIngredient}>
-                                                            {' - ('}
-                                                            {ingredient.optionalStandardQuantity > 0 &&
-                                                                (ingredient.normalizedRequiredUnitQuantity <= 0 
-                                                                    ? 'optional: '
-                                                                    : '+'
-                                                                ) +
-                                                                (ingredient.optionalStandardQuantity > 0 ?
-                                                                    `${getFormattedQuantityAndUnitLabel(
-                                                                        ingredient.normalizedOptionalUnitQuantity, 
+                                                    <div className={styles.ingredientText}>
+                                                        {ingredient.normalizedRequiredUnitQuantity > 0 &&
+                                                                <span className={styles.ingredientAmount}>
+                                                                    {`${getFormattedQuantityAndUnitLabel(
+                                                                        ingredient.normalizedRequiredUnitQuantity, 
                                                                         ingredient.normalizedUnit, 
-                                                                        standardMeasurements
-                                                                    )}` : ""
-                                                                ) +
-                                                                (ingredient.normalizedRequiredUnitQuantity > 0 ? ' optional' : "")
-                                                            }
-                                                            {(ingredient.optionalStandardQuantity > 0 && ingredient.hasArbitraryOptionalAmount) &&
-                                                                "; "
-                                                            }
-                                                            {ingredient.hasArbitraryOptionalAmount && '+ optional to taste'}
-                                                            {')'}
+                                                                        standardMeasurements,
+                                                                    )} `}
+                                                                </span>
+                                                        }
+                                                        <span className={styles.ingredientText}>
+                                                            {`${(ingredient.normalizedRequiredUnitQuantity > 1 && standardIngredients) ? 
+                                                                        standardIngredients[ingredient.name].plural : ingredient.name}`}
                                                         </span>
-                                                    }
+                                                        {(ingredient.optionalStandardQuantity > 0 || ingredient.hasArbitraryOptionalAmount) &&
+                                                            <span className={styles.optionalIngredient}>
+                                                                {' - ('}
+                                                                {ingredient.optionalStandardQuantity > 0 &&
+                                                                    (ingredient.normalizedRequiredUnitQuantity <= 0 
+                                                                        ? 'optional: '
+                                                                        : '+'
+                                                                    ) +
+                                                                    (ingredient.optionalStandardQuantity > 0 ?
+                                                                        `${getFormattedQuantityAndUnitLabel(
+                                                                            ingredient.normalizedOptionalUnitQuantity, 
+                                                                            ingredient.normalizedUnit, 
+                                                                            standardMeasurements
+                                                                        )}` : ""
+                                                                    ) +
+                                                                    (ingredient.normalizedRequiredUnitQuantity > 0 ? ' optional' : "")
+                                                                }
+                                                                {(ingredient.optionalStandardQuantity > 0 && ingredient.hasArbitraryOptionalAmount) &&
+                                                                    "; "
+                                                                }
+                                                                {ingredient.hasArbitraryOptionalAmount && '+ optional to taste'}
+                                                                {')'}
+                                                            </span>
+                                                        }
+                                                    </div>
                                                 </li>
                                             )
                                         })}

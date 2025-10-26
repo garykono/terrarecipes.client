@@ -1,3 +1,4 @@
+import styles from './GlobalErrorDisplay.module.css';
 import { useState, useEffect } from "react";
 import { Link, useRouteError } from "react-router-dom";
 
@@ -31,6 +32,9 @@ export default function GlobalErrorDisplay({ error = useRouteError(), title, mes
             }  else if (error.name === 'InvalidParameters') {
                 setDisplayTitle("Invalid Parameters")
                 setDisplayMessage("Invalid values were given for one or more parameters.")
+            } else if (error.name === 'INVALID_FIELDS_ERROR') {
+                setDisplayTitle("Invalid Fields Sent")
+                setDisplayMessage("Some fields sent with request were rejected from the server.")
             } else if (error.status) {
                 setDisplayTitle(`${error.status} Error.`);
 
@@ -62,10 +66,14 @@ export default function GlobalErrorDisplay({ error = useRouteError(), title, mes
     }, [])
 
     return (
-        <div className="section">
-            <h2 className="title">{displayTitle}</h2>
-            <p className="mb-2">{displayMessage}</p>
-            <Link to='/'>Go Home</Link>
+        <div className="page-top">
+            <div className="container">
+                <h2 className="page-title">{displayTitle}</h2>
+                <p className="subsection-title">{displayMessage}</p>
+                <div  className={`subsection-title ${styles.homeLink}`}>
+                    <Link to='/'>Go Home</Link>
+                </div>
+            </div>
         </div>
     );
 }

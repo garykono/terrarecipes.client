@@ -5,7 +5,7 @@ import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/Reci
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
 import { SingleCollectionLoaderResult } from './singleCollectionLoader';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { Recipe } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
 import Toolbar, { ToolbarAction } from '../../components/toolbar/Toolbar';

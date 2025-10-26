@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useLoaderData, Link, useRouteLoaderData, useNavigate } from 'react-router-dom';
 import { editCollectionById, getCollectionById } from '../../api/queries/collectionApi';
 import TagList from '../../components/tagList/TagList';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import { SingleRecipeLoaderResult } from './singleRecipeLoader';
 import { Ingredient, Direction } from '../../api/types/recipe';

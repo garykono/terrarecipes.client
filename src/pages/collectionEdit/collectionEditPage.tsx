@@ -7,7 +7,7 @@ import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/Reci
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
 import FormMessage from '../../components/formMessage/FormMessage';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { CollectionEditLoaderResult } from './collectionEditLoader';
 import { Recipe, RecipeWithMarkForDelete } from '../../api/types/recipe';
@@ -52,7 +52,6 @@ export default function CollectionEditPage() {
 
         const startIndex = (page - 1) * resultsPerPage;
         const endIndex = Math.min((page * resultsPerPage), numUserRecipes);
-        console.log(`page: ${page}, resultsPerPage: ${resultsPerPage}`)
 
         setRecipesToShow(collectionRecipes.slice(startIndex, endIndex));
         setTotalPages(Math.ceil(numUserRecipes / resultsPerPage));
@@ -129,62 +128,64 @@ export default function CollectionEditPage() {
         <div className="page-collection-edit">
             <BasicHero title='Edit Collection' />
 
-            <div className="container">
-                <form className='form form--card' onSubmit={handleSubmit(onSubmit)}>
-                    <div className="field">
-                        <label className="label">Collection Name: </label>
-                        <div className="control">
-                            <input 
-                                className="input"
-                                {...register("name", {
-                                    required: 'A collection must have a name.'
-                                })}
-                            />
-                            {errors.name?.message &&
-                                <FormMessage message={errors.name.message} danger />
-                            }
+            <div className="page-top">
+                <div className="container">
+                    <form className='form' onSubmit={handleSubmit(onSubmit)}>
+                        <div className="field">
+                            <label className="label">Collection Name: </label>
+                            <div className="control">
+                                <input 
+                                    className="input"
+                                    {...register("name", {
+                                        required: 'A collection must have a name.'
+                                    })}
+                                />
+                                {errors.name?.message &&
+                                    <FormMessage message={errors.name.message} danger />
+                                }
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="field">
-                        <label className="label">Description: </label>
-                        <div className="control">
-                            <textarea 
-                                className="textarea"
-                                rows={5}
-                                {...register("description", {
-                                    maxLength: {
-                                        value: 300,
-                                        message: 'A collection description has a max length of 300 characters.'
-                                    }
-                                })}
+                        <div className="field">
+                            <label className="label">Description: </label>
+                            <div className="control">
+                                <textarea 
+                                    className="textarea"
+                                    rows={5}
+                                    {...register("description", {
+                                        maxLength: {
+                                            value: 300,
+                                            message: 'A collection description has a max length of 300 characters.'
+                                        }
+                                    })}
+                                />
+                                {errors.description?.message &&
+                                    <FormMessage message={errors.description.message} danger />
+                                }
+                            </div>
+                        </div>   
+
+                        <CardList list={renderedRecipeCards} className={styles.cardList} />
+                        <Pagination 
+                                currentPage={page} 
+                                onFirstPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${1}`)}
+                                onPreviousPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${page - 1}`)} 
+                                onNextPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${page + 1}`)}
+                                onLastPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${totalPages}`)}
+                                numPages={totalPages} 
                             />
-                            {errors.description?.message &&
-                                <FormMessage message={errors.description.message} danger />
-                            }
-                        </div>
-                    </div>   
-
-                    <CardList list={renderedRecipeCards} className={styles.cardList} />
-                    <Pagination 
-                            currentPage={page} 
-                            onFirstPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${1}`)}
-                            onPreviousPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${page - 1}`)} 
-                            onNextPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${page + 1}`)}
-                            onLastPageButtonClicked={() => navigate(`/editCollection/${collection._id}/${totalPages}`)}
-                            numPages={totalPages} 
-                        />
-                
-                    <div className="buttons">
-                        {errors.root?.general.message &&
-                            <FormMessage className="form-message" message={errors.root.general.message} danger />
-                        }
+                    
                         <div className="buttons">
-                            <Button type="button" onClick={handleCancel}>Cancel</Button>
-                            <Button primary type="submit">Save</Button>
+                            {errors.root?.general.message &&
+                                <FormMessage className="form-message" message={errors.root.general.message} danger />
+                            }
+                            <div className="buttons">
+                                <Button type="button" onClick={handleCancel}>Cancel</Button>
+                                <Button primary type="submit">Save</Button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     )

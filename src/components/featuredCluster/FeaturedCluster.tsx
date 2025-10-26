@@ -1,40 +1,47 @@
 import { Recipe } from '../../api/types/recipe';
-import GlobalErrorDisplay from '../GlobalErrorDisplay';
+import GlobalErrorDisplay from '../globalErrorDisplay/GlobalErrorDisplay';
 import RecipeCardWithFeatures from '../recipeCardWithFeatures/RecipeCardWithFeatures';
 import styles from './FeaturedCluster.module.css';
 
 type FeaturedClusterProps = {
-    title: string;
+    title?: string;
     hero: Recipe;
     companions: Recipe[];
     className?: string;
 };
 
 export default function FeaturedCluster({ title, hero, companions, className } : FeaturedClusterProps) {
-    if (companions.length < 1) {
-        const e = new Error();
-        e.name = 'InvalidParameters';
-        return <GlobalErrorDisplay error={e} message='Featured Cluster requires at least 1 recipe.' />
-    }
-
     return (
         <div className={`${styles.featuredClusterWrapper} ${className}`}>
-            <div className={styles.header}>
-                <h2 
-                    className={`section-title ${styles.title} underlined-title`}
-                    style={{ "--category-color": "var(--color-brand-primary-light)" } as React.CSSProperties}
-                >
-                    {title}
-                </h2>
-            </div>
-            <div className={styles.content}>
-                <div className={styles.heroRecipe}>
-                    <RecipeCardWithFeatures recipe={hero} size="rich" />
+            {title &&
+                <div className={styles.header}>
+                    <h2 
+                        className={`section-title ${styles.title} underlined-title`}
+                        style={{ "--category-color": "var(--color-brand-primary-light)" } as React.CSSProperties}
+                    >
+                        {title}
+                    </h2>
                 </div>
-                <div className={styles.companionRecipes}>
-                    {companions.map((recipe, index) => <RecipeCardWithFeatures key={index} recipe={recipe} size="lean" />)}
+            }
+
+            {!!hero
+                ? <div className={styles.content}>
+                    <div className={styles.heroRecipe}>
+                        <RecipeCardWithFeatures recipe={hero} size="rich" />
+                    </div>
+                    <div className={`${styles.companionRecipes} ${companions.length < 3 ? styles.companionRecipesSingleRow : ""}`}>
+                        {companions.slice(0, 4).map((recipe, index) => (
+                            <RecipeCardWithFeatures 
+                                key={index} 
+                                recipe={recipe} 
+                                size="lean" 
+                                className={companions.length < 3 ? styles.shortCompanion : ""}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
+                : <div className="text">There are no recipes for this category yet!</div>
+            }
         </div>
     )
 }

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { forgotPassword } from '../../api/queries/usersApi';
 import { isEmail } from '../../utils/validation';
 import FormMessage from '../../components/formMessage/FormMessage';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../../components/buttons/Button';
 
 function ForgotPasswordPage() {
@@ -89,8 +89,8 @@ function ForgotPasswordPage() {
     );
     
     let afterSubmitContent = (
-        <p className="has-text-centered has-text-weight-medium">
-            Send email has not been implemented yet. For now, there is not a way to change passwords.
+        <p className={`page-top subsection-title ${styles.emailSentMessage}`}>
+            A password reset link has been sent to your email.
         </p>
     );
 

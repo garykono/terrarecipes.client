@@ -7,7 +7,7 @@ import Modal from '../../components/modal/Modal'
 import { isEmail } from '../../utils/validation';
 import FormMessage from '../../components/formMessage/FormMessage';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
 

@@ -42,6 +42,8 @@
 }
 
 .ingredientListItem {
+    display: flex;
+    align-items: center;
     list-style: none;
     margin-bottom: var(--space-xs);
     list-style-position: inside; /* Bring marker inside the content box */
@@ -49,6 +51,8 @@
 
 .ingredientCheckbox {
     margin-right: var(--space-sm);
+    width: 1.4rem;
+    height: 1.4rem;
 }
 
 .miscellaneousSection {

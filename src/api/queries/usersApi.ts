@@ -67,6 +67,25 @@ export const forgotPassword = (emailAddress: string) => {
     );
 }
 
+export const resetPassword = (password: string, passwordConfirm: string, token: string) => {
+    return (
+        axiosInstance
+            .patch(`/users/resetPassword/${token}`, {
+                password,
+                passwordConfirm
+            })
+            .then((response) => {
+                return {
+                    message: response.data.message as string,
+                    status: response.data.status as string
+                };
+            })
+            .catch(error => {
+                throw error;
+            })
+    );
+}
+
 export const updateUserPassword = (passwordCurrent: string, password: string, passwordConfirm: string) => {
     return (
         axiosInstance

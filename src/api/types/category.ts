@@ -18,5 +18,11 @@ export interface CategoryData {
         },
         relatedCategories: string[];
     },
-    recipes: Recipe[]
+    recipes: {
+        [key: string]: {
+            results: Recipe[],
+            totalCount: number,
+            totalPages: number;
+        }
+    }
 }

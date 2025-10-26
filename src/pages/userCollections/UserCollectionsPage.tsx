@@ -7,7 +7,7 @@ import { MdDelete } from 'react-icons/md'
 import { CollectionUpdateProps, createCollection, deleteCollectionById } from '../../api/queries/collectionApi';
 import Modal from '../../components/modal/Modal'
 import FormMessage from '../../components/formMessage/FormMessage';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { Collection } from '../../api/types/collection';
 import BasicHero from '../../components/basicHero/BasicHero';

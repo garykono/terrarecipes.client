@@ -1,13 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
-import GlobalErrorDisplay from "../components/GlobalErrorDisplay";
+import GlobalErrorDisplay from "../components/globalErrorDisplay/GlobalErrorDisplay";
 import Root from "../pages/root/Root";
 import { rootLoader } from "../pages/root/rootLoader";
 import HomePage from '../pages/home/HomePage';
 import { homeLoader } from "../pages/home/homeLoader";
 import BrowsePage from "../pages/browse/browsePage";
 import { browseLoader } from "../pages/browse/browseLoader";
-import BrowseCategoryPage from "../pages/browseCategory/browseCategoryPage";
-import { browseCategoryLoader } from "../pages/browseCategory/browseCategoryLoader";
+import BrowseCoreCategoryPage from "../pages/browseCoreCategory/browseCoreCategoryPage";
+import { browseCoreCategoryLoader } from "../pages/browseCoreCategory/browseCoreCategoryLoader";
+import BrowseFeaturedCategoryPage from "../pages/browseFeaturedCategory/browseFeaturedCategoryPage";
+import { browseFeaturedCategoryLoader } from "../pages/browseFeaturedCategory/browseFeaturedCategoryLoader";
 import RecipesPage from '../pages/recipes/RecipesPage'
 import { recipesLoader } from "../pages/recipes/recipesLoader";
 import SingleRecipePage from '../pages/singleRecipe/SingleRecipePage'
@@ -21,6 +23,8 @@ import { collectionEditLoader } from '../pages/collectionEdit/collectionEditLoad
 import LogInPage from '../pages/logIn/LogInPage'
 import SignUpPage from '../pages/signUp/SignUpPage'
 import ForgotPasswordPage from '../pages/forgotPassword/ForgotPasswordPage'
+import ResetPasswordPage from '../pages/resetPassword/ResetPasswordPage'
+import { resetPasswordLoader } from '../pages/resetPassword/ResetPasswordLoader';
 import ChangePasswordPage from '../pages/changePassword/ChangePasswordPage'
 import AccountEditPage from "../pages/accountEdit/AccountEditPage";
 import UserRecipesPage from "../pages/userRecipes/UserRecipesPage";
@@ -55,9 +59,16 @@ export const appRouter = createBrowserRouter([
                 errorElement:<GlobalErrorDisplay />,
             },
             {
-                path: '/browse/:group?/:category',
-                element: <BrowseCategoryPage />,
-                loader: browseCategoryLoader,
+                path: '/browse/core/:category',
+                element: <BrowseCoreCategoryPage />,
+                loader: browseCoreCategoryLoader,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/browse/featured/:category',
+                element: <BrowseFeaturedCategoryPage />,
+                loader: browseFeaturedCategoryLoader,
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,
             },
@@ -121,6 +132,13 @@ export const appRouter = createBrowserRouter([
                 path: '/forgotPassword',
                 element: <ForgotPasswordPage />,
                 loader: undefined,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/resetPassword/:token',
+                element: <ResetPasswordPage />,
+                loader: resetPasswordLoader,
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,
             },

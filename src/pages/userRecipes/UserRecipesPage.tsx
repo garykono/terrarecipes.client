@@ -6,7 +6,7 @@ import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/Reci
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
 import FormError from '../../components/formMessage/FormMessage';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import { Recipe } from '../../api/types/recipe';
 import BasicHero from '../../components/basicHero/BasicHero';

@@ -6,7 +6,7 @@ import { GoXCircleFill, GoArrowUp, GoArrowDown } from 'react-icons/go';
 import { createRecipe, editRecipeById } from '../../api/queries/recipesApi';
 import TagList from '../../components/tagList/TagList'
 import FormMessage from '../../components/formMessage/FormMessage';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { RecipeEditLoaderResult } from './recipeEditLoader';
 import { Ingredient, Direction, UnvalidatedRecipe } from '../../api/types/recipe';

@@ -24,7 +24,11 @@
     gap: var(--space-sm);
     padding: var(--space-md);
     justify-items: center;
-    align-items: start;
+    align-items: center;
+}
+
+.companionRecipesSingleRow {
+    height: 50%;
 }
 
 /**************************/

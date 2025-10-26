@@ -2,7 +2,7 @@ import styles from './Modal.module.css';
 import ReactDOM from 'react-dom'
 import { useEffect } from 'react'
 import { ReactNode } from "react";
-import GlobalErrorDisplay from '../GlobalErrorDisplay';
+import GlobalErrorDisplay from '../globalErrorDisplay/GlobalErrorDisplay';
 import DeleteButton from '../buttons/DeleteButton';
 
 interface ModalProps {

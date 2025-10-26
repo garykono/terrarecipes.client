@@ -4,7 +4,7 @@ import { Link, useNavigate, useRevalidator } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { logIn } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { isEmail } from '../../utils/validation';
 import Button from '../../components/buttons/Button';
 

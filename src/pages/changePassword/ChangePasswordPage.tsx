@@ -6,7 +6,7 @@ import { updateUserPassword } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { RootLoaderResult } from '../root/rootLoader';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 
 function ChangePasswordPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;

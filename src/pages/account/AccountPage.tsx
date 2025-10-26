@@ -1,7 +1,7 @@
 import styles from './AccountPage.module.css';
 import { useState, useContext, useEffect } from 'react'
 import { Link, useRouteLoaderData } from 'react-router-dom';
-import GlobalErrorDisplay from '../../components/GlobalErrorDisplay';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import BasicHero from '../../components/basicHero/BasicHero';
 
