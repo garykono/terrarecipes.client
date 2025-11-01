@@ -3,7 +3,7 @@ import signUpImage from '../../assets/signup.jpg';
 import { useState, useEffect } from 'react';
 import { useNavigate, useRevalidator } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { signUp } from '../../api/queries/usersApi';
+import { resendVerificationEmail, signUp } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import { isEmail } from '../../utils/validation';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
@@ -25,8 +25,6 @@ export default function SignUpPage () {
             }
         });
 
-    const [ accountCreated, setAccountCreated ] = useState(false);
-
     const usernameValue = watch('username');
     const emailValue = watch('email');
     const passwordValue = watch('password');
@@ -46,13 +44,11 @@ export default function SignUpPage () {
     const onSubmit = ({ username, email, password, passwordConfirm }: FormData) => {
         signUp(username, email, password, passwordConfirm)
             .then(() => {
-                revalidator.revalidate();
-                reset();
-                setAccountCreated(true);
-                navigate('/logIn');
+                // revalidator.revalidate();
+                // reset();
+                navigate("/verificationSent", { state: { email } });
             })
             .catch(err => {
-                setAccountCreated(false);
                 useSetError(err, setError as ErrorMessageSetter);
             });
     }
@@ -162,9 +158,6 @@ export default function SignUpPage () {
                                 <Button primary className={styles.signupButton} type="submit">Sign Up</Button>
                             </p>
                         </div>
-                        {accountCreated && 
-                            <FormMessage className='form-message' message={'Account successfully created!'} success />
-                        }
                         {errors.root?.general?.message && (
                             <FormMessage className='form-message' message={errors.root.general.message} danger />
                         )}
@@ -172,7 +165,6 @@ export default function SignUpPage () {
 
                     <div className={styles.signupImage} role="img" aria-label="vegetable platter"></div>
                 </div>
-                    
             </div>
         </div>
     );

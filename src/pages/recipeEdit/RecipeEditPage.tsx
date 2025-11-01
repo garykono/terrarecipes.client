@@ -69,6 +69,12 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         = useRouteLoaderData('root') as RootLoaderResult;
     const { loadedRecipe } = mode === 'edit' ? useLoaderData() as RecipeEditLoaderResult : { loadedRecipe: null};
 
+    useEffect(() => {
+        if (user && !user.verifiedAt) {
+            navigate('/verificationRequired', { state: { email: user.email, fromLogin: false } })
+        }
+    }, [])
+
     const essentialTagIds = ["meal", "course", "theme", "ingredientGroup", "difficulty"] as FacetKey[];
     const styleAndIdentityTagIds = ["dishType", "diet", "occasion", "cuisine"] as FacetKey[];
     const moreTagIds = [ "season", "temperature", "method", "appliance", "flavor"] as FacetKey[];

@@ -20,6 +20,34 @@ export const signUp = (username: string, email: string, password: string, passwo
     );
 }
 
+export const resendVerificationEmail = (email: string) => {
+    return (
+        axiosInstance
+            .post('/users/verification/resend', {
+                email
+            })
+            .then(async (response) => {
+                return response;
+            })
+            .catch(error => {
+                throw error;
+            })
+    );
+}
+
+export const verifyEmail = (token: string) => {
+    return (
+        axiosInstance
+            .post(`/users/verifyEmail/${token}`)
+            .then(async (response) => {
+                return response;
+            })
+            .catch(error => {
+                throw error;
+            })
+    );
+}
+
 export const logIn = (email: string, password: string) => {
     return (
         axiosInstance
@@ -121,7 +149,7 @@ export const updateUserInfo = (updatedInfo: { [key: string]: string }) => {
         axiosInstance
             .patch('/users/updateMe', updatedInfo)
             .then((response) => {
-                return response.data.user as User;
+                return response.data.data.data as User;
             })
             .catch((error) => {
                 throw error;

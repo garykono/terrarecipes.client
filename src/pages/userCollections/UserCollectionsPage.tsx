@@ -20,6 +20,12 @@ function UserCollectionsPage() {
     const revalidator = useRevalidator();
     const { user } = useRouteLoaderData('root');
 
+    useEffect(() => {
+        if (user && !user.verifiedAt) {
+            navigate('/verificationRequired', { state: { email: user.email, fromLogin: false } })
+        }
+    }, [])
+
     // Collection Modification
     const [showCollectionModificationButtons, setShowCollectionModificationButtons] = useState(false);
 

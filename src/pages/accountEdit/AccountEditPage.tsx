@@ -45,10 +45,14 @@ export default function AccountEditPage () {
                     username,
                     email
                 })
-                .then(() => {
-                    setSuccessMessage("Account has been updated!");
-                    // In the future, probably reset the page or navigate somewhere on form submits, and use an alert to inform user
-                    //revalidator.revalidate();
+                .then((updatedUser) => {
+                    if (user.email !== updatedUser.email) {
+                        setSuccessMessage("Account has been updated! A verification email has been sent to your new email address.");
+                    } else {
+                        setSuccessMessage("Account has been updated!");
+                        // In the future, probably reset the page or navigate somewhere on form submits, and use an alert to inform user
+                        //revalidator.revalidate();
+                    }
                 })
                 .catch(err => {
                     setSuccessMessage("");

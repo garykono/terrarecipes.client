@@ -37,6 +37,9 @@ export default function CollectionEditPage() {
 
     // Add a "markedForDelete" to enable multiple recipes being deleted at once and providing that clearly in a UI
     useEffect(() => {
+        if (user && !user.verifiedAt) {
+            navigate('/verificationRequired', { state: { email: user.email, fromLogin: false } })
+        }
         if (collection) {
             const recipesWithMarkForDeleteAttribute = collection.recipes.map((recipe) => {
                 return {...recipe, markForDelete: false};

@@ -7,4 +7,6 @@ export interface User {
     email: string;
     recipes: Recipe[];
     collections: Collection[];
+    role: string;
+    verifiedAt: Date;
 }

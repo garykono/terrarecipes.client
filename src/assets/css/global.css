@@ -416,6 +416,17 @@ p, li, span, .text {
     align-items: center;
 }
 
+/* --- Disabled / cooldown state --- */
+.button:disabled,
+.link[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: var(--btn-disabled-bg, #b8b8b8);
+  color: var(--btn-disabled-text, #f0f0f0);
+  text-decoration: none;
+  pointer-events: none;
+}
+
 /**************************/
 /* Card */
 /**************************/

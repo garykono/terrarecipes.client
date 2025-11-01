@@ -1,0 +1,12 @@
+.messages {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.resendLine {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}

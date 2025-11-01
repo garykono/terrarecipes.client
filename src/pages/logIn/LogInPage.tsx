@@ -35,9 +35,13 @@ function LogInPage () {
 
     const onSubmit = ({ email, password }: FormData) => {
         logIn(email, password)
-            .then(() => {
-                revalidator.revalidate();
-                navigate('/')
+            .then((user) => {
+                if (!user.verifiedAt) {
+                    revalidator.revalidate();
+                    navigate('/verificationRequired', { state: { email, fromLogin: true } })
+                } else {
+                    navigate('/')
+                }
             })
             .catch((err) => {
                 // Backend doesn't do validation check on email or password

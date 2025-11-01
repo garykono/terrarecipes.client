@@ -22,10 +22,13 @@ import CollectionEditPage from "../pages/collectionEdit/collectionEditPage";
 import { collectionEditLoader } from '../pages/collectionEdit/collectionEditLoader';
 import LogInPage from '../pages/logIn/LogInPage'
 import SignUpPage from '../pages/signUp/SignUpPage'
+import VerificationEmailSentPage from "../pages/verificationEmailSent/VerificationEmailSentPage";
+import VerifyEmailPage from '../pages/verifyEmail/VerifyEmailPage';
+import { verifyEmailLoader } from "../pages/verifyEmail/verifyEmailLoader";
+import VerificationRequiredPage from "../pages/verificationRequired/VerificationRequiredPage";
 import ForgotPasswordPage from '../pages/forgotPassword/ForgotPasswordPage'
 import ResetPasswordPage from '../pages/resetPassword/ResetPasswordPage'
 import { resetPasswordLoader } from '../pages/resetPassword/ResetPasswordLoader';
-import ChangePasswordPage from '../pages/changePassword/ChangePasswordPage'
 import AccountEditPage from "../pages/accountEdit/AccountEditPage";
 import UserRecipesPage from "../pages/userRecipes/UserRecipesPage";
 import { userRecipesLoader } from '../pages/userRecipes/userRecipesLoader';
@@ -129,6 +132,27 @@ export const appRouter = createBrowserRouter([
                 errorElement:<GlobalErrorDisplay />,
             },
             {
+                path: '/verificationSent',
+                element: <VerificationEmailSentPage />,
+                loader: undefined,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/verifyEmail/:token',
+                element: <VerifyEmailPage />,
+                loader: verifyEmailLoader,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/verificationRequired',
+                element: <VerificationRequiredPage />,
+                loader: undefined,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
                 path: '/forgotPassword',
                 element: <ForgotPasswordPage />,
                 loader: undefined,
@@ -139,13 +163,6 @@ export const appRouter = createBrowserRouter([
                 path: '/resetPassword/:token',
                 element: <ResetPasswordPage />,
                 loader: resetPasswordLoader,
-                hydrateFallbackElement: <LoadingScreen />,
-                errorElement:<GlobalErrorDisplay />,
-            },
-            {
-                path: '/changePassword',
-                element: <ChangePasswordPage />,
-                loader: undefined,
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,
             },

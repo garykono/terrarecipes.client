@@ -15,8 +15,7 @@ import Toolbar from '../../components/toolbar/Toolbar';
 function UserRecipesPage() {
     const navigate = useNavigate();
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
-    const { search } = useLoaderData();
-    const { page, numResults } = useLoaderData();
+    const { search, page, numResults } = useLoaderData();
     const [ recipesToShow, setRecipesToShow ] = useState<Recipe[]>([]);
     const [ totalPages, setTotalPages ] = useState(1);
 
@@ -29,6 +28,9 @@ function UserRecipesPage() {
 
     // Show button to add recipe
     useEffect(() => {
+        if (user && !user.verifiedAt) {
+            navigate('/verificationRequired', { state: { email: user.email, fromLogin: false } })
+        }
         if(user) {
             setShowAddRecipeButton(true);
         }

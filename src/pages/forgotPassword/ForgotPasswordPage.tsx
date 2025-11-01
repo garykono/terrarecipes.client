@@ -7,7 +7,7 @@ import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../../components/buttons/Button';
 
-function ForgotPasswordPage() {
+export default function ForgotPasswordPage() {
     const [ emailSent, setEmailSent ] = useState(false);
 
     const { register, handleSubmit, watch, setError, clearErrors, reset, formState: { errors } } = useForm({
@@ -104,5 +104,3 @@ function ForgotPasswordPage() {
         </div>
     );
 }
-
-export default ForgotPasswordPage;
