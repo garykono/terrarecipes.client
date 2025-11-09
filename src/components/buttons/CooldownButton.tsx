@@ -1,26 +1,24 @@
+import Button from './Button';
 import styles from './CooldownButton.module.css';
 import { useEffect, useState } from "react";
 
 interface CooldownButtonProps {
     onClick: () => void | Promise<void>;
     cooldownSeconds?: number;
-    as?: "button" | "link";
-    href?: string; // used if as="link"
     children: React.ReactNode;
-    className?: string;
     disabled?: boolean;
     showCountdown?: boolean;
+    className?: string;
 }
 
 export const CooldownButton: React.FC<CooldownButtonProps> = ({
         onClick,
         cooldownSeconds = 60,
-        as = "button",
-        href,
         children,
-        className = "",
         disabled = false,
-        showCountdown = true
+        showCountdown = true,
+        className = "",
+        ...rest
     }) => {
     const [cooldown, setCooldown] = useState(0);
 
@@ -46,27 +44,21 @@ export const CooldownButton: React.FC<CooldownButtonProps> = ({
         ? `${children} (${cooldown})`
         : children;
 
-    if (as === "link" && href) {
-        return (
-        <a
-            href={isDisabled ? undefined : href}
-            onClick={handleClick}
-            className={styles.link}
-            aria-disabled={isDisabled}
-        >
-            {label}
-        </a>
-        );
-    }
-
     return (
-        <button
+        <Button
+            primary
             type="button"
             onClick={handleClick}
             disabled={isDisabled}
-            className={styles.button}
+            className={className}
+            {...rest}
         >
-            {label}
-        </button>
+            <div className={styles.cooldownButtonDisplay}>
+                {children}
+                {(showCountdown && cooldown > 0) &&
+                    <span>{` (${cooldown})`}</span>
+                }
+            </div>
+        </Button>
     );
 };

@@ -1,14 +1,18 @@
 import styles from './ForgotPassword.module.css';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { forgotPassword } from '../../api/queries/usersApi';
+import { forgotPassword, resendVerificationEmail } from '../../api/queries/usersApi';
 import { isEmail } from '../../utils/validation';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../../components/buttons/Button';
+import { Link } from 'react-router';
+import { CooldownButton } from '../../components/buttons/CooldownButton';
+import { maskEmail } from '../../utils/maskEmail';
 
 export default function ForgotPasswordPage() {
     const [ emailSent, setEmailSent ] = useState(false);
+    const [ email, setEmail ] = useState("");
 
     const { register, handleSubmit, watch, setError, clearErrors, reset, formState: { errors } } = useForm({
         mode: 'onSubmit',
@@ -33,6 +37,7 @@ export default function ForgotPasswordPage() {
         .then(response => {
             reset();
             setEmailSent(true);
+            setEmail(emailValue);
         })
         .catch(err => {
             // No validation check for email on backend
@@ -89,9 +94,33 @@ export default function ForgotPasswordPage() {
     );
     
     let afterSubmitContent = (
-        <p className={`page-top subsection-title ${styles.emailSentMessage}`}>
-            A password reset link has been sent to your email.
-        </p>
+        <div className={`page-top box box--message ${styles.contentBlock}`}>
+                    <h1 className="page-title">Password Reset</h1>
+
+                    <div className={styles.explanationBlock}>
+                        <p className="text">
+                            A password reset link has been sent to {" "}
+                            {email.length > 0
+                                ? <strong>{maskEmail(email)}</strong>
+                                : "your mailbox"
+                            }.
+                        </p>
+                        <p className="text">Open the message and click the link to change your password to a new one.</p>
+                    </div>
+                    
+                    <div className={styles.troubleshootingBlock}>
+                        <p className="subsection-title">Didn't get it?</p>
+                        <ul className={styles.troubleshootingList}>
+                            <li>It may take up to a minute</li>
+                            <li>Check your spam/junk folder</li>
+                            <li>Make sure terrarecipes.xyz isn't blocked</li>
+                        </ul>
+                    </div>
+
+                    <div className={styles.secondaryActions}>
+                        <Link to={"/logIn"} className={`link text-meta`}>Back to Log In</Link>
+                    </div>
+                </div>
     );
 
     if (errors.root?.other) {

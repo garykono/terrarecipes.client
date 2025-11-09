@@ -1,7 +1,5 @@
-import type { Params } from 'react-router-dom';
+import { type Params } from 'react-router-dom';
 import { verifyEmail } from '../../api/queries/usersApi';
-
-const NUM_RESULTS = 20;
 
 interface LoaderArgs {
     params: Params
@@ -13,6 +11,7 @@ export interface VerifyEmailLoaderResult {
 }
 
 export async function verifyEmailLoader({ params }: LoaderArgs): Promise<VerifyEmailLoaderResult> {
+
     const { token } = params;
     let emailVerified = false;
     let reason = null;

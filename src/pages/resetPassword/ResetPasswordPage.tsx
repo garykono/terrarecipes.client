@@ -45,7 +45,7 @@ export default function SignUpPage () {
                 setSuccessMessage("Your password has been reset!");
             })
             .catch(err => {
-                if (err.name === "INVALID_JWT") {
+                if (err.name === "INVALID_TOKEN") {
                     setSuccessMessage("");
                     setError('root.general', { message: "Password reset link invalid or expired." });
                 } else {

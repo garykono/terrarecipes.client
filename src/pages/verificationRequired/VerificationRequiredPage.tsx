@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { resendVerificationEmail } from '../../api/queries/usersApi';
 import styles from './VerificationRequiredPage.module.css';
 import { useEffect, useState } from 'react';
@@ -29,26 +29,42 @@ export default function VerificationRequiredPage () {
     return (
         <div className={styles.verificationRequiredPage}>
             <div className='container'>
-                <div className={`page-top ${styles.messages}`}>
-                    <p className={`section-title ${styles.postSignUpMessage}`}>
-                        { fromLogin
-                            ? "You're almost there — check your email to verify your account and unlock more features."
-                            : "Please check your email to verify your account and unlock more features."
-                        }
-                    </p>
-                    {email && 
-                        <div className={styles.resendLine}>
-                            <p>{`Didn't get it? `}</p>
+                <div className={`page-top box box--message ${styles.contentBlock}`}>
+                    <h1 className="page-title">Verify your email address</h1>
+
+                    <div className={styles.explanationBlock}>
+                        <p className="text">
+                            { fromLogin
+                                ? "You're almost there — check your email to verify your account and unlock more features."
+                                : "Please check your email to verify your account and unlock more features."
+                            }
+                        </p>
+                    </div>
+                    
+                    <div className={styles.troubleshootingBlock}>
+                        <p className="subsection-title">Didn't get it?</p>
+                        <ul className={styles.troubleshootingList}>
+                            <li>It may take up to a minute</li>
+                            <li>Check your spam/junk folder</li>
+                            <li>Make sure terrarecipes.xyz isn't blocked</li>
+                        </ul>
+                    </div>
+                        
+                    <div className={styles.primaryAction}>
+                        {email && 
                             <CooldownButton
                                 cooldownSeconds={60}
-                                as={"link"}
                                 onClick={() => resendVerificationClicked(email)}
+                                className={`button ${styles.resendEmailButton}`}
                             >
-                                Resend Link
+                                <span className={styles.resendEmailText}>Resend Link</span>
                             </CooldownButton>
-                            
-                        </div>
-                    }
+                        }
+                    </div>
+
+                    <div className={styles.secondaryActions}>
+                        <Link to={"/"} className={`link text-meta`}>Continue to Home Page</Link>
+                    </div>
                 </div>
             </div>
         </div>

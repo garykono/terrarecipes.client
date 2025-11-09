@@ -85,8 +85,8 @@ Default: 9px
     --color-danger-dark: #c92a2a;
 
     /* Links */
-    --color-link: var(--color-brand-blue);
-    --color-link-hover: #1e4e82;
+    --color-link: #3b82f6;
+    --color-link-hover: #2563eb;
 
     /* Buttons */
     --color-button-primary-bg: var(--color-brand-primary);
@@ -134,7 +134,7 @@ Default: 9px
     
     /* Font sizes */
     --font-size-base: 16px;
-    --font-size-page-title: 3.6rem;  /* 36px */
+    --font-size-page-title: 4.0rem;  /* 40px */
     --font-size-section-title: 2.4rem; /* 24px */
     --font-size-subsection-title: 1.8rem; /* 18px */
     --font-size-body: 1.6rem; /* 16px */
@@ -259,6 +259,14 @@ p, li, span, .text {
     font-size: var(--font-size-tag);
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-normal);
+}
+
+.link {
+    color: var(--color-link);
+}
+
+.link:hover {
+    color: var(--color-link-hover);
 }
 
 .managementIcon {
@@ -433,15 +441,19 @@ p, li, span, .text {
 
 .box {
     background-color: #ffffff;
-    overflow: hidden;
-    border-radius: 10px;
     box-shadow: var(--shadow-md);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.box--message {
+    padding: var(--space-lg);
 }
 
 .card {
+    background-color: var(--background-cards);
     box-shadow: var(--shadow-lg);
     border-radius: 12px;
-    background-color: var(--background-cards);
     overflow: hidden;
 }
 

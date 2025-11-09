@@ -1,32 +1,30 @@
 /**************************/
-/* Forgot password form */
+/* Email change form */
 /**************************/
-
-.pageForgotPassword {
-    background-color: var(--primary-background);
-}
 
 .formContainer {
     display: flex;
-}
-
-.formForgotPassword {
-    margin: 5.2rem auto;
-    padding: 4rem 6.4rem;
-    gap: 1.2rem;
-}
-
-.submitButtons {
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
 }
 
+.form {
+    width: 100%;
+    max-width: 70rem;
+}
+
+.buttons {
+    display: flex;
+    gap: 1.2rem;
+    margin: 2.4rem 0;
+    justify-content: center;
+}
+
 /**************************/
-/* After submit screen */
+/* Success panel */
 /**************************/
 
-.contentBlock, .titleAndExplanation, .explanationBlock, .troubleshootingBlock, .actions {
+.contentBlock, .titleAndExplanation, .explanationBlock, .troubleshootingBlock {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -63,4 +61,15 @@
 
 .secondaryActions {
     margin-top: var(--space-sm);
+}
+
+/**************************/
+/* Below 544px (Phones) */
+/**************************/
+
+@media (max-width: 34em) {
+    .deleteButton {
+        display: flex;
+        justify-self: center;
+    }
 }

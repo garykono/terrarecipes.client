@@ -1,15 +1,17 @@
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 import styles from './VerifyEmailPage.module.css';
 import { VerifyEmailLoaderResult } from './verifyEmailLoader';
+import { useEffect } from 'react';
 
 export default function VerifyEmailPage() {
+    const navigate = useNavigate();
     const { emailVerified, reason } = useLoaderData() as VerifyEmailLoaderResult;
 
-    const successContent = (
-        <div className={styles.successContent}>
-            <p>Congratulations 🎉! Your account has been successfully verified.</p>
-        </div>
-    )
+    useEffect(() => {
+        if (emailVerified) {
+            navigate('/verifyEmail/success')
+        }
+    }, [emailVerified]);
 
     const failureContent = (
         <div className={styles.successContent}>
@@ -21,7 +23,9 @@ export default function VerifyEmailPage() {
         <div className={styles.verifyEmailPage}>
             <div className={"container"}>
                 <div className={`page-top ${styles.pageContent}`}>
-                    {emailVerified ? successContent : failureContent}
+                    {!emailVerified &&
+                        failureContent
+                    }    
                 </div>
             </div>
         </div>

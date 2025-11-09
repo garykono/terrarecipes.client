@@ -21,43 +21,41 @@ export default function AccountEditPage () {
     function AccountManagementForm() {
         const { register, handleSubmit, watch, setError, clearErrors, formState: { errors } } = useForm({
             defaultValues: {
-                username: user? user.username : '',
-                email: user? user.email : ''
+                username: user? user.username : ''
             }
         });
 
         const [ successMessage, setSuccessMessage ] = useState("");
         const usernameValue = watch('username');
-        const emailValue = watch('email');
 
         useEffect(() => {
             clearErrors('root.general');
-        }, [usernameValue, emailValue]);
+        }, [usernameValue]);
 
 
         interface FormData {
             username: string;
-            email: string;
         }
 
-        const onSubmit = async ({ username, email }: FormData) => {
+        const onSubmit = async ({ username }: FormData) => {
             await updateUserInfo({
-                    username,
-                    email
+                    username
                 })
                 .then((updatedUser) => {
-                    if (user.email !== updatedUser.email) {
-                        setSuccessMessage("Account has been updated! A verification email has been sent to your new email address.");
-                    } else {
-                        setSuccessMessage("Account has been updated!");
-                        // In the future, probably reset the page or navigate somewhere on form submits, and use an alert to inform user
-                        //revalidator.revalidate();
-                    }
+                    setSuccessMessage("Account has been updated!");
+                    // In the future, probably reset the page or navigate somewhere on form submits, and use an alert to inform user
+                    //revalidator.revalidate();
                 })
                 .catch(err => {
                     setSuccessMessage("");
                     useSetError(err, setError as ErrorMessageSetter);
                 });
+        }
+
+        if (!user) {
+            const e = new Error();
+            e.name = 'NotLoggedIn';
+            return <GlobalErrorDisplay error={e} />
         }
 
         if (errors.root?.other) {
@@ -99,27 +97,16 @@ export default function AccountEditPage () {
                 <div className="field">
                     <label className="label">Email</label>
                     <div className="control">
-                        <input 
-                            className="input" 
-                            type="text" 
-                            {...register("email", {
-                                required: "Email is required.",
-                                validate: {
-                                    isEmail: (value) => {
-                                        if (!isEmail(value)) return 'Must provide a valid email address.';
-                                    }
-                                }
-                            })}
-                        />
-                        {errors.email?.message && (
-                            <FormMessage className='form-message' message={errors.email.message as string} danger />
-                        )}
+                        <div className={styles.changeEmailField}>
+                            <p>{user.email}</p>
+                            <Link to={`/changeEmail`} className={styles.changeEmailLink}>
+                                <p className="text-small">
+                                    Change
+                                </p>
+                            </Link>
+                        </div>
                     </div>
                 </div>
-
-                {errors.root?.general?.message && 
-                    <FormMessage className='form-message' message={errors.root.general.message} danger />
-                }
 
                 <div className={styles.buttons}>
                     <Button primary type="submit">Save</Button>
@@ -190,8 +177,9 @@ export default function AccountEditPage () {
                     <div className="form-heading">
                         <h1 className='form-title'>Change My Password</h1>
                     </div>
+
                     <div className="field">
-                    <label className="label">Current Password</label>
+                        <label className="label">Current Password</label>
                         <div className="control">
                             <input 
                                 className="input" 
@@ -316,7 +304,7 @@ export default function AccountEditPage () {
         <div className="page-account-edit">
             <BasicHero title="Account Edit Page" />
 
-            <section className="page-top section section-account-edit">
+            <section className="page-top section">
                 <div className="container">
                     <AccountManagementForm />
                 </div>

@@ -40,6 +40,7 @@ function LogInPage () {
                     revalidator.revalidate();
                     navigate('/verificationRequired', { state: { email, fromLogin: true } })
                 } else {
+                    revalidator.revalidate();
                     navigate('/')
                 }
             })

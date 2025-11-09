@@ -131,6 +131,25 @@ export const updateUserPassword = (passwordCurrent: string, password: string, pa
     );
 }
 
+export const updateUserEmail = (newEmail: string, password: string) => {
+    return (
+        axiosInstance
+            .post('/users/updateMyEmail', {
+                newEmail,
+                password
+            })
+            .then((response) => {
+                return {
+                    message: response.data.message as string,
+                    status: response.data.status as string
+                };
+            })
+            .catch((error) => {
+                throw error;
+            })
+    );
+}
+
 export const getUserInfo = async () => {
     return ( 
         axiosInstance

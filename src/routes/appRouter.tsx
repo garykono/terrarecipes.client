@@ -25,10 +25,12 @@ import SignUpPage from '../pages/signUp/SignUpPage'
 import VerificationEmailSentPage from "../pages/verificationEmailSent/VerificationEmailSentPage";
 import VerifyEmailPage from '../pages/verifyEmail/VerifyEmailPage';
 import { verifyEmailLoader } from "../pages/verifyEmail/verifyEmailLoader";
+import VerifyEmailSuccessPage from "../pages/verifyEmailSuccess/VerifyEmailSuccessPage";
 import VerificationRequiredPage from "../pages/verificationRequired/VerificationRequiredPage";
 import ForgotPasswordPage from '../pages/forgotPassword/ForgotPasswordPage'
 import ResetPasswordPage from '../pages/resetPassword/ResetPasswordPage'
 import { resetPasswordLoader } from '../pages/resetPassword/ResetPasswordLoader';
+import ChangeEmailPage from "../pages/changeEmail/ChangeEmailPage";
 import AccountEditPage from "../pages/accountEdit/AccountEditPage";
 import UserRecipesPage from "../pages/userRecipes/UserRecipesPage";
 import { userRecipesLoader } from '../pages/userRecipes/userRecipesLoader';
@@ -146,6 +148,13 @@ export const appRouter = createBrowserRouter([
                 errorElement:<GlobalErrorDisplay />,
             },
             {
+                path: '/verifyEmail/success',
+                element: <VerifyEmailSuccessPage />,
+                loader: undefined,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
                 path: '/verificationRequired',
                 element: <VerificationRequiredPage />,
                 loader: undefined,
@@ -163,6 +172,13 @@ export const appRouter = createBrowserRouter([
                 path: '/resetPassword/:token',
                 element: <ResetPasswordPage />,
                 loader: resetPasswordLoader,
+                hydrateFallbackElement: <LoadingScreen />,
+                errorElement:<GlobalErrorDisplay />,
+            },
+            {
+                path: '/changeEmail',
+                element: <ChangeEmailPage />,
+                loader: undefined,
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,
             },

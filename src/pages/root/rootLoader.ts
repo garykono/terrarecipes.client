@@ -1,11 +1,11 @@
-import type { Params } from 'react-router-dom';
+import { redirect, type Params } from 'react-router-dom';
 import type { User } from '../../api/types/user';
 import { StandardIngredients, StandardMeasurements, StandardLookupTable, StandardIngredientsGroupedByCategory,
     FlattenedStandardIngredientsForFuse, FlattenedStandardMeasurementsForFuse,
     IngredientForms,
     IngredientPreparations,
     Categories,
-    Tags
+    StandardTags
 } from '../../api/types/standardized';
 import { getUserInfo } from '../../api/queries/usersApi';
 import { getStaticFiles, StaticFilesData } from '../../api/queries/staticApi';
@@ -13,6 +13,7 @@ import { flattenDataForFuse } from '../../utils/helpers';
 
 interface LoaderArgs {
     params: Params
+    request: Request;
 }
 
 export interface RootLoaderResult {
@@ -30,11 +31,11 @@ export interface RootLoaderResult {
     allIngredientForms: IngredientForms | null;
     allIngredientPreparations: IngredientPreparations | null;
     categories: Categories | null;
-    tags: Tags | null;
+    tags: StandardTags | null;
 }
 
-export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResult> {
-    let user = null;
+export async function rootLoader({ params, request }: LoaderArgs): Promise<RootLoaderResult | Response> {
+    let user: any = null;
     let standardIngredients = null;
     let standardMeasurements = null;
     let standardIngredientsLookupTable = null;
@@ -99,6 +100,17 @@ export async function rootLoader({ params }: LoaderArgs): Promise<RootLoaderResu
         ...units.symbol,
         ...units.aliases
     ]);
+
+    const { pathname } = new URL(request.url);
+    if (user && (pathname.toLowerCase() === "/login" || pathname.toLowerCase() === "/signup")) {
+        return redirect("/"); // or /dashboard
+    }
+    if (user 
+        && user.verifiedAt 
+        && (pathname.toLowerCase() === "/verificationrequired" || pathname.toLowerCase() === "/verificationsent")
+    ) {
+        return redirect("/"); // or /dashboard
+    }
     
     return {
         user,

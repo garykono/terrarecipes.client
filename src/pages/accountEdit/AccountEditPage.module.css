@@ -4,6 +4,12 @@
     margin: 2.4rem 0;
 }
 
+.changeEmailField {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
 /**************************/
 /* Below 544px (Phones) */
 /**************************/

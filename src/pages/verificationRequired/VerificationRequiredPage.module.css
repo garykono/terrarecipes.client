@@ -1,12 +1,38 @@
-.messages {
+.contentBlock, .titleAndExplanation, .explanationBlock, .troubleshootingBlock, .actions {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-sm);
 }
 
-.resendLine {
-    display: flex;
-    align-items: center;
+.contentBlock {
+    gap: var(--space-md);
+}
+
+.explanationBlock {
+    gap: var(--space-xxs);
+}
+
+.troubleshootingBlock {
+    margin-top: var(--space-md);
     gap: var(--space-xs);
+}
+
+.troubleshootingList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    list-style-position: inside;
+    margin-left: var(--space-lg);
+}
+
+.primaryAction {
+    margin-top: var(--space-md);
+}
+
+.resendEmailText{
+    font-size: var(--font-size-subsection-title);
+}
+
+.secondaryActions {
+    margin-top: var(--space-sm);
 }

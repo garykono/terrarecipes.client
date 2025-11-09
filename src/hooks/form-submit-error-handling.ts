@@ -8,6 +8,7 @@ export function useSetError(
         err: { 
             duplicate_fields?: string[];
             invalid_fields?: { name: string; message: string }[];
+            status?: number;
         }, 
         setError: ErrorMessageSetter) {
 
@@ -23,7 +24,6 @@ export function useSetError(
             if (['ingredients', 'directions', 'tags'].includes(field.name)) {
                 fieldName = `${field.name}.root`;
             }
-            console.log(fieldName)
             setError(fieldName, { type: 'server', message: field.message}, { shouldFocus: true })
         });
     } else {
