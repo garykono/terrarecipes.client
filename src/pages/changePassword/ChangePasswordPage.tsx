@@ -7,6 +7,9 @@ import FormMessage from '../../components/formMessage/FormMessage';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { RootLoaderResult } from '../root/rootLoader';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
+import { log } from '../../utils/logger';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 function ChangePasswordPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
@@ -56,10 +59,8 @@ function ChangePasswordPage() {
             })
     };
 
-    if (!user) {
-        const e = new Error();
-        e.name = 'NotLoggedIn';
-        return <GlobalErrorDisplay error={e} />
+    if (!user) { 
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     if (errors.root?.other) {

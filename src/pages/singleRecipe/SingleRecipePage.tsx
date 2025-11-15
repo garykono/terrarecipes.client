@@ -11,6 +11,8 @@ import FormMessage from '../../components/formMessage/FormMessage';
 import RelatedLinks from '../../components/relatedLinks/RelatedLinks';
 import Toolbar, { ToolbarAction } from '../../components/toolbar/Toolbar';
 import Dropdown from '../../components/dropdown/Dropdown';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 function SingleRecipePage() {
     const navigate = useNavigate();
@@ -92,9 +94,7 @@ function SingleRecipePage() {
     }
 
     if (!recipe) {
-        const e = new Error();
-        e.name = 'NoID';
-        return <GlobalErrorDisplay error={e} />
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NO_ID})} /> 
     }
 
     const recipeActions: ToolbarAction[] = [];

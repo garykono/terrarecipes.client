@@ -1,5 +1,5 @@
 import { StandardIngredient } from "../../../api/types/standardized";
-import { logger } from "../../logger";
+import { logRecipe } from "../../logger";
 import { StandardUnit } from "../types";
 import { Unit } from "../units";
 import { convertSameType } from "./convert-same-type";
@@ -19,7 +19,7 @@ export function convertAnyUnit(
     const form = options?.form ?? null;
     const useTrueValues = options?.useTrueValues ?? false;
 
-    if (DEBUG) logger.debug(`converting from ${from.name} (${from.type}) --> ${to.name} (${to.type})`);
+    logRecipe.debug(`converting from ${from.name} (${from.type}) --> ${to.name} (${to.type})`);
     
     if (from.name === to.name && from.type === to.type) return amount;
 

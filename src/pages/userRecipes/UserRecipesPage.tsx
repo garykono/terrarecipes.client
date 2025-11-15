@@ -11,6 +11,8 @@ import { RootLoaderResult } from '../root/rootLoader';
 import { Recipe } from '../../api/types/recipe';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Toolbar from '../../components/toolbar/Toolbar';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 function UserRecipesPage() {
     const navigate = useNavigate();
@@ -81,9 +83,7 @@ function UserRecipesPage() {
     })();
 
     if (!user) {
-        const e = new Error();
-        e.name = 'NotLoggedIn';
-        return <GlobalErrorDisplay error={e} />
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     return (

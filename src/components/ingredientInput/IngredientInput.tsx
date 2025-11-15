@@ -7,7 +7,7 @@ import { RootLoaderResult } from "../../pages/root/rootLoader";
 import { parseIngredientLine } from "../../utils/parseIngredientLine";
 import { preprocessIngredientInput } from "../../utils/ingredientPreprocessor";
 import { StandardIngredient, StandardMeasurement } from "../../api/types/standardized";
-import { logger } from "../../utils/logger";
+import { logRecipe } from "../../utils/logger";
 
 const UNIT_SEARCH_KEYS = ['name', 'plural', 'symbol', 'aliases'];
 const INGREDIENT_SEARCH_KEYS = ['name'];
@@ -133,7 +133,13 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
             allIngredientForms,
             allIngredientPreparations
         );
-        if (DEBUG) logger.debug(`input: ${preprocessIngredientInput(input, rawUnitsList)} ===> `, parsedIngredients)
+        logRecipe.debug(
+            { 
+                input: preprocessIngredientInput(input, rawUnitsList), 
+                parsedIngredients
+            },
+            "preprocessed ingredient input -> what was able to be parsed"
+        );
         setValue(PARSED_INGREDIENT_NAME, parsedIngredients);
     };
 

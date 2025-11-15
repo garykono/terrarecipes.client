@@ -1,0 +1,20 @@
+export const AppErrorCodes = {
+    NOT_LOGGED_IN: 'NOT_LOGGED_IN',
+    NO_ID: 'NO_ID',
+    MISSING_LOADER_DATA: 'MISSING_LOADER_DATA',
+    MISSING_PARAMETERS: 'MISSING_PARAMETERS',
+    INVALID_PARAMETERS: 'INVALID_PARAMETERS',
+    INVALID_FIELDS: 'INVALID_FIELDS',
+    NETWORK: 'NETWORK',
+    HTTP_400: 'HTTP_400',
+    HTTP_401: 'HTTP_401',
+    HTTP_403: 'HTTP_403',
+    HTTP_404: 'HTTP_404',
+    HTTP_409: 'HTTP_409',
+    HTTP_429: 'HTTP_429',
+    HTTP_500: 'HTTP_500',
+    HTTP_503: 'HTTP_503',
+    UNKNOWN: 'UNKNOWN',
+} as const;
+
+export type AppErrorCode = keyof typeof AppErrorCodes;

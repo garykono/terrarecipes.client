@@ -1,4 +1,5 @@
 import { FieldError } from "react-hook-form";
+import { log } from "../utils/logger";
 
 export interface ErrorMessageSetter {
     (name: string, error: FieldError, options?: { shouldFocus?: boolean }): void
@@ -10,9 +11,9 @@ export function useSetError(
             invalid_fields?: { name: string; message: string }[];
             status?: number;
         }, 
-        setError: ErrorMessageSetter) {
-
-    console.log(err)
+        setError: ErrorMessageSetter
+) {
+    log.info(err, "form submission error")
 
     if (err.duplicate_fields) {
         err.duplicate_fields.forEach((field) => {
@@ -27,7 +28,6 @@ export function useSetError(
             setError(fieldName, { type: 'server', message: field.message}, { shouldFocus: true })
         });
     } else {
-        console.log(err);
         setError('root.other', err as FieldError)
     }
 }

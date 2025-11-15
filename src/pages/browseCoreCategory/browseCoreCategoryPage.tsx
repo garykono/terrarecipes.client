@@ -6,6 +6,9 @@ import { useEffect, useMemo, useState } from 'react';
 import BasicHero from '../../components/basicHero/BasicHero';
 import FeaturedList from '../../components/featuredList/FeaturedList';
 import FeaturedCluster from '../../components/featuredCluster/FeaturedCluster';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
+import { log } from '../../utils/logger';
 
 export default function BrowseCoreCategoryPage() {
     const { categoryData } = useLoaderData() as BrowseCoreCategoryLoaderResult;
@@ -37,11 +40,9 @@ export default function BrowseCoreCategoryPage() {
     }, [categoryInfo, recipes]);
     
     if (!categoryData) {
-        const e = new Error();
-        e.name = 'MissingLoaderData';
-        return <GlobalErrorDisplay error={e} />
+        log.error("Category data was missing, couldn't load page.")
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.MISSING_LOADER_DATA })} />;
     }
-
     if (error) {
         return <GlobalErrorDisplay error={error} />;
     }

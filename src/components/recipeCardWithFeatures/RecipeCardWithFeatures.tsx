@@ -7,6 +7,7 @@ import RecipeCard from '../recipeCard/RecipeCard'
 import Modal from '../modal/Modal'
 import { Recipe, RecipeWithMarkForDelete } from '../../api/types/recipe';
 import Button from '../buttons/Button';
+import { logRecipe } from '../../utils/logger';
 
 
 interface RecipeCardWithFeaturesProps {
@@ -47,7 +48,7 @@ export default function RecipeCardWithFeatures({
                 revalidator.revalidate();
             })
             .catch(error => {
-                console.log(error);
+                logRecipe.error(error, "error deleting recipe");
                 setError(error);
                 setDeletedRecipeName("");
             })

@@ -13,7 +13,7 @@ interface CooldownButtonProps {
 
 export const CooldownButton: React.FC<CooldownButtonProps> = ({
         onClick,
-        cooldownSeconds = 60,
+        cooldownSeconds = 0,
         children,
         disabled = false,
         showCountdown = true,
@@ -21,6 +21,13 @@ export const CooldownButton: React.FC<CooldownButtonProps> = ({
         ...rest
     }) => {
     const [cooldown, setCooldown] = useState(0);
+
+    // sync external cooldownSeconds into internal state
+    useEffect(() => {
+        if (cooldownSeconds && cooldownSeconds > 0) {
+            setCooldown(cooldownSeconds);
+        }
+    }, [cooldownSeconds]);
 
     useEffect(() => {
         if (cooldown <= 0) return;

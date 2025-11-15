@@ -1,6 +1,6 @@
 import { parse as fallbackParse } from 'recipe-ingredient-parser-v3';
 import { IngredientForms, IngredientPreparations, StandardLookupTable, StandardMeasurements } from '../api/types/standardized';
-import { logger } from './logger';
+import { logRecipe } from './logger';
 import { findLongestWholePhraseMatch } from './helpers';
 
 function isLikelyUnit(word: string, unitsList: string[]): boolean {
@@ -149,9 +149,7 @@ function lookAheadForNextIngredient(
     ingredientsSet: Set<string>,
     unitsList: string[],
 ): { index: number; skipCount: number; connector: string[] } | null {
-    const DEBUG = false;
-
-    if (DEBUG) logger.debug(`look ahead in tokens: ${tokens}`);
+    logRecipe.debug("looking ahead in these tokens", { tokens });
     const commonDualIngredients = new Set([
         "salt", "pepper", "black pepper", "ground black pepper", "white pepper", "oil", "vinegar",
         "sugar", "cinnamon", "nutmeg", "oregano", "thyme", "basil", "paprika",
@@ -165,8 +163,8 @@ function lookAheadForNextIngredient(
 
         const isSeparator = token === "or" || token === "and" || token === ",";
 
-        if (DEBUG) logger.debug(`--loop ${i}--`);
-        if (DEBUG) logger.debug(`token: ${token}, next: ${next}, third: ${third}`);
+        logRecipe.debug(`--loop ${i}--`);
+        logRecipe.debug("tokens", { token, next, third });
 
         // === 1. "or use" or "and substitute" → substitution cue
         if ((token === "or" || token === "and") && (next === "use" || next === "substitute")) {
@@ -177,7 +175,7 @@ function lookAheadForNextIngredient(
         const followsAmount = isLikelyAmount(next) || /^\d+[\/\d\.]*$/.test(next || "");
         const followsUnit = isLikelyUnit(next || "", unitsList);
         if (isSeparator && (followsAmount || followsUnit)) {
-        if (DEBUG) logger.debug("→ separator followed by unit/amount → new ingredient");
+            logRecipe.debug("→ separator followed by unit/amount → new ingredient");
             return { index: i, skipCount: 1, connector: [token] };
         }
 
@@ -198,8 +196,8 @@ function lookAheadForNextIngredient(
                 ingredientsSet.has(after1) || (after2 && ingredientsSet.has(afterPhrase));
 
             if (beforeMatches && afterMatches) {
-                if (DEBUG) logger.debug("→ dual ingredient combo like 'salt and black pepper'");
-                    return { index: i, skipCount: 1, connector: [token] };
+                logRecipe.debug("→ dual ingredient combo like 'salt and black pepper'");
+                return { index: i, skipCount: 1, connector: [token] };
             }
         }
     }
@@ -328,7 +326,7 @@ export function parseIngredientLine(
         } else {
             tokens = [];
         }
-        if (DEBUG) logger.debug(`going to finish processing these tokens: ${rest}\ngoing to process these tokens next: ${tokens}`)
+        logRecipe.debug({ tokensToBeProcessedThisLoop: rest, tokensToBeProcessedNextLoop: tokens });
 
         // Attempt to parse a standard ingredient from the input
         const restPhrase = rest.join(' ').toLowerCase();
@@ -403,10 +401,10 @@ export function parseIngredientLine(
 
         // Determine if next ingredient is a substitute or not
         if (connectingWords) {
-            if (DEBUG) logger.debug("connecting words: ", connectingWords)
+            logRecipe.debug({ connectingWords });
             isSubstitute = ["substitute", "or"].includes(connectingWords[0])
                 || (connectingWords.length > 1 && ["substitute"].includes(connectingWords[1]))
-            if (DEBUG && isSubstitute) logger.debug("This is a substitute!");
+            if (isSubstitute) logRecipe.debug("This is a substitute");
         }
     }
 

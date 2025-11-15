@@ -23,10 +23,20 @@ export async function homeLoader({ params }: LoaderArgs): Promise<HomeLoaderResu
     //     pageNum = 1;
     // }
 
-    const { data, totalPages } = await fetchRecipes({
+    let data: Recipe[] = []
+    let totalPages = 1;
+
+    await fetchRecipes({
         //limit: RESULTS_COLS * RESULTS_ROWS,
         // page: pageNum
-    });
+    })
+    .then(response => {
+        data = response.data;
+        totalPages = response.totalPages;
+    })
+    .catch(error => {
+
+    })
 
     return {
         recipes: data,

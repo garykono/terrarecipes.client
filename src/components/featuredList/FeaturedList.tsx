@@ -29,7 +29,7 @@ export default function FeaturedList({
 }: FeaturedListProps) {
     if (moreButton && !onClick) {
         const e = new Error();
-        e.name = 'MissingParameters';
+        e.name = 'Missing_Parameters';
         return <GlobalErrorDisplay error={e} message='No onClick function passed for More Recipes button' />
     }
 

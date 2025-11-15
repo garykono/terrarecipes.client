@@ -14,6 +14,8 @@ import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
 import Toolbar from '../../components/toolbar/Toolbar';
 import CollectionCard from '../../components/collectionCard/CollectionCard';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 function UserCollectionsPage() {
     const navigate = useNavigate();
@@ -220,9 +222,7 @@ function UserCollectionsPage() {
 
 
     if (!user) {
-        const e = new Error();
-        e.name = 'NotLoggedIn';
-        return <GlobalErrorDisplay error={e} />
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     if (errors.root?.other) {

@@ -10,6 +10,9 @@ import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-h
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
+import { log } from '../../utils/logger';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 export default function AccountEditPage () {
     const navigate = useNavigate();
@@ -50,12 +53,6 @@ export default function AccountEditPage () {
                     setSuccessMessage("");
                     useSetError(err, setError as ErrorMessageSetter);
                 });
-        }
-
-        if (!user) {
-            const e = new Error();
-            e.name = 'NotLoggedIn';
-            return <GlobalErrorDisplay error={e} />
         }
 
         if (errors.root?.other) {
@@ -261,7 +258,7 @@ export default function AccountEditPage () {
                 navigate('/')
             })
             .catch(error => {
-                console.log(error)
+                log.warn(error, "failed to delete account")
             })
     }
 
@@ -290,14 +287,12 @@ export default function AccountEditPage () {
         </Modal>
     );
 
-    if (!user) {
-        const e = new Error();
-        e.name = 'NotLoggedIn';
-        return <GlobalErrorDisplay error={e} />
+    if (!user) { 
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     if (pageError) {
-        return <GlobalErrorDisplay error={pageError} />;
+        return <GlobalErrorDisplay error={createAppError(pageError)} />;
     }
 
     return (

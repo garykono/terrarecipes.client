@@ -1,6 +1,6 @@
 import { Ingredient } from "../../api/types/recipe";
 import { StandardIngredient, StandardIngredients, StandardLookupTable, StandardMeasurement, StandardMeasurements } from "../../api/types/standardized";
-import { logger } from "../logger";
+import { logRecipe } from "../logger";
 import { convertAnyUnit } from "./convert/convert-any";
 import { normalizeDisplayUnit } from "./display/normalize";
 import { roundToCommonFraction } from "./display/roundToCommonFraction";
@@ -36,7 +36,7 @@ export function combineIngredients({
 
     // If tools for standardizing are missing, return a list of unparsed ingredient lines
     if (!standardIngredients || !standardIngredientsLookupTable || !standardMeasurements || !standardMeasurementsLookupTable) {
-        logger.error("Missing one or more standardized lists. All ingredients set to miscellaneous.")
+        logRecipe.warn("Missing one or more standardized lists. All ingredients set to miscellaneous.")
         return {
             standardizedIngredients: {},
             miscellaneous: uncombinedIngredients.map(ingredient => ingredient.text)
@@ -53,13 +53,13 @@ export function combineIngredients({
     uncombinedIngredients.forEach(ingredient => {
         totalAttemptsToCombine++;
         if (!ingredient.parsed) {
-            if (DEBUG) logger.debug(`'${ingredient.text}' was never parsed. Try to parse in future, but for now, adding to miscellaneous list.`);
+            logRecipe.warn(`'${ingredient.text}' was never parsed. Try to parse in future, but for now, adding to miscellaneous list.`);
             validatedIngredients.miscellaneous.push(ingredient.text);
             return;
         }
         
         ingredient.parsed.forEach(parsedIngredient => {
-            if (DEBUG) logger.debug("ingredient: ", parsedIngredient)
+            logRecipe.debug({ ingredientToBeCombined: parsedIngredient })
             let parsedQuantity = parsedIngredient.quantity;
             const parsedUnit = parsedIngredient.unit;
             const parsedIngredientName = parsedIngredient.ingredient;
@@ -75,20 +75,20 @@ export function combineIngredients({
             const standardName = standardIngredientsLookupTable[parsedIngredientName];
 
             if (!standardName) {
-                if (DEBUG) logger.debug("Couldn't find ingredient name (including its aliases) in standardized list. Adding to miscellaneous.")
+                logRecipe.debug("Couldn't find ingredient name (including its aliases) in standardized list. Adding to miscellaneous.")
                 validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                 return;
             }
 
             let convertedUnitAmount = 0;
             if (!parsedIngredientName) {
-                if (DEBUG) logger.debug(`This ingredient is missing a parsed field: 'name', so no conversion possible. Adding to miscellaneous ingredients`)
+                logRecipe.debug(`This ingredient is missing a parsed field: 'name', so no conversion possible. Adding to miscellaneous ingredients`)
                 validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                 return;
             }
             if (!parsedQuantity) {
                 if (!optionalQuantity) {
-                    if (DEBUG) logger.debug(`This ingredient is missing a parsed field: 'quantity' and is not an optional ingredient, so unable to convert. Adding to miscellaneous ingredients.`)
+                    logRecipe.debug(`This ingredient is missing a parsed field: 'quantity' and is not an optional ingredient, so unable to convert. Adding to miscellaneous ingredients.`)
                     validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                     return;    
                 } else {
@@ -98,7 +98,7 @@ export function combineIngredients({
 
             // Get the ingredient's standard measurement unit
             const ingredientInfo = standardIngredients[standardName];
-            if (DEBUG) logger.debug("standard ingredient's info: ", ingredientInfo)
+            logRecipe.debug({ standardIngredientInfo: ingredientInfo });
             
             const standardConversionUnitName = standardMeasurementsLookupTable[ingredientInfo.standardConversionUnit];
             const standardConversionUnitInfo = standardMeasurements[standardConversionUnitName];
@@ -112,10 +112,11 @@ export function combineIngredients({
                     type: standardConversionUnitInfo.type
                 }
             } else {
-                if (DEBUG) logger.debug(`Couldn't derive a standard conversion unit from ${parsedIngredientName} so no conversion possible. 
-                    standardConversionUnitName = ${standardConversionUnitName};
-                    standardConversionUnitInfo = ${standardConversionUnitInfo}
-                    Adding to miscellaneous ingredients.`)
+                logRecipe.debug(
+                    `Couldn't derive a standard conversion unit from ${parsedIngredientName} so no conversion possible.
+                    Adding to miscellaneous ingredients.`,
+                    { standardConversionUnitName, standardConversionUnitInfo }
+                );
                 validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                 return;
             } 
@@ -150,18 +151,18 @@ export function combineIngredients({
                         type: standardParsedUnitMeasurementInfo.type
                     }
                 } else {
-                    if (DEBUG) logger.debug("Could not find a standardized unit match for parsed unit. Adding to miscellaneous.");
+                    logRecipe.debug("Could not find a standardized unit match for parsed unit. Adding to miscellaneous.");
                     validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                     return;
                 }
 
                 // convert to standard unit
-                if (DEBUG) logger.debug("standard unit: ", standardParsedUnit)
+                logRecipe.debug({ standardUnit: standardParsedUnit });
                 try {
                     convertedUnitAmount = convertAnyUnit(parsedQuantity, standardParsedUnit, standardConversionUnit, ingredientInfo);
-                    if (DEBUG) logger.debug(`conversion successful.`);
+                    logRecipe.debug(`conversion successful.`);
                 } catch (e) {
-                    if (DEBUG) logger.debug(e, " Adding to miscellaneous.")
+                    logRecipe.debug("Failed to convert. Adding to miscellaneous.", { error: e });
                     validatedIngredients.miscellaneous.push(parsedIngredientRawText);
                     return;
                 } 
@@ -190,9 +191,14 @@ export function combineIngredients({
                 updatedStandardUnitAmount;
 
             successfulAttemptsToCombine++;
-            if (DEBUG) logger.debug(`'${parsedIngredientName}' was added as ${isOptional ? "optional" : "validated"} ingredient.`)
-            if (DEBUG) logger.debug("previous amount: ", previousStandardUnitAmount)
-            if (DEBUG) logger.debug("new amount: ", updatedStandardUnitAmount)
+            logRecipe.debug("ingredient successfully combined to grocery list",
+                { 
+                    ingredientName: parsedIngredientName, 
+                    listAddedTo: isOptional ? "optional" : "validated",
+                    previousQuantityInThisList: previousStandardUnitAmount,
+                    newQuantityInThisList: updatedStandardUnitAmount
+                }
+            );
         })
     })
     
@@ -212,12 +218,14 @@ export function combineIngredients({
     // Copy miscellaneous ingredients array
     combinedIngredients.miscellaneous = [...validatedIngredients.miscellaneous];
 
-    if (DEBUG) {
-        logger.debug("final combined ingredients list: ", combinedIngredients)
-        logger.debug("successful ingredient inputs able to be parsed and processed: ", successfulAttemptsToCombine);
-        logger.debug("total attempts of processing ingredients: ", totalAttemptsToCombine)
-        logger.debug("% of attempts successful: ", Math.round(successfulAttemptsToCombine / totalAttemptsToCombine * 100), "%")
-    }
+    logRecipe.debug(
+        {
+            finalCombinedIngredientsList: combinedIngredients,
+            numberOfSuccessfullyParsedAndCombinedIngredients: successfulAttemptsToCombine,
+            numberOfAttemptedToCombineIngredients: totalAttemptsToCombine
+        },
+        `% of attempts successful: ${Math.round(successfulAttemptsToCombine / totalAttemptsToCombine * 100)}%`,
+    );
 
     return combinedIngredients;
 }
@@ -255,10 +263,8 @@ function normalizeAndAddStandardizedIngredient(
         ? roundToCommonFraction(normalizedRequiredUnitQuantity)
         : normalizedRequiredUnitQuantity;
 
-    if (DEBUG) {
-        logger.debug(`${ingredientInfo.name} normalization: 
+    logRecipe.debug(`${ingredientInfo.name} normalization: 
             ${validatedIngredient.requiredStandardQuantity} ${validatedIngredient.standardConversionUnit} => ${normalizedUnitQuantity} ${normalizedUnit}`);
-    }
     listAddedTo[ingredientInfo.name] = {
         ...validatedIngredient,
         normalizedRequiredUnitQuantity: normalizedAndRoundedUnitQuantity,

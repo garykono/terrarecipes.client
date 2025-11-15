@@ -1,6 +1,10 @@
 import axiosInstance from '../../utils/axiosConfig';
 import { removeEmptyFieldsFromObj } from '../../utils/helpers';
+import { logAPI } from '../../utils/logger';
 import { Recipe, UnvalidatedRecipe } from '../types/recipe'
+
+const endpointBase = "/recipes";
+const endpointLabel = "RECIPES";
 
 interface FetchRecipesProps {
     limit?: number;
@@ -16,7 +20,7 @@ export const fetchRecipes = ({limit, page, search, searchFields, ...rest} : Fetc
 
     return (
         axiosInstance
-            .get(`/recipes/?${p.toString()}`)
+            .get(`${endpointBase}/?${p.toString()}`)
             .then((response) => {
                 return {
                     data: response.data.data.data as Recipe[],
@@ -32,7 +36,7 @@ export const fetchRecipes = ({limit, page, search, searchFields, ...rest} : Fetc
 export const getRecipeById = (id: string) => {
     return (
         axiosInstance
-            .get(`/recipes/${id}`)
+            .get(`${endpointBase}/${id}`)
             .then((response) => {
                 return response.data.data.doc as Recipe;
             })
@@ -46,7 +50,7 @@ export const getRecipeById = (id: string) => {
 export const createRecipe = (recipe: UnvalidatedRecipe) => {
     return (
         axiosInstance
-            .post('/recipes/myRecipes', recipe)
+            .post(`${endpointBase}/myRecipes`, {...recipe, tungsten: "hi"})
             .then((response) => {
                 return response.data.data.doc as Recipe;
             })
@@ -59,7 +63,7 @@ export const createRecipe = (recipe: UnvalidatedRecipe) => {
 export const editRecipeById = (id: string, recipe: UnvalidatedRecipe) => {
     return (
         axiosInstance
-            .patch(`/recipes/myRecipes/${id}`, recipe)
+            .patch(`${endpointBase}/myRecipes/${id}`, recipe)
             .then((response) => {
                 return response.data.data.data as Recipe;
             })
@@ -72,7 +76,7 @@ export const editRecipeById = (id: string, recipe: UnvalidatedRecipe) => {
 export const deleteRecipeById = (id: string) => {
     return (
         axiosInstance
-            .delete(`/recipes/myRecipes/${id}`)
+            .delete(`${endpointBase}/myRecipes/${id}`)
             .then((response) => {
                 return response.data;
             })

@@ -1,4 +1,5 @@
 import axiosInstance from '../../utils/axiosConfig';
+import { logAPI } from '../../utils/logger';
 import { User } from '../types/user';
 
 export const signUp = (username: string, email: string, password: string, passwordConfirm: string) => {
@@ -132,19 +133,24 @@ export const updateUserPassword = (passwordCurrent: string, password: string, pa
 }
 
 export const updateUserEmail = (newEmail: string, password: string) => {
+    const endpointUrl = '/users/updateMyEmail'
     return (
         axiosInstance
-            .post('/users/updateMyEmail', {
+            .post(endpointUrl, {
                 newEmail,
                 password
             })
             .then((response) => {
+                const message = response.data.message as string;
+                const status = response.data.status as string;
+                logAPI.info(`success - ${endpointUrl}`, { response, message, status });
                 return {
                     message: response.data.message as string,
                     status: response.data.status as string
                 };
             })
             .catch((error) => {
+                logAPI.warn(`fail - ${endpointUrl}`, error)
                 throw error;
             })
     );

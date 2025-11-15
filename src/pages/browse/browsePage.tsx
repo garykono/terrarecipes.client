@@ -3,20 +3,21 @@ import styles from './browsePage.module.css';
 import { useEffect, useState } from 'react';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
+import { log } from '../../utils/logger';
 
 export default function BrowsePage() {
     const navigate = useNavigate();
     const rootData = useRouteLoaderData('root') as RootLoaderResult;
 
     if (!rootData?.categories) {
-        console.log(rootData)
         const e = new Error();
         e.name = 'MissingLoaderData';
         return <GlobalErrorDisplay error={e} />
     }
 
     const { categories } = rootData;
-    const [error, setError] = useState<Error | null>(null);
     // const [featuredData, setFeaturedData] = useState<Record<string, Recipe[]>>({});
     // const [featuredRecipe, setFeaturedRecipe] = useState<Recipe>();
     // const [loading, setLoading] = useState(true);
@@ -62,10 +63,6 @@ export default function BrowsePage() {
     //     loadFeatured();
     //     return () => { cancelled = true; };
     // }, [categories]);
-
-    if (error) {
-        return <GlobalErrorDisplay error={error} />;
-    }
 
     return (
         <div className="account-page">

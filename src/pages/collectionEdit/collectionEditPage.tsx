@@ -14,6 +14,9 @@ import { Recipe, RecipeWithMarkForDelete } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
+import { log } from '../../utils/logger';
 
 export default function CollectionEditPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
@@ -111,16 +114,12 @@ export default function CollectionEditPage() {
         return <RecipeCardWithFeatures key={recipe._id} recipe={recipe} collectionMode={true} onRemove={markRecipeForDeletion} />;
     })
 
-    if (!user) {
-        const e = new Error();
-        e.name = 'NotLoggedIn';
-        return <GlobalErrorDisplay error={e} />
+    if (!user) { 
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     if (!collection) {
-        const e = new Error();
-        e.name = 'No_ID';
-        return <GlobalErrorDisplay error={e} />
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NO_ID })} /> 
     }
 
     if (errors.root?.other) {

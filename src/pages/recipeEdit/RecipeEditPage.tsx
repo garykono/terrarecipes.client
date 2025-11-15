@@ -21,6 +21,8 @@ import { CustomTagsInput } from '../../components/customTagsInput/CustomTagsInpu
 import { TERM_TO_ID } from '../../components/customTagsInput/TermToIdMap';
 import { toIntOrNull } from '../../utils/helpers';
 import { getPrefix } from '../../utils/tagHelpers';
+import { AppErrorCodes } from '../../utils/errors/codes';
+import { createAppError } from '../../utils/errors/factory';
 
 const FACET_KEYS = [
     "meal",
@@ -399,18 +401,16 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
     }
 
     if (!user) {
-        const e = new Error();
-        e.name = 'NotLoggedIn';
-        return <GlobalErrorDisplay error={e} />
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     if (!tags) {
-        const e = new Error();
-        e.name = 'MissingLoaderData';
-        e.message = 'Could not properly load required data: tags';
-        return <GlobalErrorDisplay error={e} />
+        const e = createAppError({ 
+            code: AppErrorCodes.NOT_LOGGED_IN,
+            message: 'Could not properly load required data: tags'
+        });
+        return <GlobalErrorDisplay error={e} /> 
     }
-
 
     if (errors.root?.other) {
         return <GlobalErrorDisplay error={errors.root.other} />;

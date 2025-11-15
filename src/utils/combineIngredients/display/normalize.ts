@@ -1,5 +1,5 @@
 import { StandardIngredient } from "../../../api/types/standardized";
-import { logger } from "../../logger";
+import { logRecipe } from "../../logger";
 import { unitConversionTable } from "../convert/unit-tables";
 import { Unit } from "../units";
 import { unitDisplayThresholds, unitDowngradeThresholds } from "./thresholds";
@@ -90,7 +90,7 @@ function polishWithThresholds(
         const conversionRate = unitConversionTable[currentUnit]?.[to];
         if (!conversionRate) break;
 
-        if (DEBUG) logger.debug(`converted ${currentAmount} ${currentUnit} => ${currentAmount * conversionRate} ${to}`);
+        logRecipe.debug(`converted ${currentAmount} ${currentUnit} => ${currentAmount * conversionRate} ${to}`);
         currentAmount = currentAmount * conversionRate;
         currentUnit = to;
     }
@@ -106,7 +106,7 @@ function polishWithThresholds(
         const conversionRate = unitConversionTable[currentUnit]?.[to];
         if (!conversionRate) break;
 
-        if (DEBUG) logger.debug(`converted ${currentAmount} ${currentUnit} => ${currentAmount * conversionRate} ${to}`);
+        logRecipe.debug(`converted ${currentAmount} ${currentUnit} => ${currentAmount * conversionRate} ${to}`);
         currentAmount = currentAmount * conversionRate;
         currentUnit = to;
     }

@@ -9,6 +9,8 @@ import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorD
 import { Recipe } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
 import Toolbar, { ToolbarAction } from '../../components/toolbar/Toolbar';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 function SingleCollectionPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
@@ -31,9 +33,7 @@ function SingleCollectionPage() {
     }, [page])
 
     if (!collection) {
-        const e = new Error();
-        e.name = 'NoID';
-        return <GlobalErrorDisplay error={e} />
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NO_ID })} /> 
     }
 
     const collectionActions: ToolbarAction[] = [];

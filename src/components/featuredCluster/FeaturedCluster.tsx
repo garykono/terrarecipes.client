@@ -1,5 +1,4 @@
 import { Recipe } from '../../api/types/recipe';
-import GlobalErrorDisplay from '../globalErrorDisplay/GlobalErrorDisplay';
 import RecipeCardWithFeatures from '../recipeCardWithFeatures/RecipeCardWithFeatures';
 import styles from './FeaturedCluster.module.css';
 

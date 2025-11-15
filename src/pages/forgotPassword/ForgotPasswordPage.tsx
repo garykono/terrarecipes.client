@@ -7,8 +7,8 @@ import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../../components/buttons/Button';
 import { Link } from 'react-router';
-import { CooldownButton } from '../../components/buttons/CooldownButton';
 import { maskEmail } from '../../utils/maskEmail';
+import { logAPI } from '../../utils/logger';
 
 export default function ForgotPasswordPage() {
     const [ emailSent, setEmailSent ] = useState(false);
@@ -43,11 +43,17 @@ export default function ForgotPasswordPage() {
             // No validation check for email on backend
             if (err.status === 404) {
                 setError('root.general', { message: 'There is no account associated with that email address.' });
+            } else if (err.status === 429) {
+                if (err.details.additionalInfo?.secondsLeft) {
+                    setError('root.general', { message: err.details.server.message });
+                } else {
+                    setError('root.general', { message: err.message});
+                }
             } else {
-                console.log(err);
                 setError('root.other', err);
                 // setError('general', { message: 'There was an error with sending the email.' });
             }
+            logAPI.error({err})
         })
     }
 

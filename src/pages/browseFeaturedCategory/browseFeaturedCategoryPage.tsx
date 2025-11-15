@@ -7,6 +7,9 @@ import BasicHero from '../../components/basicHero/BasicHero';
 import FeaturedCluster from '../../components/featuredCluster/FeaturedCluster';
 import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
 import RecipeTileList from '../../components/recipeTileList/RecipeTileList';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
+import { log } from '../../utils/logger';
 
 export default function BrowseFeaturedCategoryPage() {
     const { categoryData } = useLoaderData() as BrowseFeaturedCategoryLoaderResult;
@@ -37,10 +40,9 @@ export default function BrowseFeaturedCategoryPage() {
         }
     }, [categoryInfo, recipes]);
     
-    if (!categoryData) {
-        const e = new Error();
-        e.name = 'MissingLoaderData';
-        return <GlobalErrorDisplay error={e} />
+    if (!categoryData) { 
+        log.warn("Page couldn't load because no category data")
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.MISSING_LOADER_DATA })} /> 
     }
 
     if (error) {

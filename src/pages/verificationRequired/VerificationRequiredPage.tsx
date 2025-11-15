@@ -3,11 +3,14 @@ import { resendVerificationEmail } from '../../api/queries/usersApi';
 import styles from './VerificationRequiredPage.module.css';
 import { useEffect, useState } from 'react';
 import { CooldownButton } from '../../components/buttons/CooldownButton';
+import { log } from '../../utils/logger';
 
 export default function VerificationRequiredPage () {
     const location = useLocation() as { state?: { email?: string; fromLogin?: boolean } };
     const [email, setEmail] = useState<string | null>(location.state?.email ?? null);
     const [fromLogin, setFromLogin] = useState<boolean | null>(location.state?.fromLogin ?? false);
+    const [resendEmailCooldown, setResendEmailCooldown] = useState<number>(0);
+    const [tooManyEmailsSent, setTooManyEmailsSent] = useState<boolean>(false);
 
     useEffect(() => {
         if (location.state?.email) {
@@ -21,8 +24,16 @@ export default function VerificationRequiredPage () {
     const resendVerificationClicked = (email: string) => {
         resendVerificationEmail(email)
             .then(() => {
+                setResendEmailCooldown(60);
             })
             .catch(err => {
+                if (err.status === 429) {
+                    if (err.details.additionalInfo?.secondsLeft) {
+                        setResendEmailCooldown(err.details.additionalInfo?.secondsLeft || 60);
+                    } else {
+                        setTooManyEmailsSent(true);
+                    }
+                }
             });
     }
 
@@ -50,17 +61,21 @@ export default function VerificationRequiredPage () {
                         </ul>
                     </div>
                         
-                    <div className={styles.primaryAction}>
-                        {email && 
+                    {!!email && 
+                        <div className={styles.primaryAction}>
                             <CooldownButton
-                                cooldownSeconds={60}
+                                disabled={tooManyEmailsSent}
+                                cooldownSeconds={resendEmailCooldown}
                                 onClick={() => resendVerificationClicked(email)}
                                 className={`button ${styles.resendEmailButton}`}
                             >
                                 <span className={styles.resendEmailText}>Resend Link</span>
                             </CooldownButton>
-                        }
-                    </div>
+                        </div>
+                    }
+                    {tooManyEmailsSent &&
+                        <p className="text">Too many verification emails sent. Please try again later.</p>
+                    }
 
                     <div className={styles.secondaryActions}>
                         <Link to={"/"} className={`link text-meta`}>Continue to Home Page</Link>

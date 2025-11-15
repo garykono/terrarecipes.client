@@ -13,11 +13,17 @@ import { User } from "../../api/types/user";
 import { CooldownButton } from "../../components/buttons/CooldownButton";
 import { resendVerificationEmail, updateUserEmail } from "../../api/queries/usersApi";
 import { maskEmail } from "../../utils/maskEmail";
+import { log, logAPI } from "../../utils/logger";
+import { createAppError } from "../../utils/errors/factory";
+import { AppErrorCodes } from "../../utils/errors/codes";
 
 export default function ChangeEmailPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
 
     const [ emailChangeIsInitiated, setEmailChangeIsInitiated ] = useState(false);
+    
+    const [resendEmailCooldown, setResendEmailCooldown] = useState<number>(0);
+    const [tooManyEmailsSent, setTooManyEmailsSent] = useState<boolean>(false);
 
     function ChangeEmailForm({ user }: { user: User }) {
         const { register, handleSubmit, watch, setError, clearErrors, formState: { errors } } = useForm({
@@ -50,10 +56,16 @@ export default function ChangeEmailPage() {
             .catch(err => {
                 if (err.status && err.status === 401) {
                     setError('root.general', { message: "Email address or password is incorrect." });
-                } else if(err.name && err.name === "SAME_EMAIL") {
+                } else if(err.details.server.name && err.details.server.name === "SAME_EMAIL") {
                     setError('newEmail', { message: "This is already your email address." });
-                } else if(err.name && err.name === "ALREADY_TAKEN") {
+                } else if(err.details.server.name && err.details.server.name === "ALREADY_TAKEN") {
                     setError('newEmail', { message: "This email address is already in use." });
+                } else if (err.status === 429) {
+                    if (err.details.additionalInfo?.secondsLeft) {
+                        setError('root.general', { message: err.details.server.message });
+                    } else {
+                        setError('root.general', { message: err.message});
+                    }
                 } else {
                     useSetError(err, setError as ErrorMessageSetter);
                 }
@@ -120,14 +132,6 @@ export default function ChangeEmailPage() {
     }
 
     function SentValidationPanel({ user }: { user: User }) {
-        const resendVerificationClicked = (email: string) => {
-            resendVerificationEmail(email)
-                .then((response) => {
-                })
-                .catch(err => {
-                });
-        }
-
         return (
             <div className={`page-top box box--message ${styles.contentBlock}`}>
                 <div className={styles.explanationBlock}>
@@ -147,15 +151,18 @@ export default function ChangeEmailPage() {
                 </div>
                     
                 <div className={styles.primaryAction}>
-                    {user.email && 
-                        <CooldownButton
-                            cooldownSeconds={60}
-                            onClick={() => resendVerificationClicked(user.email)}
-                            className={`button ${styles.resendEmailButton}`}
-                        >
-                            <span className={styles.resendEmailText}>Resend Link</span>
-                        </CooldownButton>
-                    }
+                    {/* {!!user.email && 
+                        <div className={styles.primaryAction}>
+                            <CooldownButton
+                                disabled={tooManyEmailsSent}
+                                cooldownSeconds={resendEmailCooldown}
+                                onClick={() => resendVerificationClicked(user.email)}
+                                className={`button ${styles.resendEmailButton}`}
+                            >
+                                <span className={styles.resendEmailText}>Resend Link</span>
+                            </CooldownButton>
+                        </div>
+                    } */}
                 </div>
 
                 <div className={styles.secondaryActions}>
@@ -165,10 +172,8 @@ export default function ChangeEmailPage() {
         )
     }
 
-    if (!user) {
-        const e = new Error();
-        e.name = 'NotLoggedIn';
-        return <GlobalErrorDisplay error={e} />
+    if (!user) { 
+        return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     return (
