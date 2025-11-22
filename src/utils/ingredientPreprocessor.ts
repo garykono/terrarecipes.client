@@ -1,5 +1,3 @@
-import { logger } from "./logger";
-
 // Helper: parse fraction string like "1/8" or "3/4" or "2" into a decimal number
 function parseFraction(str: string): number {
     if (str.includes('/')) {

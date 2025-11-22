@@ -12,8 +12,6 @@ import { logRecipe } from "../../utils/logger";
 const UNIT_SEARCH_KEYS = ['name', 'plural', 'symbol', 'aliases'];
 const INGREDIENT_SEARCH_KEYS = ['name'];
 
-const DEBUG = false;
-
 interface InputWithAutoSuggestProps {
     name: string;
     className?: string;

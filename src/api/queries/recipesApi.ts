@@ -50,7 +50,7 @@ export const getRecipeById = (id: string) => {
 export const createRecipe = (recipe: UnvalidatedRecipe) => {
     return (
         axiosInstance
-            .post(`${endpointBase}/myRecipes`, {...recipe, tungsten: "hi"})
+            .post(`${endpointBase}/myRecipes`, {...recipe})
             .then((response) => {
                 return response.data.data.doc as Recipe;
             })

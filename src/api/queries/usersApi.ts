@@ -9,8 +9,7 @@ export const signUp = (username: string, email: string, password: string, passwo
                 username,
                 email,
                 password,
-                passwordConfirm,
-                role: "user"
+                passwordConfirm
             })
             .then(async (response) => {
                 return response.data.data.doc as User;

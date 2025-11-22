@@ -5,10 +5,14 @@ import { useEffect, useState } from 'react';
 import { maskEmail } from '../../utils/maskEmail';
 import { CooldownButton } from '../../components/buttons/CooldownButton';
 import Button from '../../components/buttons/Button';
+import { logAPI } from '../../utils/logger';
 
 export default function VerificationEmailSentPage () {
     const location = useLocation() as { state?: { email?: string } };
     const [email, setEmail] = useState<string | null>(location.state?.email ?? null);
+
+    const [cooldown, setCooldown] = useState<number>(0);
+    const [resendButtonDisabled, setResendButtonDisabled] = useState<boolean>(false);
 
     useEffect(() => {
         if (location.state?.email) {
@@ -24,6 +28,14 @@ export default function VerificationEmailSentPage () {
             .then(() => {
             })
             .catch(err => {
+                logAPI.info({ err })
+                if (err.status === 429) {
+                    if (err.details?.additionalInfo?.secondsLeft) {
+                        setCooldown(err.details?.additionalInfo?.secondsLeft);
+                    } else {
+                        setResendButtonDisabled(true);
+                    }
+                }
             });
     }
 
@@ -56,7 +68,8 @@ export default function VerificationEmailSentPage () {
                     <div className={styles.primaryAction}>
                         {email && 
                             <CooldownButton
-                                cooldownSeconds={60}
+                                cooldownSeconds={cooldown}
+                                disabled={resendButtonDisabled}
                                 onClick={() => resendVerificationClicked(email)}
                                 className={`button ${styles.resendEmailButton}`}
                             >

@@ -286,7 +286,6 @@ export function parseIngredientLine(
     allForms: IngredientForms,
     allPreparations: IngredientPreparations
 ): ParsedIngredient[] {
-    const DEBUG = false
     const parsedIngredients = [] as ParsedIngredient[];
 
     let { cleaned, isOptional, optionalQuantity } = stripOptionalQuantityPhrases(line.trim());

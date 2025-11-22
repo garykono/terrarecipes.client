@@ -1,5 +1,5 @@
 import { FieldError } from "react-hook-form";
-import { log } from "../utils/logger";
+import { log, logAPI } from "../utils/logger";
 
 export interface ErrorMessageSetter {
     (name: string, error: FieldError, options?: { shouldFocus?: boolean }): void
@@ -10,6 +10,7 @@ export function useSetError(
             duplicate_fields?: string[];
             invalid_fields?: { name: string; message: string }[];
             status?: number;
+            name?: string;
         }, 
         setError: ErrorMessageSetter
 ) {
@@ -28,6 +29,7 @@ export function useSetError(
             setError(fieldName, { type: 'server', message: field.message}, { shouldFocus: true })
         });
     } else {
+        logAPI.debug("unknown error", {err})
         setError('root.other', err as FieldError)
     }
 }

@@ -7,8 +7,6 @@ import { roundToCommonFraction } from "./display/roundToCommonFraction";
 import { NormalizedAndNamedIngredient, NormalizedIngredient, StandardUnit, ValidatedIngredient } from "./types";
 import { Unit } from "./units";
 
-const DEBUG = false;
-
 export interface CombinedIngredients {
     standardizedIngredients: {
         [key: string]: NormalizedIngredient
@@ -30,7 +28,7 @@ export function combineIngredients({
     standardIngredientsLookupTable,
     standardMeasurements,
     standardMeasurementsLookupTable
-    } : CombineIngredientsProps) {
+} : CombineIngredientsProps) {
     let successfulAttemptsToCombine = 0;
     let totalAttemptsToCombine = 0;
 

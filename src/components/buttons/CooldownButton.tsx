@@ -62,7 +62,7 @@ export const CooldownButton: React.FC<CooldownButtonProps> = ({
         >
             <div className={styles.cooldownButtonDisplay}>
                 {children}
-                {(showCountdown && cooldown > 0) &&
+                {(!disabled && showCountdown && cooldown > 0) &&
                     <span>{` (${cooldown})`}</span>
                 }
             </div>
