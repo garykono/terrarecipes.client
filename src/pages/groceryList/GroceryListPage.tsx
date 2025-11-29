@@ -6,13 +6,16 @@ import { RootLoaderResult } from '../root/rootLoader';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { StandardMeasurements } from '../../api/types/standardized';
 import { formatWithUnicodeFraction } from '../../utils/helpers';
-import { categorizeAndCombineIngredients, CategorizedAndCombinedIngredients, combineIngredients } from '../../utils/combineIngredients/index'
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
+import { CategorizedIngredients } from '../../api/types/groceryList';
 
 export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection' }) {
     // const navigate = useNavigate();
     const { standardIngredients, standardMeasurements, standardIngredientsLookupTable, standardMeasurementsLookupTable } = useRouteLoaderData('root') as RootLoaderResult;
-    const { name, recipes } = useLoaderData() as GroceryListLoaderResult;
-    const [ingredientsList, setIngredientsList] = useState<CategorizedAndCombinedIngredients>({
+    const { groceryList } = useLoaderData() as GroceryListLoaderResult;
+    const [ groceryListName, setGroceryListName ] = useState<string>("Unknown");
+    const [ ingredientsList, setIngredientsList ] = useState<CategorizedIngredients>({
         standardizedIngredients: {},
         miscellaneousIngredients: []
     });
@@ -31,31 +34,20 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
         "❓ Uncategorized": 'var(--category-color-uncategorized)'
     };
 
-    if (!recipes) {
-        const e = new Error();
-        e.name = 'NoID';
-        return <GlobalErrorDisplay error={e} />
+    if (!groceryList) {
+        const e = createAppError({ 
+            code: AppErrorCodes.MISSING_LOADER_DATA,
+            message: 'Could not properly load required data: grocery list'
+        });
+        return <GlobalErrorDisplay error={e} /> 
     }
 
     useEffect(() => {
-        if (recipes) {
-            const uncombinedIngredientsList = recipes.flatMap(recipe => {
-                return recipe.ingredients.filter(ingredient => !ingredient.isSection)
-            });
-            // Combine similar ingredients
-            const combinedIngredients = combineIngredients({ 
-                uncombinedIngredients: uncombinedIngredientsList, 
-                standardIngredients,
-                standardIngredientsLookupTable,
-                standardMeasurements,
-                standardMeasurementsLookupTable
-            });
-            
-            // Break the ingredients into categories
-            const categorizedAndCombinedIngredients = categorizeAndCombineIngredients(combinedIngredients)
-            setIngredientsList(categorizedAndCombinedIngredients)
+        if (groceryList) {
+            setGroceryListName(groceryList.name);
+            setIngredientsList(groceryList.categorizedIngredients)
         }
-    }, [])
+    }, [groceryList])
     
 
     if (error) {
@@ -74,7 +66,7 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                             >
                                 🛒 Grocery List
                             </h1>
-                            <p className={`subsection-title ${styles.for}`}><span className="text">For:</span>{' ' + name}</p>
+                            <p className={`subsection-title ${styles.for}`}><span className="text">For:</span>{' ' + groceryListName}</p>
                             <div className={styles.actionLine}>
                                 <p><span>Servings:</span>{' 4'}</p>
                                 <p>🌱 Vegetarian</p>
