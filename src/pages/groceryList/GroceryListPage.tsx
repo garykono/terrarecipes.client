@@ -1,5 +1,5 @@
 import styles from './GroceryListPage.module.css';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoaderData, useRouteLoaderData } from 'react-router';
 import { GroceryListLoaderResult } from './groceryListLoader';
 import { RootLoaderResult } from '../root/rootLoader';
@@ -12,7 +12,7 @@ import { CategorizedIngredients } from '../../api/types/groceryList';
 
 export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection' }) {
     // const navigate = useNavigate();
-    const { standardIngredients, standardMeasurements, standardIngredientsLookupTable, standardMeasurementsLookupTable } = useRouteLoaderData('root') as RootLoaderResult;
+    const { standardIngredients, standardMeasurements } = useRouteLoaderData('root') as RootLoaderResult;
     const { groceryList } = useLoaderData() as GroceryListLoaderResult;
     const [ groceryListName, setGroceryListName ] = useState<string>("Unknown");
     const [ ingredientsList, setIngredientsList ] = useState<CategorizedIngredients>({

@@ -1,6 +1,8 @@
 import type { Params } from 'react-router-dom';
 import type { Recipe } from '../../api/types/recipe';
 import { fetchRecipes } from '../../api/queries/recipesApi';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 const RESULTS_COLS = 5;
 const RESULTS_ROWS = 4;
@@ -25,7 +27,10 @@ export async function recipesLoader({ params }: LoaderArgs): Promise<RecipesLoad
     let pageNum = Number(page);
     if (page) {
         if (isNaN(pageNum)) {
-            throw new Error('Param error: Page must be an integer.');
+            throw createAppError({ 
+                code: AppErrorCodes.INVALID_PARAMETERS, 
+                message: 'Param error: Page must be an integer.'
+            });
         } else if (pageNum < 1) {
             pageNum = 1;
         } 

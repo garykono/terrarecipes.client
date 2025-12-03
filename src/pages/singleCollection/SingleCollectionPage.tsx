@@ -1,6 +1,6 @@
 import styles from './SingleCollectionPage.module.css';
-import { useState, useContext, useEffect } from 'react';
-import { Link, useLoaderData, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useLoaderData, useNavigate, useRouteLoaderData } from 'react-router-dom';
 import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';

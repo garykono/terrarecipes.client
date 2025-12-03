@@ -40,6 +40,8 @@ import TestPage from "../pages/test/TestPage";
 import GroceryListPage from "../pages/groceryList/GroceryListPage";
 import { groceryListLoader } from "../pages/groceryList/groceryListLoader";
 
+const ENABLE_TEST_PAGE = import.meta.env.VITE_ENV === "development";
+
 export const appRouter = createBrowserRouter([
     {
         path: '/',
@@ -217,13 +219,17 @@ export const appRouter = createBrowserRouter([
                 hydrateFallbackElement: <LoadingScreen />,
                 errorElement:<GlobalErrorDisplay />,
             },
-            {
-                path: '/test',
-                element: <TestPage />,
-                loader: undefined,
-                hydrateFallbackElement: <LoadingScreen />,
-                errorElement:<GlobalErrorDisplay />,
-            }
+            ...(ENABLE_TEST_PAGE
+                ? [
+                    {
+                    path: "/test",
+                    element: <TestPage />,
+                    loader: undefined,
+                    hydrateFallbackElement: <LoadingScreen />,
+                    errorElement: <GlobalErrorDisplay />,
+                    }
+                ]
+                : []),
         ]
     }
 ])

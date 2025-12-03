@@ -7,7 +7,6 @@ import FormMessage from '../../components/formMessage/FormMessage';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import { RootLoaderResult } from '../root/rootLoader';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { log } from '../../utils/logger';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
 

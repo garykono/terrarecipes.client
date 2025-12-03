@@ -1,5 +1,5 @@
 import styles from './collectionEditPage.module.css';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLoaderData, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
 import { useForm } from 'react-hook-form'; 
 import { CollectionUpdateProps, editCollectionById } from '../../api/queries/collectionApi';
@@ -16,7 +16,6 @@ import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
-import { log } from '../../utils/logger';
 
 export default function CollectionEditPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
@@ -29,7 +28,7 @@ export default function CollectionEditPage() {
     const [ recipesToShow, setRecipesToShow ] = useState<Recipe[]>([]);
     const [ totalPages, setTotalPages ] = useState<number>(1);
     
-    const { register, control, handleSubmit, setError, formState: { errors } } = useForm({
+    const { register, handleSubmit, setError, formState: { errors } } = useForm({
         defaultValues: {
             name: collection?.name? collection.name : "",
             description: collection?.description? collection.description: ""

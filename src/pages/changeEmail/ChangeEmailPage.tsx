@@ -10,10 +10,8 @@ import { isEmail } from "../../utils/validation";
 import Button from "../../components/buttons/Button";
 import BasicHero from "../../components/basicHero/BasicHero";
 import { User } from "../../api/types/user";
-import { CooldownButton } from "../../components/buttons/CooldownButton";
-import { resendVerificationEmail, updateUserEmail } from "../../api/queries/usersApi";
+import { updateUserEmail } from "../../api/queries/usersApi";
 import { maskEmail } from "../../utils/maskEmail";
-import { log, logAPI } from "../../utils/logger";
 import { createAppError } from "../../utils/errors/factory";
 import { AppErrorCodes } from "../../utils/errors/codes";
 

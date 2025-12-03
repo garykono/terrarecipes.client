@@ -1,10 +1,9 @@
 import styles from './AccountEditPage.module.css';
-import { useState, useContext, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { updateUserInfo, deleteUser, updateUserPassword } from '../../api/queries/usersApi';
 import Modal from '../../components/modal/Modal'
-import { isEmail } from '../../utils/validation';
 import FormMessage from '../../components/formMessage/FormMessage';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
@@ -13,12 +12,13 @@ import Button from '../../components/buttons/Button';
 import { log } from '../../utils/logger';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
+import { AppError } from '../../utils/errors/types';
 
 export default function AccountEditPage () {
     const navigate = useNavigate();
     const revalidator = useRevalidator();
     const { user } = useRouteLoaderData('root');
-    const [ pageError, setPageError ] = useState<any>(null);
+    const [ pageError, setPageError ] = useState<AppError | null>(null);
     const [ showModal, setShowModal ] = useState(false);
 
     function AccountManagementForm() {
@@ -56,7 +56,7 @@ export default function AccountEditPage () {
         }
 
         if (errors.root?.other) {
-            setPageError(errors.root.other);
+            setPageError(errors.root.other as AppError);
         }
 
         return (
@@ -166,7 +166,7 @@ export default function AccountEditPage () {
             };
 
             if (errors.root?.other) {
-                setPageError(errors.root.other);
+                setPageError(errors.root.other as AppError);
             }
 
             return (
@@ -258,7 +258,7 @@ export default function AccountEditPage () {
                 navigate('/')
             })
             .catch(error => {
-                log.warn(error, "failed to delete account")
+                log.warn({ error }, "failed to delete account")
             })
     }
 

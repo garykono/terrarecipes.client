@@ -1,68 +1,21 @@
-import { Link, useNavigate, useRouteLoaderData } from 'react-router';
+import { Link, useRouteLoaderData } from 'react-router';
 import styles from './browsePage.module.css';
-import { useEffect, useState } from 'react';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
-import { log } from '../../utils/logger';
 
 export default function BrowsePage() {
-    const navigate = useNavigate();
     const rootData = useRouteLoaderData('root') as RootLoaderResult;
 
     if (!rootData?.categories) {
-        const e = new Error();
-        e.name = 'MissingLoaderData';
+        const e = createAppError({ 
+            code: AppErrorCodes.MISSING_LOADER_DATA,
+            message: 'Could not properly load required data: categories'
+        });
         return <GlobalErrorDisplay error={e} />
     }
-
     const { categories } = rootData;
-    // const [featuredData, setFeaturedData] = useState<Record<string, Recipe[]>>({});
-    // const [featuredRecipe, setFeaturedRecipe] = useState<Recipe>();
-    // const [loading, setLoading] = useState(true);
-
-    // useEffect(() => {
-    //     if (!categories?.featured) return;
-
-    //     let cancelled = false;
-
-    //     async function loadFeatured() {
-    //         try {
-    //             setLoading(true);
-
-    //             const results: Record<string, Recipe[]> = {};
-    //             let featuredRec = null;
-    //             for (const category of categories.featured) {
-    //                 try {
-    //                     const data = await fetchRecipes({ search: category.searchTags[0] });
-    //                     results[category.slug] = data.data.slice(0, 10) ?? [];
-    //                     // Just grabbing a placeholder recipe for now
-    //                     if (!featuredRec && results[category.slug].length > 0) featuredRec = results[category.slug][0];
-    //                 } catch (err) {
-    //                     console.error(`Error loading ${category.title}`, err);
-    //                     results[category.slug] = [];
-    //                 }
-    //             }
-
-    //             if (!cancelled) {
-    //                 setFeaturedData(results);
-    //                 if (featuredRec) {
-    //                     setFeaturedRecipe(featuredRec)
-    //                 }
-    //                 setLoading(false);
-    //             }
-    //         } catch (err) {
-    //             if (!cancelled) {
-    //                 setError(err as Error);
-    //                 setLoading(false);
-    //             }
-    //         }
-    //     }
-
-    //     loadFeatured();
-    //     return () => { cancelled = true; };
-    // }, [categories]);
 
     return (
         <div className="account-page">

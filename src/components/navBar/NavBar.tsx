@@ -1,9 +1,10 @@
 import styles from './NavBar.module.css';
-import { useState, useContext, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link, useLoaderData, useRevalidator } from 'react-router-dom';
 import logo from '../../assets/logo.png'
 import { IoClose, IoMenu } from "react-icons/io5";
 import { logOut } from '../../api/queries/usersApi';
+import { logAPI } from '../../utils/logger';
 
 interface NavBarProps {
     className?: string;
@@ -22,7 +23,7 @@ export default function NavBar({ className }: NavBarProps) {
                 navigate('/logIn')
             })
             .catch(err => {
-                console.log(err);   
+                logAPI.warn({ error: err }, "error attempting to log out") 
             })
     }
 

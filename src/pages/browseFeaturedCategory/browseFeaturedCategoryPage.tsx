@@ -1,11 +1,10 @@
-import { Link, useLoaderData, useNavigate, useRouteLoaderData } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 import styles from './browseFeaturedCategoryPage.module.css';
 import { BrowseFeaturedCategoryLoaderResult } from './browseFeaturedCategoryLoader';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import BasicHero from '../../components/basicHero/BasicHero';
 import FeaturedCluster from '../../components/featuredCluster/FeaturedCluster';
-import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
 import RecipeTileList from '../../components/recipeTileList/RecipeTileList';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
@@ -16,7 +15,6 @@ export default function BrowseFeaturedCategoryPage() {
     const { categoryInfo, recipes } = categoryData;    
 
     const [error, setError] = useState<Error | null>(null);
-    const navigate = useNavigate();
     // const [featuredData, setFeaturedData] = useState<Record<string, Recipe[]>>({});
     // const [loading, setLoading] = useState(true);
 

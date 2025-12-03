@@ -3,8 +3,8 @@ import { IngredientForms, IngredientPreparations, StandardLookupTable, StandardM
 import { logRecipe } from './logger';
 import { findLongestWholePhraseMatch } from './helpers';
 
-function isLikelyUnit(word: string, unitsList: string[]): boolean {
-  return unitsList.includes(word.toLowerCase());
+function isLikelyUnit(word: string, unitsSet: Set<string>): boolean {
+  return unitsSet.has(word.toLowerCase());
 }
 
 function isLikelyAmount(word: string): boolean {
@@ -135,9 +135,9 @@ function extractQuantityAndRest(tokens: string[]): { quantity?: number, rest: st
     return { quantity, rest: normalizedTokens };
 }
 
-function extractAndStandardizeUnit(tokens: string[], unitsList: string[], standardMeasurementsLookupTable: StandardLookupTable): string | undefined {
+function extractAndStandardizeUnit(tokens: string[], unitsSet: Set<string>, standardMeasurementsLookupTable: StandardLookupTable): string | undefined {
     let unit: string | undefined = undefined;
-    if (tokens.length && isLikelyUnit(tokens[0], unitsList)) {
+    if (tokens.length && isLikelyUnit(tokens[0], unitsSet)) {
         const extractedUnit = tokens.shift();
         if (extractedUnit) unit = standardMeasurementsLookupTable[extractedUnit];
     }
@@ -147,7 +147,7 @@ function extractAndStandardizeUnit(tokens: string[], unitsList: string[], standa
 function lookAheadForNextIngredient(
     tokens: string[],
     ingredientsSet: Set<string>,
-    unitsList: string[],
+    unitsSet: Set<string>,
 ): { index: number; skipCount: number; connector: string[] } | null {
     logRecipe.debug("looking ahead in these tokens", { tokens });
     const commonDualIngredients = new Set([
@@ -173,7 +173,7 @@ function lookAheadForNextIngredient(
 
         // === 2. Separator followed by amount or unit → new ingredient
         const followsAmount = isLikelyAmount(next) || /^\d+[\/\d\.]*$/.test(next || "");
-        const followsUnit = isLikelyUnit(next || "", unitsList);
+        const followsUnit = isLikelyUnit(next || "", unitsSet);
         if (isSeparator && (followsAmount || followsUnit)) {
             logRecipe.debug("→ separator followed by unit/amount → new ingredient");
             return { index: i, skipCount: 1, connector: [token] };
@@ -281,7 +281,7 @@ export interface ParsedIngredient {
 export function parseIngredientLine(
     line: string,
     ingredientsSet: Set<string>,
-    unitsList: string[],
+    unitsSet: Set<string>,
     standardMeasurementsLookupTable: StandardLookupTable,
     allForms: IngredientForms,
     allPreparations: IngredientPreparations
@@ -299,13 +299,13 @@ export function parseIngredientLine(
         // Parse Unit and then remove it
         const unit: string | undefined = extractAndStandardizeUnit(
             rest,
-            unitsList,
+            unitsSet,
             standardMeasurementsLookupTable
         );
 
         // Most of what can reliable be parsed out based on structure has been parsed and shaved off the input. Look ahead to indicate 
         // whether there is more than one ingredient left in the input
-        const indexOfNextIngredient = lookAheadForNextIngredient(rest, ingredientsSet, unitsList);
+        const indexOfNextIngredient = lookAheadForNextIngredient(rest, ingredientsSet, unitsSet);
 
         // Get the phrase between this ingredient and the next one in this input ex. "or", "or use"
         const connectingWords = indexOfNextIngredient !== null

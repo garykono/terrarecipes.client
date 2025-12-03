@@ -1,8 +1,8 @@
-import { Link, useLoaderData, useNavigate, useRouteLoaderData } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 import styles from './browseCoreCategoryPage.module.css';
 import { BrowseCoreCategoryLoaderResult } from './browseCoreCategoryLoader';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import BasicHero from '../../components/basicHero/BasicHero';
 import FeaturedList from '../../components/featuredList/FeaturedList';
 import FeaturedCluster from '../../components/featuredCluster/FeaturedCluster';
@@ -15,7 +15,6 @@ export default function BrowseCoreCategoryPage() {
     const { categoryInfo, recipes } = categoryData;    
 
     const [error, setError] = useState<Error | null>(null);
-    const navigate = useNavigate();
     // const [featuredData, setFeaturedData] = useState<Record<string, Recipe[]>>({});
     // const [loading, setLoading] = useState(true);
 

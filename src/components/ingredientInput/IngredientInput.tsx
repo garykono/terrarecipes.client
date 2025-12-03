@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { getCurrentWordAtPosition } from "../../utils/helpers";
 import { AutoSuggestResult, useAutoSuggest } from "../../hooks/use-auto-suggest";
@@ -26,8 +26,8 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
         standardMeasurementsLookupTable,
         flattenedStandardIngredientsForFuse,
         flattenedStandardMeasurementsForFuse,
-        rawUnitsList,
         rawIngredientsSet,
+        rawUnitsSet,
         allIngredientForms,
         allIngredientPreparations
     } = useRouteLoaderData('root') as RootLoaderResult;
@@ -53,7 +53,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
         flattenedStandardIngredientsForFuse &&
         flattenedStandardMeasurementsForFuse &&
         rawIngredientsSet &&
-        rawUnitsList &&
+        rawUnitsSet &&
         allIngredientForms &&
         allIngredientPreparations
 
@@ -95,9 +95,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
         }
 
         const isLikelyAmount = /^\d+([\/.]\d+)?$/.test(currentWord);
-        const isLikelyUnit = rawUnitsList.some(unit =>
-            unit.includes(currentWord.toLowerCase())
-        );
+        const isLikelyUnit = rawUnitsSet.has(currentWord.toLowerCase());
 
         let results: AutoSuggestResult<{ name: string }>[] = [];
 
@@ -124,16 +122,16 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
     const updateParsedInfo = (input: string) => {
         if (!hasData) return;
         const parsedIngredients = parseIngredientLine(
-            preprocessIngredientInput(input, rawUnitsList), 
+            preprocessIngredientInput(input, rawUnitsSet), 
             rawIngredientsSet,
-            rawUnitsList, 
+            rawUnitsSet, 
             standardMeasurementsLookupTable,
             allIngredientForms,
             allIngredientPreparations
         );
         logRecipe.debug(
             { 
-                input: preprocessIngredientInput(input, rawUnitsList), 
+                input: preprocessIngredientInput(input, rawUnitsSet), 
                 parsedIngredients
             },
             "preprocessed ingredient input -> what was able to be parsed"

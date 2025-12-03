@@ -1,9 +1,8 @@
 import styles from './SignUpPage.module.css';
-import signUpImage from '../../assets/signup.jpg';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useRevalidator } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { resendVerificationEmail, signUp } from '../../api/queries/usersApi';
+import { signUp } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import { isEmail } from '../../utils/validation';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
@@ -11,10 +10,9 @@ import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-h
 import Button from '../../components/buttons/Button';
 
 export default function SignUpPage () {
-    const revalidator = useRevalidator();
     const navigate = useNavigate();
 
-    const { register, handleSubmit, watch, getValues, setValue, setError, clearErrors, reset, formState: { errors } } = useForm({
+    const { register, handleSubmit, watch, getValues, setValue, setError, clearErrors, formState: { errors } } = useForm({
             mode: 'onSubmit',
             reValidateMode: 'onSubmit',
             defaultValues: {

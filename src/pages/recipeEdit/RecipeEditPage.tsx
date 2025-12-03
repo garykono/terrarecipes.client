@@ -1,10 +1,8 @@
 import styles from './RecipeEditPage.module.css';
-import { useState, useContext, useEffect, useMemo, Ref, useRef } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLoaderData, useRouteLoaderData, useRevalidator } from 'react-router-dom';
-import { useForm, useFieldArray, useWatch, UseFieldArrayRemove, UseFormRegister, FormProvider, useFormContext, Controller, Path } from 'react-hook-form';
-import { GoXCircleFill, GoArrowUp, GoArrowDown } from 'react-icons/go';
+import { useForm, useFieldArray, useWatch, FormProvider, Controller } from 'react-hook-form';
 import { createRecipe, editRecipeById } from '../../api/queries/recipesApi';
-import TagList from '../../components/tagList/TagList'
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
@@ -12,10 +10,6 @@ import { RecipeEditLoaderResult } from './recipeEditLoader';
 import { Ingredient, Direction, UnvalidatedRecipe } from '../../api/types/recipe';
 import { RootLoaderResult } from '../root/rootLoader';
 import BasicHero from '../../components/basicHero/BasicHero';
-import DeleteButton from '../../components/buttons/DeleteButton';
-import IngredientInput from '../../components/ingredientInput/IngredientInput'
-import RecipeCard from '../../components/recipeCard/RecipeCard';
-import { FacetChipPicker } from '../../components/facetChipPicker/FacetChipPicker';
 import { CollapsibleSection } from '../../components/collapsibleSection/CollapsibleSection';
 import { CustomTagsInput } from '../../components/customTagsInput/CustomTagsInput';
 import { TERM_TO_ID } from '../../components/customTagsInput/TermToIdMap';
@@ -23,6 +17,9 @@ import { toIntOrNull } from '../../utils/helpers';
 import { getPrefix } from '../../utils/tagHelpers';
 import { AppErrorCodes } from '../../utils/errors/codes';
 import { createAppError } from '../../utils/errors/factory';
+import RecipePreviewPane from '../../components/recipePreviewPane/RecipePreviewPane';
+import { FieldArrayList } from './fieldArrayList/FieldArrayList';
+import { TagSection } from './tagSection/TagSection';
 
 const FACET_KEYS = [
     "meal",
@@ -41,10 +38,10 @@ const FACET_KEYS = [
     "flavor",
 ] as const;
 
-type FacetKey = typeof FACET_KEYS[number];
-type FacetPath<K extends FacetKey> = `tags.facets.${K}`;
-const facetPath = <K extends FacetKey>(k: K) => `tags.facets.${k}` as FacetPath<K>;
-type FacetValues = Partial<Record<FacetKey, string[]>>;
+export type FacetKey = typeof FACET_KEYS[number];
+export type FacetPath<K extends FacetKey> = `tags.facets.${K}`;
+export const facetPath = <K extends FacetKey>(k: K) => `tags.facets.${k}` as FacetPath<K>;
+export type FacetValues = Partial<Record<FacetKey, string[]>>;
 
 export interface FormData {
     name: string;
@@ -247,166 +244,13 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         }
     }
 
-    interface FieldArrayListProps {
-        fieldArrayName: keyof FormData;
-        title: string;
-        isInput: boolean;
-        field: {
-            text: string;
-            isSection: boolean;
-        }[];
-        register: UseFormRegister<FormData>;
-        append: ({ text, isSection}: { text: string, isSection: boolean}) => void;
-        remove: UseFieldArrayRemove;
-        swap: (i1: number, i2: number) => void;
-    }
-
-    function FieldArrayList({ fieldArrayName, title, isInput, field, register, append, remove, swap }: FieldArrayListProps) {
-        const fieldArray = getValues(fieldArrayName) as typeof field;
-
-        return (
-            <>
-                <ul className={styles.fieldArrayList}>
-                    {field.map((item, index) => {
-                        const isSection = fieldArray[index].isSection;
-                        const name = `${fieldArrayName}.${index}` as keyof FormData;
-                        let textBox;
-                        if (isSection) {
-                            textBox = 
-                                <div className={styles.fieldArraySectionContent}>
-                                    <div className={styles.sectionFieldTag}>Section:</div>
-                                    <input 
-                                        className={'input'}
-                                        {...register(`${name}.text` as keyof FormData)}
-                                    />
-                                </div>
-                        } else if (isInput) {
-                            textBox =
-                                <IngredientInput
-                                    name={name}
-                                />
-                        } else {
-                            textBox = 
-                                <textarea
-                                    className="textarea"
-                                    rows={2}
-                                    {...register(`${name}.text` as keyof FormData)}
-                                />
-                        }
-                                    
-                        
-                        return (
-                            <li 
-                                key={index} 
-                                className={`
-                                    ${styles.fieldArrayListItem}
-                                    ${isSection? styles.fieldArraySection : ''}
-                                `}
-                            >
-                                <div className={styles.moveItemArrows}>
-                                    <button
-                                        className={styles.moveItemArrow}
-                                        type="button" 
-                                        onClick={() => swap(index, index - 1)} 
-                                        disabled={index === 0}
-                                        tabIndex={-1}
-                                    >
-                                        <GoArrowUp />
-                                    </button>
-                                    <button
-                                        className={styles.moveItemArrow}
-                                        type="button" 
-                                        onClick={() => swap(index, index + 1)} 
-                                        disabled={index === field.length - 1}
-                                        tabIndex={-1}
-                                    >
-                                        <GoArrowDown />
-                                    </button>
-                                </div>
-                                {textBox}
-                                
-                                <DeleteButton 
-                                    className={styles.deleteButton}
-                                    type="button"
-                                    onClick={() => remove(index)}
-                                    tabIndex={-1}
-                                />
-                            </li>
-                        )
-                    })}
-                </ul>   
-                <div className={styles.buttons}>
-                    <button className="button button--secondary-frequent" type="button" onClick={() => append({ text: "" , isSection: false}) }>
-                        Add {title}
-                    </button>
-                    {/* <button className="button" type="button" onClick={() => append("section:") }> */}
-                    <button className="button button--secondary-frequent" type="button" onClick={() => append({ text: "" , isSection: true}) }>
-                        Add Section
-                    </button>
-                </div>
-                </>
-        )
-    }
-    
-    function TagSection({
-        id
-    }: { id: FacetKey}) {
-        if (!tags) {
-            const e = new Error();
-            e.name = 'MissingLoaderData';
-            e.message = 'Could not properly load required data: tags';
-            setError("root.other", e)
-            return;
-        }
-
-        const tagInfo = tags?.facets[id];
-        let desc = tagInfo.multi ? `Select all that apply. ` : "Select one."
-        if (tagInfo.multi && tagInfo.requirement.max) desc += `(Up to ${tagInfo.requirement.max})` 
-
-        return (
-            <Controller
-                name={facetPath(id)}
-                control={control}
-                render={({ field, fieldState }) => (
-                    <div className="field">
-                        <FacetChipPicker
-                            title={
-                                <label className="label">{tagInfo.label}</label>
-                            }
-                            description={<p className="text">{desc}</p>}
-                            options={tags.facets[id].options}
-                            multi={tags.facets[id].multi}
-                            value={field.value ?? []}
-                            onChange={field.onChange}
-                            minSelected={tagInfo.requirement.min || undefined}
-                            maxSelected={tagInfo.requirement.max || undefined}
-                        />
-
-                        {fieldState.error?.message && (
-                            <FormMessage className='form-message' message={fieldState.error.message} danger />
-                        )}
-                    </div>
-                )}
-                rules={{
-                    validate: (value) => {
-                        if (value && tagInfo.requirement.min && value.length < tagInfo.requirement.min) {
-                            return "Please select at least one option.";
-                        } else if (value && tagInfo.requirement.max && value.length > tagInfo.requirement.max) {
-                            return `Please select ${tagInfo.requirement.max} options at most.`;
-                        }
-                    }
-                }}
-            />
-        )
-    }
-
     if (!user) {
         return <GlobalErrorDisplay error={createAppError({ code: AppErrorCodes.NOT_LOGGED_IN })} /> 
     }
 
     if (!tags) {
         const e = createAppError({ 
-            code: AppErrorCodes.NOT_LOGGED_IN,
+            code: AppErrorCodes.MISSING_LOADER_DATA,
             message: 'Could not properly load required data: tags'
         });
         return <GlobalErrorDisplay error={e} /> 
@@ -600,9 +444,10 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                     <label className="label">Ingredients</label>
                                     <div className="control">
                                         <FieldArrayList 
-                                            fieldArrayName="ingredients"
+                                            fieldArrayName={"ingredients"}
                                             title={"Ingredient"}
                                             field={ingredientsField}
+                                            getValues={getValues}
                                             isInput={true}
                                             register={register}
                                             append={appendIngredient} 
@@ -621,6 +466,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                         fieldArrayName="directions"
                                         title={"Direction"}
                                         field={directionsField}
+                                        getValues={getValues}
                                         isInput={false}
                                         register={register}
                                         append={appendDirection} 
@@ -631,7 +477,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
 
                                 <div className={styles.collapsibleBody}>
                                     {essentialTagIds.map(id => (
-                                        <TagSection id={id} key={`facet-section-${id}`}/>
+                                        <TagSection tags={tags} id={id} control={control} key={`facet-section-${id}`}/>
                                     ))}
                                 </div>
 
@@ -642,7 +488,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                 >
                                     <div className={styles.collapsibleBody}>
                                         {styleAndIdentityTagIds.map(id => (
-                                            <TagSection id={id} key={`facet-section-${id}`}/>
+                                            <TagSection tags={tags} id={id} control={control} key={`facet-section-${id}`}/>
                                         ))}
                                     </div>
                                 </CollapsibleSection>
@@ -654,7 +500,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                 >
                                     <div className={styles.collapsibleBody}>
                                         {moreTagIds.map(id => (
-                                            <TagSection id={id} key={`facet-section-${id}`}/>
+                                            <TagSection tags={tags} id={id} control={control} key={`facet-section-${id}`}/>
                                         ))}
                                     </div>
                                 </CollapsibleSection>
@@ -732,52 +578,12 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                 </div>
                             </form>
                             <aside className={styles.previewAside}>
-                                <PreviewPane fallback={loadedRecipe} />
+                                <RecipePreviewPane fallback={loadedRecipe} />
                             </aside>
                         </FormProvider>
                     </div>
                 </div>
             </section>
-        </div>
-    );
-}
-
-function PreviewPane({ fallback }: { fallback?: any }) {
-    const { control } = useFormContext<FormData>();
-
-    // watch the whole form (simple) – or list specific names if you want fewer re-renders
-    const w = (useWatch({ control }) as Partial<FormData>) || {};
-
-    // numbers (guard against string values)
-    const servings = Number(w.servings ?? fallback?.servings ?? 0) || 0;
-    const prep     = Number(w.prepTimeMin ?? fallback?.prepTimeMin ?? 0) || 0;
-    const cook     = Number(w.cookTimeMin ?? fallback?.cookTimeMin ?? 0) || 0;
-    const rest     = Number(w.restTimeMin ?? fallback?.restTimeMin ?? 0) || 0;
-    const total    = prep + cook + rest;
-
-    // tags are objects in the form; map to strings for the card
-    const tags = (w.tags ?? fallback?.tags ?? [])
-
-    // shape the object your RecipeCard expects
-    const recipeForCard = {
-        name: w.name ?? fallback?.name ?? "",
-        description: w.description ?? fallback?.description ?? "",
-        image: w.image ?? fallback?.image ?? "",
-        servings,
-        prepTimeMin: prep,
-        cookTimeMin: cook,
-        restTimeMin: rest,
-        totalTimeMin: total || Number(fallback?.totalTimeMin ?? 0) || 0,
-        ingredients: (w.ingredients ?? fallback?.ingredients ?? []).filter((i: any) => i?.text?.trim?.()),
-        directions: (w.directions ?? fallback?.directions ?? []).filter((d: any) => d?.text?.trim?.()),
-        tags,
-        credit: w.credit ?? fallback?.credit,
-    };
-
-    return (
-        <div className={styles.previewPane}>
-            <h3 className={styles.previewTitle}>Preview</h3>
-            <RecipeCard recipe={recipeForCard as UnvalidatedRecipe} />
         </div>
     );
 }

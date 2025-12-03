@@ -1,6 +1,5 @@
 import styles from './GlobalErrorDisplay.module.css';
 import { Link, useRouteError } from "react-router-dom";
-import { log } from '../../utils/logger';
 import { isAppError } from '../../utils/errors/factory';
 import { ERROR_CODE_MAP, HTTP_STATUS_TO_CODE } from '../../utils/errors/errorCodeMaps';
 import { AppErrorCodes } from '../../utils/errors/codes';

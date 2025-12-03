@@ -3,7 +3,6 @@ import { resendVerificationEmail } from '../../api/queries/usersApi';
 import styles from './VerificationRequiredPage.module.css';
 import { useEffect, useState } from 'react';
 import { CooldownButton } from '../../components/buttons/CooldownButton';
-import { log } from '../../utils/logger';
 
 export default function VerificationRequiredPage () {
     const location = useLocation() as { state?: { email?: string; fromLogin?: boolean } };

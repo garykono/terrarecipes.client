@@ -1,9 +1,7 @@
 import styles from './UserCollectionsPage.module.css';
-import { useState, useEffect, useContext } from 'react'
-import { Form, Link, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { Link, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { MdEdit } from 'react-icons/md';
-import { MdDelete } from 'react-icons/md'
 import { CollectionUpdateProps, createCollection, deleteCollectionById } from '../../api/queries/collectionApi';
 import Modal from '../../components/modal/Modal'
 import FormMessage from '../../components/formMessage/FormMessage';
@@ -16,6 +14,7 @@ import Toolbar from '../../components/toolbar/Toolbar';
 import CollectionCard from '../../components/collectionCard/CollectionCard';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
+import { logAPI } from '../../utils/logger';
 
 function UserCollectionsPage() {
     const navigate = useNavigate();
@@ -91,7 +90,7 @@ function UserCollectionsPage() {
                 setShowDeleteCollectionModal(false);
             })
             .catch(err => {
-                console.log(err);
+                logAPI.warn({error: err}, `An error occurred trying to delete the collection ${collectionId}`);
                 setError('root.other', err);
                 // setDangerMessage(`Failed to delete collection '${collectionNameToDelete}'.`);
                 // setSuccessMessage('');

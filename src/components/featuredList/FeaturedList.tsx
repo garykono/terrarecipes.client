@@ -1,13 +1,8 @@
 import styles from './FeaturedList.module.css';
-import { ReactElement, useState } from 'react'
-import { Link } from 'react-router-dom';
-import classNames from 'classnames'
 import RecipeCardWithFeatures from '../recipeCardWithFeatures/RecipeCardWithFeatures';
 import { Recipe } from '../../api/types/recipe';
-import CardList from '../cardList/CardList';
 import GlobalErrorDisplay from '../globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../buttons/Button';
-import RecipeCard from '../recipeCard/RecipeCard';
 
 interface FeaturedListProps {
     title: string;

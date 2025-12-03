@@ -1,11 +1,11 @@
 import styles from './RecipeCardWithFeatures.module.css';
-import { useState, useEffect, useContext, Fragment } from 'react';
-import { Link, Navigate, useNavigate, useRevalidator } from 'react-router-dom';
-import { MdEdit, MdDelete, MdOutlineAddCircle, MdOutlineRemoveCircle } from "react-icons/md";
+import { useState } from 'react';
+import { Link, useNavigate, useRevalidator } from 'react-router-dom';
+import { MdOutlineAddCircle, MdOutlineRemoveCircle } from "react-icons/md";
 import { deleteRecipeById } from '../../api/queries/recipesApi';
 import RecipeCard from '../recipeCard/RecipeCard'
 import Modal from '../modal/Modal'
-import { Recipe, RecipeWithMarkForDelete } from '../../api/types/recipe';
+import { Recipe } from '../../api/types/recipe';
 import Button from '../buttons/Button';
 import { logRecipe } from '../../utils/logger';
 

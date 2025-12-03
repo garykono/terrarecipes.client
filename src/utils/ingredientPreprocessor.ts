@@ -91,8 +91,10 @@ function normalizeContainerQuantityPhrase(input: string): string {
 }
 
 // NEW: Normalize parentheses and hyphenated numeric-unit pairs
-function normalizeTokens(tokens: string[], knownUnits: string[]): string[] {
-    const unitSet = new Set(knownUnits.map(u => u.toLowerCase()));
+function normalizeTokens(tokens: string[], knownUnits: Set<string>): string[] {
+    const unitSet = new Set(
+        Array.from(knownUnits, u => u.toLowerCase())
+    )
     const result: string[] = [];
 
     for (let token of tokens) {
@@ -120,7 +122,7 @@ function normalizeTokens(tokens: string[], knownUnits: string[]): string[] {
     return result;
 }
 
-export function preprocessIngredientInput(input: string, rawUnitsList: string[]): string {
+export function preprocessIngredientInput(input: string, rawUnitsSet: Set<string>): string {
     let working = input.trim().toLowerCase();
 
     // === Step 1: Replace "a dash" → "1 dash" using quantityWords
@@ -161,7 +163,7 @@ export function preprocessIngredientInput(input: string, rawUnitsList: string[])
 
     // === Step 5: Tokenize and apply token-level normalization
     let tokens = working.split(/\s+/);
-    tokens = normalizeTokens(tokens, rawUnitsList);
+    tokens = normalizeTokens(tokens, rawUnitsSet);
     tokens = removeQuantityModifiersFromTokens(tokens);
     tokens = removeContainerWords(tokens);
 

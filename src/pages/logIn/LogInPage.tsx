@@ -1,5 +1,5 @@
 import styles from './LogInPage.module.css';
-import { useState, useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate, useRevalidator } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { logIn } from '../../api/queries/usersApi';
@@ -50,7 +50,6 @@ function LogInPage () {
                     setError("root.general", { message:'There is no account with that email and password.'})
                 } 
                 else {
-                    console.log(err);
                     setError('root.other', err);
                     // setError("general", { message:'Something went wrong with the log in attempt.'})
                 }

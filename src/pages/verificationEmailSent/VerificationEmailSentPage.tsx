@@ -4,7 +4,6 @@ import styles from './VerificationEmailSentPage.module.css';
 import { useEffect, useState } from 'react';
 import { maskEmail } from '../../utils/maskEmail';
 import { CooldownButton } from '../../components/buttons/CooldownButton';
-import Button from '../../components/buttons/Button';
 import { logAPI } from '../../utils/logger';
 
 export default function VerificationEmailSentPage () {
@@ -28,7 +27,7 @@ export default function VerificationEmailSentPage () {
             .then(() => {
             })
             .catch(err => {
-                logAPI.info({ err })
+                logAPI.info({ err }, "Error sending verification email.")
                 if (err.status === 429) {
                     if (err.details?.additionalInfo?.secondsLeft) {
                         setCooldown(err.details?.additionalInfo?.secondsLeft);

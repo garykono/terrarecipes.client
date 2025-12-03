@@ -6,13 +6,14 @@ import { Recipe, UnvalidatedRecipe } from '../types/recipe'
 const endpointBase = "/recipes";
 const endpointLabel = "RECIPES";
 
-interface FetchRecipesProps {
-    limit?: number;
-    page?: number;
-    search?: string;
-    searchFields?: string;
-    [key: string]: any;
-}
+export type FetchRecipesProps<
+  TExtra extends Record<string, unknown> = {}
+> = {
+  limit?: number;
+  page?: number;
+  search?: string;
+  searchFields?: string;
+} & TExtra;
 
 // export const fetchRecipes = (params: { [key: string]: string }) => {
 export const fetchRecipes = ({limit, page, search, searchFields, ...rest} : FetchRecipesProps) => {

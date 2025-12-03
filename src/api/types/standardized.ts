@@ -89,22 +89,27 @@ export interface Categories {
     featured: Category[]
 }
 
+export interface TagFacetCategory {
+    id: string;
+    label: string;
+    multi: boolean;
+    requirement: {
+        min?: number;
+        max?: number;
+    }
+    options: TagFacetOption[]
+}
+
+export interface TagFacetOption {
+    id: string;
+    label: string;
+    isActive: boolean;
+    sort: number;
+}
+
 export interface StandardTags {
     facets: {
-        [key: string]: {
-            id: string;
-            label: string;
-            multi: boolean;
-            requirement: {
-                min?: number;
-                max?: number;
-            }
-            options: {
-                id: string;
-                label: string;
-                isActive: boolean;
-                sort: number;
-            }[]
-        }
+        [key: string]: TagFacetCategory
     },
+    custom: []
 }

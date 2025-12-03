@@ -50,22 +50,6 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
-        // if (error.code && error.code === 'ERR_NETWORK') {
-        //     error.name = 'NETWORK_ERROR';
-        //     error.status = 503;
-        // } else if (error.response?.data?.name) {
-        //     error.name = error.response?.data?.name;
-        //     if (error.name === 'DUPLICATE_FIELD_ERROR') {
-        //         error.duplicate_fields = error.response.data.errors.map((errMessage: string) => errMessage.split(':')[0].trim())
-        //     } else if (error.name === 'VALIDATION_ERROR') {
-        //         error.invalid_fields = error.response.data.errors.map((errMessage: string) => {
-        //             return {
-        //                 name: errMessage.split(':')[0],
-        //                 message: errMessage.split(':')[1]
-        //             }
-        //         })
-        //     }
-        // }
         // 1) Parse and normalize values from the response
         const cfg = error.config || {};
         const start = performance.now();

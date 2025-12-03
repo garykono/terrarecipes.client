@@ -5,14 +5,10 @@ import { useForm } from 'react-hook-form';
 import { resetPassword } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import Button from '../../components/buttons/Button';
 import { ResetPasswordLoaderResult } from './ResetPasswordLoader';
 
 export default function SignUpPage () {
-    const revalidator = useRevalidator();
-    const navigate = useNavigate();
-
     const { token } = useLoaderData() as ResetPasswordLoaderResult;
 
     const { register, handleSubmit, watch, getValues, setValue, setError, clearErrors, reset, formState: { errors } } = useForm({

@@ -2,6 +2,8 @@ import type { Params } from 'react-router-dom';
 import type { Recipe } from '../../api/types/recipe';
 import { getCollectionById } from '../../api/queries/collectionApi';
 import { Collection } from '../../api/types/collection';
+import { createAppError } from '../../utils/errors/factory';
+import { AppErrorCodes } from '../../utils/errors/codes';
 
 const NUM_RESULTS = 20;
 
@@ -20,7 +22,10 @@ export async function singleCollectionLoader({ params }: LoaderArgs): Promise<Si
 
     let pageNum = Number(page);
     if (page && isNaN(pageNum)) {
-        throw new Error('Param error: Page must be an integer.');
+        throw createAppError({ 
+            code: AppErrorCodes.INVALID_PARAMETERS, 
+            message: 'Param error: Page must be an integer.'
+        });
     } else if (pageNum < 1) {
         pageNum = 1;
     }

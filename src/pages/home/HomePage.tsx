@@ -1,12 +1,8 @@
 import styles from "./HomePage.module.css";
-import { useState, useContext, useEffect } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import FeaturedRecipe from "../../components/featuredRecipe/FeaturedRecipe";
 import FeaturedList from "../../components/featuredList/FeaturedList";
 import { Recipe } from "../../api/types/recipe";
 import { HomeLoaderResult } from "./homeLoader";
-import BasicHero from "../../components/basicHero/BasicHero";
-import RecipeCardWithFeatures from "../../components/recipeCardWithFeatures/RecipeCardWithFeatures";
 import FeaturedCluster from "../../components/featuredCluster/FeaturedCluster";
 import { shavePrefix } from "../../utils/tagHelpers";
 

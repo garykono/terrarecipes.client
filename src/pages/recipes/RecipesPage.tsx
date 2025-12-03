@@ -1,12 +1,10 @@
 import styles from './RecipesPage.module.css';
-import { useEffect } from 'react'
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/searchBar/SearchBar';
 import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
 import { RecipesLoaderResult } from './recipesLoader';
-import BasicHero from '../../components/basicHero/BasicHero';
 
 function RecipesPage() {
     const navigate = useNavigate();

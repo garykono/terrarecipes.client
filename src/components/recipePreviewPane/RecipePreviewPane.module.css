@@ -1,0 +1,11 @@
+.previewPane {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.previewTitle {
+    font-size: var(--font-size-meta);
+    font-weight: var(--font-weight-semi-bold);
+    text-transform: uppercase;
+}

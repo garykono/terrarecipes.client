@@ -1,55 +1,21 @@
 import { redirect, type Params } from 'react-router-dom';
 import type { User } from '../../api/types/user';
-import { StandardIngredients, StandardMeasurements, StandardLookupTable, StandardIngredientsGroupedByCategory,
-    FlattenedStandardIngredientsForFuse, FlattenedStandardMeasurementsForFuse,
-    IngredientForms,
-    IngredientPreparations,
-    Categories,
-    StandardTags
-} from '../../api/types/standardized';
 import { getUserInfo } from '../../api/queries/usersApi';
-import { getStaticFiles, StaticFilesData } from '../../api/queries/staticApi';
-import { flattenDataForFuse } from '../../utils/helpers';
+import { deriveRootRedirect } from '../../services/rootRedirect';
+import { buildStandardizedStaticState, StaticBootstrapState } from '../../services/staticDataBootstrap';
+import { logAPI } from '../../utils/logger';
 
 interface LoaderArgs {
     params: Params
     request: Request;
 }
 
-export interface RootLoaderResult {
+export interface RootLoaderResult extends StaticBootstrapState {
     user: User | null;
-    standardIngredients: StandardIngredients | null;
-    standardMeasurements: StandardMeasurements | null;
-    standardIngredientsLookupTable: StandardLookupTable | null;
-    standardMeasurementsLookupTable: StandardLookupTable | null;
-    stardardIngredientsGroupedByCategory: StandardIngredientsGroupedByCategory | null;
-    flattenedStandardIngredientsForFuse: FlattenedStandardIngredientsForFuse | null;
-    flattenedStandardMeasurementsForFuse: FlattenedStandardMeasurementsForFuse | null;
-    rawIngredientsList: string[] | null;
-    rawIngredientsSet: Set<string> | null;
-    rawUnitsList: string[] | null;
-    allIngredientForms: IngredientForms | null;
-    allIngredientPreparations: IngredientPreparations | null;
-    categories: Categories | null;
-    tags: StandardTags | null;
 }
 
 export async function rootLoader({ params, request }: LoaderArgs): Promise<RootLoaderResult | Response> {
-    let user: any = null;
-    let standardIngredients = null;
-    let standardMeasurements = null;
-    let standardIngredientsLookupTable = null;
-    let standardMeasurementsLookupTable = null;
-    let stardardIngredientsGroupedByCategory = null;
-    let flattenedStandardIngredientsForFuse = null;
-    let flattenedStandardMeasurementsForFuse = null;
-    let rawIngredientsList = null;
-    let rawIngredientsSet = null;
-    let rawUnitsList = null;
-    let allIngredientForms = null;
-    let allIngredientPreparations = null;
-    let categories = null;
-    let tags = null;
+    let user: User | null = null;
 
     await getUserInfo()
         .then(response => {
@@ -59,74 +25,21 @@ export async function rootLoader({ params, request }: LoaderArgs): Promise<RootL
             if (err.status) {
                 // Do nothing, there is just no user logged in.
             } else {
-                console.log(err);
+                logAPI.warn({ error: err }, "User failed to be loaded.");
             }
         })
 
-    await getStaticFiles()
-        .then(data => {
-            standardIngredients = data.standardIngredients;
-            standardMeasurements = data.standardMeasurements;
-            standardIngredientsLookupTable = data.standardIngredientsLookupTable;
-            standardMeasurementsLookupTable = data.standardMeasurementsLookupTable;
-            stardardIngredientsGroupedByCategory = data.standardIngredientsGroupedByCategory;
-            allIngredientForms = data.ingredientForms;
-            allIngredientPreparations = data.ingredientPreparations;
-            categories = data.categories;
-            tags = data.tags;
-        })
-        .catch(err => {
-            if (err.status) {
-                // Do nothing as of now, but in the future, somehow imply that standardizing is disabled for ingredients and measurements
-                // in new recipes.
-                console.log(err)
-            } else {
-                console.log(err);
-            }
-        })
-
-    // Reformat for compatibility with fuse searching
-    if (standardIngredients) flattenedStandardIngredientsForFuse = flattenDataForFuse(standardIngredients, "ingredient");
-    if (standardMeasurements) flattenedStandardMeasurementsForFuse = flattenDataForFuse(standardMeasurements, "measurement");
-    if (flattenedStandardIngredientsForFuse) rawIngredientsList = flattenedStandardIngredientsForFuse.flatMap(ingredient => [
-        ingredient.name,
-        ingredient.plural,
-        ...ingredient.aliases
-    ]);
-    if (rawIngredientsList) rawIngredientsSet = new Set(rawIngredientsList);
-    if (flattenedStandardMeasurementsForFuse) rawUnitsList = flattenedStandardMeasurementsForFuse.flatMap(units => [
-        units.name,
-        units.plural,
-        ...units.symbol,
-        ...units.aliases
-    ]);
+    const staticState = await buildStandardizedStaticState();
 
     const { pathname } = new URL(request.url);
-    if (user && (pathname.toLowerCase() === "/login" || pathname.toLowerCase() === "/signup")) {
-        return redirect("/"); // or /dashboard
-    }
-    if (user 
-        && user.verifiedAt 
-        && (pathname.toLowerCase() === "/verificationrequired" || pathname.toLowerCase() === "/verificationsent")
-    ) {
-        return redirect("/"); // or /dashboard
+    
+    const redirectTo = deriveRootRedirect({ user, pathname });
+    if (redirectTo) {
+        throw redirect(redirectTo);
     }
     
     return {
         user,
-        standardIngredients,
-        standardMeasurements,
-        standardIngredientsLookupTable,
-        standardMeasurementsLookupTable,
-        stardardIngredientsGroupedByCategory,
-        flattenedStandardIngredientsForFuse,
-        flattenedStandardMeasurementsForFuse,
-        rawIngredientsList,
-        rawIngredientsSet,
-        rawUnitsList,
-        allIngredientForms,
-        allIngredientPreparations,
-        categories,
-        tags
+        ...staticState
     }
 }

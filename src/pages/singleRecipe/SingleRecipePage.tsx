@@ -1,6 +1,6 @@
 import styles from './SingleRecipePage.module.css';
 import { useState } from 'react'
-import { useLoaderData, Link, useRouteLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useRouteLoaderData, useNavigate } from 'react-router-dom';
 import { editCollectionById, getCollectionById } from '../../api/queries/collectionApi';
 import TagList from '../../components/tagList/TagList';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
@@ -13,6 +13,7 @@ import Toolbar, { ToolbarAction } from '../../components/toolbar/Toolbar';
 import Dropdown from '../../components/dropdown/Dropdown';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
+import { AppError } from '../../utils/errors/types';
 
 function SingleRecipePage() {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ function SingleRecipePage() {
 
     const [addToCollectionDropdownButtonStatus, setAddToCollectionDropdownButtonStatus] = useState("");
     const [addToCollectionStatus, setAddToCollectionStatus] = useState("");
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<AppError | null>(null);
 
     const tags: string[] = Array.isArray(recipe?.tags)
         ? recipe.tags
@@ -37,7 +38,6 @@ function SingleRecipePage() {
             })
             .catch(err => {
                 setError(err);
-                console.log(err);
                 setAddToCollectionStatus('Failed to add to collection.')
             })
         if (!collection) {
@@ -61,7 +61,6 @@ function SingleRecipePage() {
                     navigate('.');
                 }).catch(err => {
                     setError(err);
-                    console.log(err);
                     setAddToCollectionStatus('Failed to add to collection.')
                 }
                 );

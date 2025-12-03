@@ -1,5 +1,4 @@
 import { Collection } from '../../api/types/collection';
-import Card from '../card/Card';
 import styles from './CollectionCard.module.css';
 
 interface CollectionCardProps {
@@ -23,14 +22,5 @@ export default function CollectionCard({ collection, className }: CollectionCard
                 <p className={`text-meta ${styles.collectionMetaInfo}`}>{`📖 ${collection.recipes.length} recipes`}</p>
             </div>
         </div>
-
-
-
-        // <Card
-        //     title={collection.name}
-        //     description={collection.description}
-        //     metaDataItems={metaDataItems}
-        //     size="lean"
-        // />
     )
 }
