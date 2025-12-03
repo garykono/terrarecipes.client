@@ -1,17 +1,18 @@
-import styles from "./ChangeEmailPage.module.css";
-import { RootLoaderResult } from "../root/rootLoader";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { Link, useRouteLoaderData } from "react-router";
 import { useForm } from "react-hook-form";
-import GlobalErrorDisplay from "../../components/globalErrorDisplay/GlobalErrorDisplay";
+import styles from "./ChangeEmailPage.module.css";
+import { updateUserEmail } from "../../api/queries/usersApi";
+import { User } from "../../api/types/user";
+import { RootLoaderResult } from "../root/rootLoader";
 import { ErrorMessageSetter, useSetError } from "../../hooks/form-submit-error-handling";
+import GlobalErrorDisplay from "../../components/globalErrorDisplay/GlobalErrorDisplay";
 import FormMessage from "../../components/formMessage/FormMessage";
-import { isEmail } from "../../utils/validation";
 import Button from "../../components/buttons/Button";
 import BasicHero from "../../components/basicHero/BasicHero";
-import { User } from "../../api/types/user";
-import { updateUserEmail } from "../../api/queries/usersApi";
 import { maskEmail } from "../../utils/maskEmail";
+import { isEmail } from "../../utils/validation";
 import { createAppError } from "../../utils/errors/factory";
 import { AppErrorCodes } from "../../utils/errors/codes";
 
@@ -73,7 +74,12 @@ export default function ChangeEmailPage() {
         return (
             <div className={styles.formContainer}>
                 <form 
-                    className={`form card card--form ${styles.form}`}
+                    className={clsx(
+                        "form",
+                        "card",
+                        "card--form",
+                        styles.form
+                    )}
                     onSubmit={handleSubmit(onSubmit)}
                 >
 
@@ -113,7 +119,7 @@ export default function ChangeEmailPage() {
                             })}
                         />
                         {errors.password?.message && (
-                            <FormMessage className='form-message' message={errors.password.message} danger />
+                            <FormMessage className="form-message" message={errors.password.message} danger />
                         )}
                         </div>
 
@@ -122,7 +128,7 @@ export default function ChangeEmailPage() {
                     </div>
 
                     {errors.root?.general?.message &&
-                        <FormMessage className='form-message' message={errors.root.general.message} danger />
+                        <FormMessage className="form-message" message={errors.root.general.message} danger />
                     }
                 </form>
             </div>
@@ -131,7 +137,12 @@ export default function ChangeEmailPage() {
 
     function SentValidationPanel({ user }: { user: User }) {
         return (
-            <div className={`page-top box box--message ${styles.contentBlock}`}>
+            <div className={clsx(
+                "page-top",
+                "box",
+                "box--message",
+                styles.contentBlock
+            )}>
                 <div className={styles.explanationBlock}>
                     <p className="text">
                         A verification email was sent to the new email address{user.email && ` ${maskEmail(user.email)}`}.
@@ -164,7 +175,7 @@ export default function ChangeEmailPage() {
                 </div>
 
                 <div className={styles.secondaryActions}>
-                    <Link to={"/account"} className={`link text-meta`}>Back to Account Settings</Link>
+                    <Link to={"/account"} className={"link text-meta"}>Back to Account Settings</Link>
                 </div>
             </div>
         )

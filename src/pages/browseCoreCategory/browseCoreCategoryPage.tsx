@@ -1,8 +1,9 @@
+import clsx from 'clsx';
+import { useMemo, useState } from 'react';
 import { Link, useLoaderData } from 'react-router';
 import styles from './browseCoreCategoryPage.module.css';
 import { BrowseCoreCategoryLoaderResult } from './browseCoreCategoryLoader';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { useMemo, useState } from 'react';
 import BasicHero from '../../components/basicHero/BasicHero';
 import FeaturedList from '../../components/featuredList/FeaturedList';
 import FeaturedCluster from '../../components/featuredCluster/FeaturedCluster';
@@ -15,8 +16,6 @@ export default function BrowseCoreCategoryPage() {
     const { categoryInfo, recipes } = categoryData;    
 
     const [error, setError] = useState<Error | null>(null);
-    // const [featuredData, setFeaturedData] = useState<Record<string, Recipe[]>>({});
-    // const [loading, setLoading] = useState(true);
 
     const subCategoryData = useMemo(() => {
         if (categoryInfo.subCategories) {
@@ -52,8 +51,11 @@ export default function BrowseCoreCategoryPage() {
                 <BasicHero title={`${categoryInfo.title}`} text={categoryInfo.description} />
             </div>
 
-            <section className={`section ${styles.sectionCluster}`}>
-                <div className={`container`}>
+            <section className={clsx(
+                "section",
+                styles.sectionCluster
+            )}>
+                <div className={"container"}>
                     {subCategoryData[0].recipes.length > 0 &&
                         <FeaturedCluster 
                             key={subCategoryData[0].key}
@@ -66,7 +68,10 @@ export default function BrowseCoreCategoryPage() {
                 </div>
             </section>
 
-            <section className={`section ${styles.sectionCategory}`}>
+            <section className={clsx(
+                "section",
+                styles.sectionCategory
+            )}>
                 <div className="container">
                     {subCategoryData.length > 1 && subCategoryData[1].recipes.length > 0 &&
                         <FeaturedList
@@ -79,7 +84,10 @@ export default function BrowseCoreCategoryPage() {
                 </div>
             </section>
 
-            <section className={`section ${styles.sectionCategory}`}>
+            <section className={clsx(
+                "section",
+                styles.sectionCategory
+            )}>
                 <div className="container">
                     {subCategoryData.length > 1 && subCategoryData[2].recipes.length > 0 &&
                         <FeaturedList
@@ -92,8 +100,11 @@ export default function BrowseCoreCategoryPage() {
                 </div>
             </section>
 
-            <section className={`section ${styles.sectionCluster}`}>
-                <div className={`container`}>
+            <section className={clsx(
+                "section",
+                styles.sectionCluster
+            )}>
+                <div className={"container"}>
                     {subCategoryData.length > 1 && subCategoryData[3].recipes.length > 0 &&
                         <FeaturedCluster 
                             key={subCategoryData[3].key}
@@ -106,7 +117,10 @@ export default function BrowseCoreCategoryPage() {
                 </div>
             </section>
 
-            <section className={`section ${styles.sectionCategory}`}>
+            <section className={clsx(
+                "section",
+                styles.sectionCategory
+            )}>
                 <div className="container">
                     {subCategoryData.length > 1 && subCategoryData[4].recipes.length > 0 &&
                         <FeaturedList
@@ -120,15 +134,18 @@ export default function BrowseCoreCategoryPage() {
             </section>
 
             {!!categoryInfo.relatedCategories && categoryInfo.relatedCategories.length > 1 && 
-                <section className={`section ${styles.sectionRelatedRecipes}`}>
+                <section className={clsx(
+                    "section",
+                    styles.sectionRelatedRecipes
+                )}>
                     <div className="container">
                         <div className={styles.sectionRelatedRecipesContent}>
-                            <h2 className='heading-secondary'>{`Related Recipes`}</h2>
+                            <h2 className="heading-secondary">{`Related Recipes`}</h2>
                             <div className={styles.relatedRecipesOptions}>
                                 {categoryInfo.relatedCategories.map(relatedCategoryName => (
                                         <Link
                                             to={`/recipes/1/${relatedCategoryName}`}
-                                            className={`${styles.relatedRecipesLink}`}
+                                            className={styles.relatedRecipesLink}
                                             key={relatedCategoryName}
                                         > 
                                             {relatedCategoryName}

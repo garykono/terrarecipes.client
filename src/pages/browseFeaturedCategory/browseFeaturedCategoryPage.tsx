@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Link, useLoaderData } from 'react-router';
 import styles from './browseFeaturedCategoryPage.module.css';
 import { BrowseFeaturedCategoryLoaderResult } from './browseFeaturedCategoryLoader';
@@ -53,8 +54,11 @@ export default function BrowseFeaturedCategoryPage() {
                 <BasicHero title={`${categoryInfo.title}`} text={categoryInfo.description} />
             </div>
 
-            <section className={`section ${styles.sectionCluster}`}>
-                <div className={`container`}>
+            <section className={clsx(
+                "section",
+                styles.sectionCluster
+            )}>
+                <div className={"container"}>
                     {subCategoryData[0].recipes.length > 0 &&
                         <FeaturedCluster 
                             key={subCategoryData[0].key}
@@ -67,8 +71,11 @@ export default function BrowseFeaturedCategoryPage() {
             </section>
 
             {subCategoryData[0].recipes.length > 5 &&
-                <section className={`section ${styles.sectionRecipeTiles}`}>
-                    <div className={`container`}>
+                <section className={clsx(
+                    "section",
+                    styles.sectionRecipeTiles
+                )}>
+                    <div className={"container"}>
                         <div className={styles.recipeTileList}>
                             <h2 className="section-title">{`More ${categoryInfo.title}`}</h2>
                             <RecipeTileList
@@ -81,10 +88,13 @@ export default function BrowseFeaturedCategoryPage() {
             }
 
             {!!categoryInfo.relatedCategories && categoryInfo.relatedCategories.length > 1 && 
-                <section className={`section ${styles.sectionRelatedRecipes}`}>
+                <section className={clsx(
+                    "section",
+                    styles.sectionRelatedRecipes
+                )}>
                     <div className="container">
                         <div className={styles.sectionRelatedRecipesContent}>
-                            <h2 className='heading-secondary'>{`Related Recipes`}</h2>
+                            <h2 className="heading-secondary">{`Related Recipes`}</h2>
                             <div className={styles.relatedRecipesOptions}>
                                 {categoryInfo.relatedCategories.map(relatedCategoryName => (
                                         <Link

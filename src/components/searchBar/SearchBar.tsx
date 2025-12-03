@@ -1,6 +1,7 @@
-import Button from '../buttons/Button';
-import styles from './SearchBar.module.css';
+import clsx from 'clsx';
 import { SubmitHandler, useForm } from "react-hook-form";
+import styles from './SearchBar.module.css';
+import Button from '../buttons/Button';
 
 interface SearchBarProps {
     initialSearchTerm: string | undefined;
@@ -10,7 +11,7 @@ interface SearchBarProps {
     className?: string;
 }
 
-function SearchBar({ initialSearchTerm, placeholder, onSearch, size = 'medium', className }: SearchBarProps) {
+export default function SearchBar({ initialSearchTerm, placeholder, onSearch, size = 'medium', className }: SearchBarProps) {
     const { register, handleSubmit, watch, setError, clearErrors, formState: { errors } } = useForm({
             mode: 'onSubmit',
             reValidateMode: 'onSubmit',
@@ -24,12 +25,21 @@ function SearchBar({ initialSearchTerm, placeholder, onSearch, size = 'medium', 
     }
 
     return (
-        <form className={`${styles.searchBar} ${className}`} onSubmit={handleSubmit(onSubmit)}>
+        <form 
+            className={clsx(
+                styles.searchBar,
+                className
+            )} 
+            onSubmit={handleSubmit(onSubmit)}
+        >
             <div className="field">
-                {/* <label className="label mr-4">Search: </label> */}
                 <div className="control">
                     <input 
-                        className={`input ${styles.searchInput} ${size === 'large' && styles.searchInputLarge}`}
+                        className={clsx(
+                            "input",
+                            styles.searchInput,
+                            size === 'large' && styles.searchInputLarge
+                        )}
                         type="text"
                         {...register("search", {
                             required: ""
@@ -46,5 +56,3 @@ function SearchBar({ initialSearchTerm, placeholder, onSearch, size = 'medium', 
         </form>        
     );
 }
-
-export default SearchBar;

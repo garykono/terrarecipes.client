@@ -1,7 +1,8 @@
-import { Link, useLocation } from 'react-router';
-import { resendVerificationEmail } from '../../api/queries/usersApi';
-import styles from './VerificationRequiredPage.module.css';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router';
+import styles from './VerificationRequiredPage.module.css';
+import { resendVerificationEmail } from '../../api/queries/usersApi';
 import { CooldownButton } from '../../components/buttons/CooldownButton';
 
 export default function VerificationRequiredPage () {
@@ -38,8 +39,13 @@ export default function VerificationRequiredPage () {
 
     return (
         <div className={styles.verificationRequiredPage}>
-            <div className='container'>
-                <div className={`page-top box box--message ${styles.contentBlock}`}>
+            <div className="container">
+                <div className={clsx(
+                    "page-top",
+                    "box",
+                    "box--message",
+                    styles.contentBlock
+                )}>
                     <h1 className="page-title">Verify your email address</h1>
 
                     <div className={styles.explanationBlock}>
@@ -66,7 +72,10 @@ export default function VerificationRequiredPage () {
                                 disabled={tooManyEmailsSent}
                                 cooldownSeconds={resendEmailCooldown}
                                 onClick={() => resendVerificationClicked(email)}
-                                className={`button ${styles.resendEmailButton}`}
+                                className={clsx(
+                                    "button",
+                                    styles.resendEmailButton
+                                )}
                             >
                                 <span className={styles.resendEmailText}>Resend Link</span>
                             </CooldownButton>
@@ -77,7 +86,7 @@ export default function VerificationRequiredPage () {
                     }
 
                     <div className={styles.secondaryActions}>
-                        <Link to={"/"} className={`link text-meta`}>Continue to Home Page</Link>
+                        <Link to={"/"} className={"link text-meta"}>Continue to Home Page</Link>
                     </div>
                 </div>
             </div>

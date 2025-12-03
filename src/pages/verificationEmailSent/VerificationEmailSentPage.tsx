@@ -1,7 +1,8 @@
-import { Link, useLocation } from 'react-router';
-import { resendVerificationEmail } from '../../api/queries/usersApi';
-import styles from './VerificationEmailSentPage.module.css';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router';
+import styles from './VerificationEmailSentPage.module.css';
+import { resendVerificationEmail } from '../../api/queries/usersApi';
 import { maskEmail } from '../../utils/maskEmail';
 import { CooldownButton } from '../../components/buttons/CooldownButton';
 import { logAPI } from '../../utils/logger';
@@ -40,8 +41,13 @@ export default function VerificationEmailSentPage () {
 
     return (
         <div className={styles.verificationEmailSentPage}>
-            <div className='container'>
-                <div className={`page-top box box--message ${styles.contentBlock}`}>
+            <div className="container">
+                <div className={clsx(
+                    "page-top",
+                    "box",
+                    "box--message",
+                    styles.contentBlock
+                )}>
                     <h1 className="page-title">Verify your email address</h1>
 
                     <div className={styles.explanationBlock}>
@@ -70,7 +76,10 @@ export default function VerificationEmailSentPage () {
                                 cooldownSeconds={cooldown}
                                 disabled={resendButtonDisabled}
                                 onClick={() => resendVerificationClicked(email)}
-                                className={`button ${styles.resendEmailButton}`}
+                                className={clsx(
+                                    "button",
+                                    styles.resendEmailButton
+                                )}
                             >
                                 <span className={styles.resendEmailText}>Resend Link</span>
                             </CooldownButton>
@@ -78,7 +87,7 @@ export default function VerificationEmailSentPage () {
                     </div>
 
                     <div className={styles.secondaryActions}>
-                        <Link to={"/logIn"} className={`link text-meta`}>Back to Log In</Link>
+                        <Link to={"/logIn"} className={"link text-meta"}>Back to Log In</Link>
                     </div>
                 </div>
             </div>

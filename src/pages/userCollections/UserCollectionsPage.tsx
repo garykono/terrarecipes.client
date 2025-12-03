@@ -1,13 +1,14 @@
+import clsx from 'clsx';
 import styles from './UserCollectionsPage.module.css';
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { CollectionUpdateProps, createCollection, deleteCollectionById } from '../../api/queries/collectionApi';
+import { Collection } from '../../api/types/collection';
+import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import Modal from '../../components/modal/Modal'
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
-import { Collection } from '../../api/types/collection';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
 import Toolbar from '../../components/toolbar/Toolbar';
@@ -16,7 +17,7 @@ import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
 import { logAPI } from '../../utils/logger';
 
-function UserCollectionsPage() {
+export default function UserCollectionsPage() {
     const navigate = useNavigate();
     const revalidator = useRevalidator();
     const { user } = useRouteLoaderData('root');
@@ -190,23 +191,25 @@ function UserCollectionsPage() {
                             className={styles.collectionLink}
                         >
                             <CollectionCard collection={collection} className={styles.collectionCard}/>
-                            {/* <div className={styles.collectionCard}>
-                                <span className={styles.collectionTitle}>
-                                    {collection.name}
-                                </span>
-                            </div> */}
                         </Link>
 
                         {showCollectionModificationButtons && 
                             <div className={styles.collectionManagementButtons}>
                                 <button 
-                                    className={`${styles.managementButton} managementIcon `}
+                                    className={clsx(
+                                        styles.managementButton,
+                                        "managementIcon"
+                                    )}
                                     onClick={() => navigate(`/editCollection/${collection._id}`)}
                                 >
                                     ✏️
                                 </button>
                                 <button 
-                                    className={`${styles.managementButton} managementIcon js-modal-trigger`} 
+                                    className={clsx(
+                                        styles.managementButton,
+                                        "managementIcon",
+                                        "js-modal-trigger"
+                                    )} 
                                     onClick={() => handleDeleteCollectionButtonClick(collection.name, collection._id)}
                                 >
                                     🗑️    
@@ -265,5 +268,3 @@ function UserCollectionsPage() {
         </div>
     ); 
 }
-
-export default UserCollectionsPage;

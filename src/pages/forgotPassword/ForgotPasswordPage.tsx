@@ -1,13 +1,14 @@
-import styles from './ForgotPassword.module.css';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
 import { useForm } from 'react-hook-form';
-import { forgotPassword, resendVerificationEmail } from '../../api/queries/usersApi';
-import { isEmail } from '../../utils/validation';
+import styles from './ForgotPassword.module.css';
+import { forgotPassword } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../../components/buttons/Button';
-import { Link } from 'react-router';
 import { maskEmail } from '../../utils/maskEmail';
+import { isEmail } from '../../utils/validation';
 import { logAPI } from '../../utils/logger';
 
 export default function ForgotPasswordPage() {
@@ -88,7 +89,7 @@ export default function ForgotPasswordPage() {
                             )}
                         </div>
                     </div>
-                    <div className={`${styles.submitButtons}`}>
+                    <div className={styles.submitButtons}>
                             <Button primary type="submit">Send Reset Link</Button>
                     </div>
                     {errors.root?.general?.message && (
@@ -100,7 +101,12 @@ export default function ForgotPasswordPage() {
     );
     
     let afterSubmitContent = (
-        <div className={`page-top box box--message ${styles.contentBlock}`}>
+        <div className={clsx(
+            "page-top",
+            "box",
+            "box--message",
+            styles.contentBlock
+        )}>
                     <h1 className="page-title">Password Reset</h1>
 
                     <div className={styles.explanationBlock}>
@@ -124,7 +130,7 @@ export default function ForgotPasswordPage() {
                     </div>
 
                     <div className={styles.secondaryActions}>
-                        <Link to={"/logIn"} className={`link text-meta`}>Back to Log In</Link>
+                        <Link to={"/logIn"} className={"link text-meta"}>Back to Log In</Link>
                     </div>
                 </div>
     );

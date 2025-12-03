@@ -1,6 +1,6 @@
+import { useRef, useState } from "react";
 import styles from "./CustomTagsInput.module.css";
 import Chip from "../chip/Chip";
-import { useRef, useState } from "react";
 import FormMessage from "../formMessage/FormMessage";
 
 export type CustomTagsInputProps = {

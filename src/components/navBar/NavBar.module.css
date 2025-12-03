@@ -90,10 +90,6 @@
     max-height: 4.8rem;
 }
 
-.navBarEnd {
-
-}
-
 /**************************/
 /* Mobile Nav Menu */
 /**************************/
@@ -134,11 +130,6 @@
     pointer-events: auto;
     visibility: visible;
     transform: translateX(0);
-}
-
-.menuTitle {
-    /* font-size: 4.8rem;
-    text-align: center; */
 }
 
 .menu {
@@ -195,14 +186,4 @@
         height: 100%;
     }
 
-}
-
-/**************************/
-/* Below 544px (Phones) */
-/**************************/
-
-@media (max-width: 34em) {
-    .navBarBrand {
-        /* display: none; */
-    }
 }

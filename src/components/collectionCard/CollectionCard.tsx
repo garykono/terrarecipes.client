@@ -1,5 +1,6 @@
-import { Collection } from '../../api/types/collection';
+import clsx from 'clsx';
 import styles from './CollectionCard.module.css';
+import { Collection } from '../../api/types/collection';
 
 interface CollectionCardProps {
     collection: Collection
@@ -15,11 +16,28 @@ export default function CollectionCard({ collection, className }: CollectionCard
     ]
 
     return (
-        <div className={`box ${styles.collectionCard} ${className}`}>
-            <img className={styles.collectionImage} src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" />
-            <div className={`${styles.collectionInfo}`}>
-                <p className={`subsection-title ${styles.collectionName}`}>{collection.name}</p>
-                <p className={`text-meta ${styles.collectionMetaInfo}`}>{`📖 ${collection.recipes.length} recipes`}</p>
+        <div className={clsx(
+            "box",
+            styles.collectionCard,
+            className
+        )}>
+            <img 
+                className={styles.collectionImage} 
+                src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png" 
+            />
+            <div className={styles.collectionInfo}>
+                <p className={clsx(
+                    "subsection-title",
+                    styles.collectionName
+                )}>
+                    {collection.name}
+                </p>
+                <p className={clsx(
+                    "text-meta",
+                    styles.collectionMetaInfo
+                )}>
+                    {`📖 ${collection.recipes.length} recipes`}
+                </p>
             </div>
         </div>
     )

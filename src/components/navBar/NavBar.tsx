@@ -1,8 +1,9 @@
+import clsx from 'clsx';
 import styles from './NavBar.module.css';
 import { useState } from 'react';
 import { useNavigate, Link, useLoaderData, useRevalidator } from 'react-router-dom';
 import logo from '../../assets/logo.png'
-import { IoClose, IoMenu } from "react-icons/io5";
+import { IoClose, IoMenu } from 'react-icons/io5';
 import { logOut } from '../../api/queries/usersApi';
 import { logAPI } from '../../utils/logger';
 
@@ -30,16 +31,27 @@ export default function NavBar({ className }: NavBarProps) {
    function UserSettings() {
         if (!user) {
             return (
-                <div className={`${styles.navBarItem} ${className}`}>
-                    <Link to="/logIn" className={`button button--full`}>
+                <div className={clsx(
+                    styles.navBarItem,
+                    className
+                )}>
+                    <Link to="/logIn" className={"button button--full"}>
                         Log in
                     </Link>
                 </div>
             );
         } else {
             return (
-                <div className={`dropdown dropdown--arrow dropdown--is-hoverable ${className}`}>
-                    <div className={`dropdown-trigger ${styles.accountName}`}>
+                <div className={clsx(
+                    "dropdown",
+                    "dropdown--arrow",
+                    "dropdown--is-hoverable",
+                    className
+                )}>
+                    <div className={clsx(
+                        "dropdown-trigger",
+                        styles.accountName
+                    )}>
                         <span>{user.username}</span>
                     </div>
                     <div className="dropdown-menu dropdown-menu--right">
@@ -67,7 +79,7 @@ export default function NavBar({ className }: NavBarProps) {
     }
 
     return (
-        <nav className={`${styles.navBar}`}>
+        <nav className={styles.navBar}>
             <div className={styles.navBarContent}>
                 <div className={styles.navBarBrand}>
                     <Link to={"/"}>
@@ -78,10 +90,21 @@ export default function NavBar({ className }: NavBarProps) {
                 <div className={styles.navBarMenu}>
                     <div className={styles.navBarMobile}>
                         {showMobileMenu ? 
-                            <div className={`${styles.navBarItem} ${styles.mobileMenuButton}`} onClick={() => setShowMobileMenu(false)}>
+                            <div 
+                                className={clsx(
+                                    styles.navBarItem,
+                                    styles.mobileMenuButton
+                                )} 
+                                onClick={() => setShowMobileMenu(false)}
+                            >
                                 <IoClose className={styles.mobileMenuIcon} />
                             </div> :
-                            <div className={`${styles.navBarItem} ${styles.mobileMenuButton}`} onClick={() => setShowMobileMenu(true)}>
+                            <div 
+                                className={clsx(styles.navBarItem,
+                                    styles.mobileMenuButton
+                                )}
+                                onClick={() => setShowMobileMenu(true)}
+                            >
                                 <IoMenu className={styles.mobileMenuIcon} />
                             </div>
                         }
@@ -108,40 +131,50 @@ export default function NavBar({ className }: NavBarProps) {
             </div>
 
             {/* Mobile Navigation Menu */}
-            <nav className={`${styles.navMenuMobile} ${showMobileMenu && styles.navOpen}`}>
-                <div className={`${styles.basicMenu}`}>
-                    <ul className={`${styles.menu}`}>
+            <nav className={clsx(
+                styles.navMenuMobile,
+                showMobileMenu && styles.navOpen
+            )}>
+                <div className={styles.basicMenu}>
+                    <ul className={styles.menu}>
                         <li onClick={() => setShowMobileMenu(false)}>
-                            <Link to='/' className={`${styles.navMenuMobileItem}`}>Home</Link>
+                            <Link to='/' className={styles.navMenuMobileItem}>Home</Link>
                         </li>
                         <li onClick={() => setShowMobileMenu(false)}>
-                            <Link to='/browse' className={`${styles.navMenuMobileItem}`}>Browse</Link>
+                            <Link to='/browse' className={styles.navMenuMobileItem}>Browse</Link>
                         </li>
                         <li onClick={() => setShowMobileMenu(false)}>
-                            <Link to='/recipes' className={`${styles.navMenuMobileItem}`}>Search</Link>
+                            <Link to='/recipes' className={styles.navMenuMobileItem}>Search</Link>
                         </li>
                         {!user && 
                             <li onClick={() => setShowMobileMenu(false)}>
-                                <Link to='/login' className={`${styles.navMenuMobileItem} ${styles.logOutItem}`}>Log In</Link>
+                                <Link 
+                                    to='/login' 
+                                    className={clsx(
+                                        styles.navMenuMobileItem,
+                                        styles.logOutItem
+                                    )}>
+                                        Log In
+                                    </Link>
                             </li>    
                         } 
                     </ul>
 
                 </div>
                 {user &&
-                    <div className={`${styles.accountMenu}`}>
-                        <ul className={`${styles.menu}`}>
+                    <div className={styles.accountMenu}>
+                        <ul className={styles.menu}>
                             <li onClick={() => setShowMobileMenu(false)}>
-                                <Link to='/editRecipe' className={`${styles.navMenuMobileItem}`}>Create a Recipe</Link>
+                                <Link to='/editRecipe' className={styles.navMenuMobileItem}>Create a Recipe</Link>
                             </li>
                             <li onClick={() => setShowMobileMenu(false)}>
-                                <Link to='/account' className={`${styles.navMenuMobileItem}`}>Account</Link>
+                                <Link to='/account' className={styles.navMenuMobileItem}>Account</Link>
                             </li>
                             <li onClick={() => setShowMobileMenu(false)}>
-                                <Link to='/myRecipes' className={`${styles.navMenuMobileItem}`}>My Recipes</Link>
+                                <Link to='/myRecipes' className={styles.navMenuMobileItem}>My Recipes</Link>
                             </li>
                             <li onClick={() => setShowMobileMenu(false)}>
-                                <Link to='/myCollections' className={`${styles.navMenuMobileItem}`}>Collections</Link>
+                                <Link to='/myCollections' className={styles.navMenuMobileItem}>Collections</Link>
                             </li>
                             <li onClick={() => setShowMobileMenu(false)}>
                                 <Link to='/login' className={`${styles.navMenuMobileItem} ${styles.logOutItem}`} onClick={handleLogOut}>Log Out</Link>

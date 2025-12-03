@@ -1,6 +1,6 @@
 import styles from './TagList.module.css';
+import { UseFieldArrayRemove } from 'react-hook-form';
 import { GoXCircleFill } from 'react-icons/go';
-import { UseFieldArrayRemove } from "react-hook-form";
 import { shavePrefix } from '../../utils/tagHelpers';
 
 interface TagListProps {

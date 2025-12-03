@@ -1,11 +1,12 @@
-import styles from './AccountEditPage.module.css';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useRevalidator, useRouteLoaderData } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import styles from './AccountEditPage.module.css';
 import { updateUserInfo, deleteUser, updateUserPassword } from '../../api/queries/usersApi';
+import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import Modal from '../../components/modal/Modal'
 import FormMessage from '../../components/formMessage/FormMessage';
-import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Button from '../../components/buttons/Button';
@@ -61,7 +62,13 @@ export default function AccountEditPage () {
 
         return (
             <form 
-                className={`form card card--form ${styles.form} form-login`}
+                className={clsx(
+                    "form",
+                    "card",
+                    "card--form",
+                    styles.form,
+                    "form-login"
+                )}
                 onSubmit={handleSubmit(onSubmit)}
             >
                 <div className="form-heading">
@@ -277,7 +284,7 @@ export default function AccountEditPage () {
                     Cancel
                 </Button>
                 <Button type="button" 
-                    className={`${styles.deleteCollectionModalButton}`}
+                    className={styles.deleteCollectionModalButton}
                     danger 
                     onClick={handleDeleteButton}
                 >

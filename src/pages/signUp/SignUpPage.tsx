@@ -1,13 +1,14 @@
-import styles from './SignUpPage.module.css';
+import clsx from 'clsx';
 import { useEffect } from 'react';
-import { useNavigate, useRevalidator } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import styles from './SignUpPage.module.css';
 import { signUp } from '../../api/queries/usersApi';
-import FormMessage from '../../components/formMessage/FormMessage';
-import { isEmail } from '../../utils/validation';
-import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
+import FormMessage from '../../components/formMessage/FormMessage';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../../components/buttons/Button';
+import { isEmail } from '../../utils/validation';
 
 export default function SignUpPage () {
     const navigate = useNavigate();
@@ -57,13 +58,25 @@ export default function SignUpPage () {
 
     return (
         <div className={styles.pageSignup}>
-            <div className='container'>
+            <div className="container">
                 <div className={styles.signUp}>
-                    <form className={`form card card--form ${styles.form} ${styles.formSignup}`} onSubmit={handleSubmit(onSubmit)}>
+                    <form 
+                        className={clsx(
+                            "form",
+                            "card",
+                            "card--form",
+                            styles.form,
+                            styles.formSignup
+                        )} 
+                        onSubmit={handleSubmit(onSubmit)}
+                    >
                         <div className="form-heading">
-                            <h1 className={`form-title`}>Create an Account</h1>
+                            <h1 className={"form-title"}>Create an Account</h1>
                         </div>
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                            "field",
+                            styles.field
+                        )}>
                             <label className="label">Username</label>
                             <div className="control">
                                 <input 
@@ -82,11 +95,14 @@ export default function SignUpPage () {
                                     })}
                                 />
                                 {errors.username?.message && (
-                                    <FormMessage className='form-message' message={errors.username.message} danger />
+                                    <FormMessage className="form-message" message={errors.username.message} danger />
                                 )}
                             </div>
                         </div>
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                            "field",
+                            styles.field
+                        )}>
                             <label className="label">Email Address</label>
                             <div className="control">
                                 <input 
@@ -102,11 +118,14 @@ export default function SignUpPage () {
                                     })}
                                 />
                                 {errors.email?.message && (
-                                    <FormMessage className='form-message' message={errors.email.message} danger />
+                                    <FormMessage className="form-message" message={errors.email.message} danger />
                                 )}
                             </div>
                         </div>
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                            "field",
+                            styles.field
+                        )}>
                             <label className="label">Password</label>
                             <div className="control">
                                 <input 
@@ -125,11 +144,14 @@ export default function SignUpPage () {
                                     })}
                                 />
                                 {errors.password?.message && (
-                                    <FormMessage className='form-message' message={errors.password.message} danger />
+                                    <FormMessage className="form-message" message={errors.password.message} danger />
                                 )}
                             </div>
                         </div>
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                        "field",
+                        styles.field
+                    )}>
                             <label className="label">Retype Password</label>
                             <div className="control">
                                     <input 
@@ -147,17 +169,20 @@ export default function SignUpPage () {
                                         })}
                                     />
                                     {errors.passwordConfirm?.message && (
-                                        <FormMessage className='form-message' message={errors.passwordConfirm.message} danger />
+                                        <FormMessage className="form-message" message={errors.passwordConfirm.message} danger />
                                     )}
                             </div>
                         </div>
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                            "field",
+                            styles.field
+                        )}>
                             <p className="control">
                                 <Button primary className={styles.signupButton} type="submit">Sign Up</Button>
                             </p>
                         </div>
                         {errors.root?.general?.message && (
-                            <FormMessage className='form-message' message={errors.root.general.message} danger />
+                            <FormMessage className="form-message" message={errors.root.general.message} danger />
                         )}
                     </form>
 

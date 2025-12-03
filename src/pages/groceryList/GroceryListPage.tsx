@@ -1,14 +1,15 @@
-import styles from './GroceryListPage.module.css';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import { useLoaderData, useRouteLoaderData } from 'react-router';
-import { GroceryListLoaderResult } from './groceryListLoader';
-import { RootLoaderResult } from '../root/rootLoader';
-import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
+import styles from './GroceryListPage.module.css';
 import { StandardMeasurements } from '../../api/types/standardized';
+import { CategorizedIngredients } from '../../api/types/groceryList';
+import { RootLoaderResult } from '../root/rootLoader';
+import { GroceryListLoaderResult } from './groceryListLoader';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { formatWithUnicodeFraction } from '../../utils/helpers';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
-import { CategorizedIngredients } from '../../api/types/groceryList';
 
 export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection' }) {
     // const navigate = useNavigate();
@@ -57,7 +58,7 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
     return (
         <div className="page-recipe">
             <div className="container">
-                <div className={`${styles.groceryList}`}>
+                <div className={styles.groceryList}>
                     <section className={styles.header}>
                         <header className={styles.header}>
                             <h1 
@@ -66,7 +67,12 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                             >
                                 🛒 Grocery List
                             </h1>
-                            <p className={`subsection-title ${styles.for}`}><span className="text">For:</span>{' ' + groceryListName}</p>
+                            <p className={clsx(
+                                "subsection-title",
+                                styles.for
+                            )}>
+                                <span className="text">For:</span>{' ' + groceryListName}
+                            </p>
                             <div className={styles.actionLine}>
                                 <p><span>Servings:</span>{' 4'}</p>
                                 <p>🌱 Vegetarian</p>
@@ -75,16 +81,31 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                     </section>
 
                     <section className="section standardizedIngredientsSection">
-                        <div className={`grid grid--cols-3 ${styles.ingredientsList}`}>
+                        <div className={clsx(
+                            "grid",
+                            "grid--cols-3",
+                            styles.ingredientsList
+                        )}>
                             {Object.keys(ingredientsList.standardizedIngredients).map((categoryName) => {
                                 const categoryIngredients = ingredientsList.standardizedIngredients[categoryName];
                                 return (
                                     <div 
                                         key={categoryName}
-                                        className={`card card--grocery-category left-border-gradient ${styles.categoryIngredientSection}`} 
+                                        className={clsx(
+                                            "card",
+                                            "card--grocery-category",
+                                            "left-border-gradient",
+                                            styles.categoryIngredientSection
+                                        )} 
                                         style={{ "--category-color": categoryColors[categoryName] } as React.CSSProperties}
                                     >
-                                        <h3 className={`subsection-title underlined-title ${styles.categoryTitle}`}>{categoryName}</h3>
+                                        <h3 className={clsx(
+                                            "subsection-title",
+                                            "underlined-title",
+                                            styles.categoryTitle
+                                        )}>
+                                            {categoryName}
+                                        </h3>
                                         {categoryIngredients.map((ingredient, key) => {
                                             return (
                                                 <li key={ingredient.name} className={styles.ingredientListItem}>
@@ -138,8 +159,16 @@ export default function GroceryListPage({ mode }: { mode: 'recipe' | 'collection
                     </section>
 
                     {ingredientsList.miscellaneousIngredients.length > 0 &&
-                        <section className={`section ${styles.miscellaneousSection}`}>
-                            <h2 className={`section-title ${styles.miscellaneousTitle}`}>Miscellaneous Ingredients:</h2>
+                        <section className={clsx(
+                                "section",
+                                styles.miscellaneousSection
+                        )}>
+                            <h2 className={clsx(
+                                "section-title",
+                                styles.miscellaneousTitle
+                            )}>
+                                Miscellaneous Ingredients:
+                            </h2>
 
                             <ul className={''}>
                                 {ingredientsList.miscellaneousIngredients.map((ingredientText, index) => (

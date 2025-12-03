@@ -30,11 +30,6 @@
     gap: var(--space-xl)
 }
 
-.categoryIngredientSection {
-    /* border-left: 5px solid var(--category-color); */
-    
-}
-
 .categoryTitle {
     font-weight: bold;
     padding-bottom: var(--space-sm);
@@ -81,10 +76,7 @@
 @media(max-width: 59em) {
     .ingredientsList {
         grid-template-columns: repeat(2, 1fr);
-    }
-
-    
-    
+    }    
 }
 
 /**************************/

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import styles from './CardList.module.css';
 
 interface CardListProps {
@@ -8,7 +9,10 @@ interface CardListProps {
 export default function CardList({ list, className }: CardListProps) {
     return (
         <div 
-            className={`${styles.cardList} ${className}`}
+            className={clsx(
+                styles.cardList,
+                className
+            )}
         >
                 {list}
         </div>

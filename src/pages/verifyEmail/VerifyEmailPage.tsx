@@ -1,7 +1,8 @@
+import clsx from 'clsx';
+import { useEffect } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import styles from './VerifyEmailPage.module.css';
 import { VerifyEmailLoaderResult } from './verifyEmailLoader';
-import { useEffect } from 'react';
 
 export default function VerifyEmailPage() {
     const navigate = useNavigate();
@@ -22,7 +23,10 @@ export default function VerifyEmailPage() {
     return (
         <div className={styles.verifyEmailPage}>
             <div className={"container"}>
-                <div className={`page-top ${styles.pageContent}`}>
+                <div className={clsx(
+                    "page-top",
+                    styles.pageContent
+                )}>
                     {!emailVerified &&
                         failureContent
                     }    

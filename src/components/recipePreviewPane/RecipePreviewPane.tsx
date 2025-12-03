@@ -1,8 +1,8 @@
-import styles from './RecipePreviewPane.module.css';
 import { useFormContext, useWatch } from "react-hook-form";
+import styles from './RecipePreviewPane.module.css';
+import { Direction, Ingredient, Recipe, UnvalidatedRecipe } from "../../api/types/recipe";
 import { FormData } from "../../pages/recipeEdit/RecipeEditPage";
 import RecipeCard from "../recipeCard/RecipeCard";
-import { Direction, Ingredient, Recipe, UnvalidatedRecipe } from "../../api/types/recipe";
 
 export default function RecipePreviewPane({ fallback }: { fallback?: Partial<Recipe> | null }) {
     const { control } = useFormContext<FormData>();

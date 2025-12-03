@@ -1,5 +1,5 @@
+import clsx from 'clsx';
 import styles from './FormMessage.module.css';
-import classNames from "classnames"
 
 interface FormMessageProps {
     message?: string;
@@ -14,7 +14,7 @@ export default function FormMessage({
     danger, 
     className 
 }: FormMessageProps) {
-    const classes = classNames(
+    const classes = clsx(
         className,
         styles.message,
         success && styles.success,

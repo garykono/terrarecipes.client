@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Link, useNavigate } from 'react-router';
 import styles from './VerifyEmailSuccessPage.module.css';
 import Button from '../../components/buttons/Button';
@@ -7,8 +8,13 @@ export default function VerifyEmailSuccessPage() {
 
     return (
         <div className={styles.verifyEmailSuccessPage}>
-            <div className='container'>
-                <div className={`page-top box box--message ${styles.contentBlock}`}>
+            <div className="container">
+                <div className={clsx(
+                    "page-top",
+                    "box",
+                    "box--message",
+                    styles.contentBlock
+                )}>
                     <h1 className="page-title">Your email has been verified! 🎉</h1>
 
                     <div className={styles.explanationBlock}>
@@ -26,7 +32,7 @@ export default function VerifyEmailSuccessPage() {
                     </div>
 
                     <div className={styles.secondaryActions}>
-                        <Link to={"/account"} className={`link text-meta`}>Go to Account</Link>
+                        <Link to={"/account"} className={"link text-meta"}>Go to Account</Link>
                     </div>
                 </div>
             </div>

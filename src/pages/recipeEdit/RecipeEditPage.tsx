@@ -1,23 +1,24 @@
-import styles from './RecipeEditPage.module.css';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useNavigate, useLoaderData, useRouteLoaderData, useRevalidator } from 'react-router-dom';
 import { useForm, useFieldArray, useWatch, FormProvider, Controller } from 'react-hook-form';
+import styles from './RecipeEditPage.module.css';
+import { RootLoaderResult } from '../root/rootLoader';
+import { RecipeEditLoaderResult } from './recipeEditLoader';
 import { createRecipe, editRecipeById } from '../../api/queries/recipesApi';
+import { Ingredient, Direction, UnvalidatedRecipe } from '../../api/types/recipe';
+import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { ErrorMessageSetter, useSetError } from '../../hooks/form-submit-error-handling';
-import { RecipeEditLoaderResult } from './recipeEditLoader';
-import { Ingredient, Direction, UnvalidatedRecipe } from '../../api/types/recipe';
-import { RootLoaderResult } from '../root/rootLoader';
 import BasicHero from '../../components/basicHero/BasicHero';
 import { CollapsibleSection } from '../../components/collapsibleSection/CollapsibleSection';
 import { CustomTagsInput } from '../../components/customTagsInput/CustomTagsInput';
 import { TERM_TO_ID } from '../../components/customTagsInput/TermToIdMap';
+import RecipePreviewPane from '../../components/recipePreviewPane/RecipePreviewPane';
 import { toIntOrNull } from '../../utils/helpers';
 import { getPrefix } from '../../utils/tagHelpers';
 import { AppErrorCodes } from '../../utils/errors/codes';
 import { createAppError } from '../../utils/errors/factory';
-import RecipePreviewPane from '../../components/recipePreviewPane/RecipePreviewPane';
 import { FieldArrayList } from './fieldArrayList/FieldArrayList';
 import { TagSection } from './tagSection/TagSection';
 
@@ -125,8 +126,6 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
         }
     });
     const { register, control, handleSubmit, getValues, setValue, setError, clearErrors, setFocus, formState: { errors } } = formMethods;
-
-
 
     const prep = useWatch({ control, name: "prepTimeMin", defaultValue: 0 }) ?? 0;
     const cook = useWatch({ control, name: "cookTimeMin", defaultValue: 0 }) ?? 0;
@@ -268,7 +267,15 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                 <div className="container">
                     <div className={styles.pageWrapper}>
                         <FormProvider {...formMethods}>
-                            <form className={`form card card--form ${styles.formEditRecipe}`} onSubmit={handleSubmit(onSubmit)}>
+                            <form 
+                                className={clsx(
+                                    "form",
+                                    "card",
+                                    "card--form",
+                                    styles.formEditRecipe
+                                )} 
+                                onSubmit={handleSubmit(onSubmit)}
+                            >
                                 <div className="field">
                                     <label className="label">Recipe Name:</label>
                                     <div className="control">
@@ -289,7 +296,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                             })}
                                         />
                                         {errors.name?.message && (
-                                            <FormMessage className='form-message' message={errors.name.message} danger />
+                                            <FormMessage className="form-message" message={errors.name.message} danger />
                                         )}
                                     </div>
                                 </div>
@@ -307,20 +314,27 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                         })}
                                     />
                                     {errors.description?.message && (
-                                        <FormMessage className='form-message' message={errors.description.message} danger />
+                                        <FormMessage className="form-message" message={errors.description.message} danger />
                                     )}
                                 </div>
 
                                 <div className="field">
                                     {/* <label className="label">Recipe Image:</label> */}
-                                    <div className={`image is-square ${styles.imageContainer}`}>
+                                    <div className={clsx(
+                                        "image",
+                                        "is-square",
+                                        styles.imageContainer
+                                    )}>
                                         <img 
                                             src={getValues('image')? getValues('image') : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"} 
                                             className={styles.recipeImage}
                                         />
                                     </div>
                                     <label className="label">Image URL:</label>
-                                    <div className={`field ${styles.fieldGroup}`}>
+                                    <div className={clsx(
+                                        "field",
+                                        styles.fieldGroup
+                                    )}>
                                             <input 
                                                 className="input" 
                                                 placeholder={"ex. https://www.cookingclassy.com/wp-content/uploads/2022/07/grilled-steak-15.jpg"} 
@@ -335,7 +349,10 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                 <div className={styles.firstMeta}>
                                     <div className="field">
                                         <label className="label">Servings:</label>
-                                        <div className={`control ${styles.metaInputControl}`}>
+                                        <div className={clsx(
+                                            "control",
+                                            styles.metaInputControl
+                                        )}>
                                             <input 
                                                 className="input" 
                                                 placeholder="0"
@@ -354,7 +371,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                                 })}
                                             />
                                             {errors.servings?.message && (
-                                                <FormMessage className='form-message' message={errors.servings.message} danger />
+                                                <FormMessage className="form-message" message={errors.servings.message} danger />
                                             )}
                                         </div>
                                     </div>
@@ -380,7 +397,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                                         })}
                                                     />
                                                     {errors.prepTimeMin?.message && (
-                                                        <FormMessage className='form-message' message={errors.prepTimeMin.message} danger />
+                                                        <FormMessage className="form-message" message={errors.prepTimeMin.message} danger />
                                                     )}
                                                 </div>
                                             </div>
@@ -404,13 +421,16 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                                         })}
                                                     />
                                                     {errors.cookTimeMin?.message && (
-                                                        <FormMessage className='form-message' message={errors.cookTimeMin.message} danger />
+                                                        <FormMessage className="form-message" message={errors.cookTimeMin.message} danger />
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="field">
                                                 <label className="label">{"Rest Time (mins):"}</label>
-                                                <div className={`control ${styles.metaInputControl}`}>
+                                                <div className={clsx(
+                                                    "control",
+                                                    styles.metaInputControl
+                                                )}>
                                                     <input 
                                                         className="input" 
                                                         placeholder="0"
@@ -428,14 +448,14 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                                         })}
                                                     />
                                                     {errors.restTimeMin?.message && (
-                                                        <FormMessage className='form-message' message={errors.restTimeMin.message} danger />
+                                                        <FormMessage className="form-message" message={errors.restTimeMin.message} danger />
                                                     )}
                                                 </div>
                                             </div>
                                         </div>
                                         <div className={styles.totalTime}>
-                                            <p className={`text`}>Total Time: </p>
-                                            <p className={`subsection-title`}>{displayTotal} min</p>
+                                            <p className={"text"}>Total Time: </p>
+                                            <p className={"subsection-title"}>{displayTotal} min</p>
                                         </div>
                                     </div>
                                 </div>
@@ -456,7 +476,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                         />
                                     </div>
                                     {errors.ingredients?.root?.message && 
-                                        <FormMessage className='form-message' message={errors.ingredients.root.message} danger/>
+                                        <FormMessage className="form-message" message={errors.ingredients.root.message} danger/>
                                     }
                                 </div>
 
@@ -555,7 +575,7 @@ export default function RecipeEditPage({ mode }: { mode: 'create' | 'edit' }) {
                                             })}
                                         />
                                         {errors.credit?.message && (
-                                            <FormMessage className='form-message' message={errors.credit.message} danger />
+                                            <FormMessage className="form-message" message={errors.credit.message} danger />
                                         )}
                                     </div>
                                 </div>

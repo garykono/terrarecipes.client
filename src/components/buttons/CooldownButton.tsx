@@ -1,6 +1,6 @@
-import Button from './Button';
 import styles from './CooldownButton.module.css';
 import { useEffect, useState } from "react";
+import Button from './Button';
 
 interface CooldownButtonProps {
     onClick: () => void | Promise<void>;

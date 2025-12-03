@@ -1,5 +1,6 @@
-import styles from "./FacetChipPicker.module.css";
+import clsx from "clsx";
 import { useMemo } from "react";
+import styles from "./FacetChipPicker.module.css";
 import Chip from "../chip/Chip";
 
 export type FacetOption = { 
@@ -53,7 +54,10 @@ export function FacetChipPicker({
     };
 
     return (
-        <div className={`${styles.facet} ${className}`}>
+        <div className={clsx(
+            styles.facet,
+            className
+        )}>
             <div className={styles.facetHeader}>
                 <div>
                     <span className={styles.facetTitle}>{title}</span>
@@ -93,11 +97,12 @@ export function FacetChipPicker({
                 })}
             </div>
 
-            {/* {multi && typeof maxSelected === "number" && minSelected && minSelected > 0 && value.length > 0 && (
+            {/* Optional: show count
+                {multi && typeof maxSelected === "number" && minSelected && minSelected > 0 && value.length > 0 && (
                 <div className="facet__count">
                     {selected.size}/{maxSelected} selected
                 </div>
             )} */}
-            </div>
+        </div>
     );
 }

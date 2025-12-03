@@ -1,5 +1,6 @@
-import styles from './FeaturedRecipe.module.css';
+import clsx from 'clsx';
 import { Link } from "react-router-dom";
+import styles from './FeaturedRecipe.module.css';
 import { Recipe } from '../../api/types/recipe';
 import Button from '../buttons/Button';
 
@@ -10,7 +11,12 @@ interface FeaturedRecipeProps {
 
 export default function FeaturedRecipe({ recipe, className }: FeaturedRecipeProps) {
     return(
-        <div className={`grid grid--cols-2 ${styles.featuredRecipe} ${className}`}>
+        <div className={clsx(
+            "grid",
+            "grid--cols-2",
+            styles.featuredRecipe,
+            className
+        )}>
             <img 
                 className={styles.img}
                 src={recipe.image? recipe.image : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"}

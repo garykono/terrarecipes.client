@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React, { useState, useRef, useEffect } from "react";
 
 type DropdownItem = {
@@ -45,7 +46,14 @@ export default function Dropdown({
     }, [isOpen]);
 
     return (
-        <div className={`dropdown ${isOpen ? "dropdown--is-active" : ""} ${className}`} ref={dropdownRef}>
+        <div 
+            className={clsx(
+                "dropdown",
+                isOpen && "dropdown--is-active",
+                className
+            )} 
+            ref={dropdownRef}
+        >
             <div className="dropdown-trigger">
                 <button
                     type="button"
@@ -60,7 +68,13 @@ export default function Dropdown({
             </div>
 
             {isOpen && (
-                <div className={`dropdown-menu ${alignment === "right" && "dropdown-menu--right"}`}  role="listbox">
+                <div 
+                    className={clsx(
+                        "dropdown-menu",
+                        alignment === "right" && "dropdown-menu--right"
+                    )}  
+                    role="listbox"
+                >
                     <div className="dropdown-content">
                         {items.length > 0 ? (
                             items.map(({ id, label, onClick }) => (

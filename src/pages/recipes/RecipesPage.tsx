@@ -1,12 +1,13 @@
-import styles from './RecipesPage.module.css';
+import clsx from 'clsx';
 import { useLoaderData, useNavigate } from 'react-router-dom';
+import styles from './RecipesPage.module.css';
+import { RecipesLoaderResult } from './recipesLoader';
 import SearchBar from '../../components/searchBar/SearchBar';
 import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
-import { RecipesLoaderResult } from './recipesLoader';
 
-function RecipesPage() {
+export default function RecipesPage() {
     const navigate = useNavigate();
     const { recipes, totalPages, page, search } = useLoaderData() as RecipesLoaderResult;
     const previousSearchTerm = search;
@@ -16,8 +17,16 @@ function RecipesPage() {
         <div className={styles.recipePage}>
             <div className="container">
                 <div className={styles.recipes}>
-                    <div className={`card ${styles.hero}`}>
-                        <p className={`page-title ${styles.heroText}`}>🍓 What are you craving today?</p>
+                    <div className={clsx(
+                        "card",
+                        styles.hero
+                    )}>
+                        <p className={clsx(
+                            "page-title",
+                            styles.heroText
+                        )}>
+                            🍓 What are you craving today?
+                        </p>
                         <div className={styles.searchForm}>
                             <SearchBar 
                                 placeholder="Try ramen, dinner, onion…"
@@ -27,7 +36,7 @@ function RecipesPage() {
                             />
                         </div>
                     </div>
-                    <section className={`${styles.results}`}>
+                    <section className={styles.results}>
                         <p className={styles.resultsText}>
                                 {recipes.length > 0
                                     ? search && `Showing results for "${previousSearchTerm}".`
@@ -57,5 +66,3 @@ function RecipesPage() {
         </div>
     )
 }
-
-export default RecipesPage;

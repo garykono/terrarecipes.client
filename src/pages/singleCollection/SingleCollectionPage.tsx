@@ -1,18 +1,19 @@
-import styles from './SingleCollectionPage.module.css';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { useLoaderData, useNavigate, useRouteLoaderData } from 'react-router-dom';
+import styles from './SingleCollectionPage.module.css';
+import { RootLoaderResult } from '../root/rootLoader';
+import { SingleCollectionLoaderResult } from './singleCollectionLoader';
+import { Recipe } from '../../api/types/recipe';
 import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
-import { SingleCollectionLoaderResult } from './singleCollectionLoader';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { Recipe } from '../../api/types/recipe';
-import { RootLoaderResult } from '../root/rootLoader';
 import Toolbar, { ToolbarAction } from '../../components/toolbar/Toolbar';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
 
-function SingleCollectionPage() {
+export default function SingleCollectionPage() {
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
     const navigate = useNavigate();
 
@@ -61,12 +62,29 @@ function SingleCollectionPage() {
             <div className="container">
                 <Toolbar actions={collectionActions} />
                 
-                <div className={`${styles.info}`}>
-                    <h1 className={`page-title underlined-title category-color-standard ${styles.title}`}>{collection.name}</h1>
+                <div className={styles.info}>
+                    <h1 className={clsx(
+                        "page-title",
+                        "underlined-title",
+                        "category-color-standard",
+                        styles.title
+                )}>
+                    {collection.name}
+                </h1>
 
                     <div className={styles.subInfo}>
-                        <p className={`subsection-title ${styles.numRecipesLine}`}>{`📖 ${collection.recipes.length} recipes`}</p>
-                        <p className={`text ${styles.description}`}>{collection.description}</p>    
+                        <p className={clsx(
+                            "subsection-title",
+                            styles.numRecipesLine
+                        )}>
+                            {`📖 ${collection.recipes.length} recipes`}
+                        </p>
+                        <p className={clsx(
+                            "text",
+                            styles.description
+                        )}>
+                            {collection.description}
+                            </p>    
                     </div>
                 </div>            
 
@@ -83,5 +101,3 @@ function SingleCollectionPage() {
         </div>
     )
 }
-
-export default SingleCollectionPage;

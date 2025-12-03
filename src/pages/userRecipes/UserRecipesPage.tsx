@@ -1,14 +1,14 @@
 import styles from './UserRecipesPage.module.css';
-import { useState, useEffect, useContext } from 'react'
-import { useNavigate, Link, useRouteLoaderData, useLoaderData } from 'react-router-dom';
-import SearchBar from "../../components/searchBar/SearchBar";
-import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
-import CardList from '../../components/cardList/CardList';
-import Pagination from '../../components/pagination/Pagination';
-import FormError from '../../components/formMessage/FormMessage';
-import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
+import { useState, useEffect } from 'react'
+import { useNavigate, useRouteLoaderData, useLoaderData } from 'react-router-dom';
 import { RootLoaderResult } from '../root/rootLoader';
 import { Recipe } from '../../api/types/recipe';
+import CardList from '../../components/cardList/CardList';
+import Pagination from '../../components/pagination/Pagination';
+import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
+import SearchBar from "../../components/searchBar/SearchBar";
+import FormError from '../../components/formMessage/FormMessage';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import BasicHero from '../../components/basicHero/BasicHero';
 import Toolbar from '../../components/toolbar/Toolbar';
 import { createAppError } from '../../utils/errors/factory';
@@ -88,7 +88,7 @@ function UserRecipesPage() {
 
     return (
         <div className={styles.pageUserRecipes}>
-            <div className='container'>
+            <div className="container">
                 {showAddRecipeButton && 
                     <Toolbar 
                         actions={[
@@ -106,10 +106,10 @@ function UserRecipesPage() {
                     <SearchBar initialSearchTerm={search} onSearch={searchTerm => navigate(`/myRecipes/1/${searchTerm}`)} className={styles.search} />
                     
                     {deletedRecipeName !== '' &&
-                        <FormError className="mb-3" message={`Recipe '${deletedRecipeName}' successfully deleted.`} success />
+                        <FormError message={`Recipe '${deletedRecipeName}' successfully deleted.`} success />
                     }
                     {error &&
-                        <FormError className="mb-3" message={'There was an error with this request.'} danger />
+                        <FormError message={'There was an error with this request.'} danger />
                     }
                     
                     <CardList list={renderedRecipeCards} className={styles.cardList} />

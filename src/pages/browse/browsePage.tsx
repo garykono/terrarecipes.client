@@ -1,7 +1,8 @@
+import clsx from 'clsx';
 import { Link, useRouteLoaderData } from 'react-router';
 import styles from './browsePage.module.css';
-import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { RootLoaderResult } from '../root/rootLoader';
+import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
 
@@ -21,7 +22,10 @@ export default function BrowsePage() {
         <div className="account-page">
             <h2 className={`page-title ${styles.pageTitle}`}>Explore Recipes</h2>
 
-            <section className={`section ${styles.sectionStaticCategories}`}>
+            <section className={clsx(
+                "section",
+                styles.sectionStaticCategories
+            )}>
                 <div className="container">
                     <ul className={styles.staticCategoryList}>
                         {categories.core.map(category => {
@@ -42,15 +46,26 @@ export default function BrowsePage() {
                 </div>
             </section>
 
-            <section className={`section ${styles.sectionFeaturedCategories}`}>
+            <section className={clsx(
+                "section",
+                styles.sectionFeaturedCategories
+            )}>
                 <div className="container">
-                    <h2 className={`section-title ${styles.categoriesTitle}`}>Seasonal and Trending</h2>
+                    <h2 className={clsx(
+                        "section-title",
+                        styles.categoriesTitle
+                    )}>
+                        Seasonal and Trending
+                    </h2>
                     <div className={styles.featuredCategoriesContainer}>
                         <div className={styles.featuredCategoriesList}>
                             {categories.featured.map((category, index) => {
                                 return (
                                     <Link to={`/browse/featured/${category.slug}`} key={index}>
-                                        <div className={`card ${styles.featuredCategoryCard}`}>
+                                        <div className={clsx(
+                                            "card",
+                                            styles.featuredCategoryCard
+                                        )}>
                                             <span className={styles.featuredIconCircle}>
                                                 <span className={styles.featuredCategoryIcon}>
                                                     {category.icon}

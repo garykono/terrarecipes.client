@@ -1,17 +1,7 @@
-.homePage {
-    
-}
-
-.heroSection {
-}
-
 .heroContainer {
     padding: var(--space-md);
     border-radius: 1rem;
     background-color: var(--color-brand-primary-soft);
-}
-
-.heroCluster {
 }
 
 .recipeSections {

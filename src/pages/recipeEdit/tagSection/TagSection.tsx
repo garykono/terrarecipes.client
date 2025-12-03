@@ -36,7 +36,7 @@ export function TagSection({
                     />
 
                     {fieldState.error?.message && (
-                        <FormMessage className='form-message' message={fieldState.error.message} danger />
+                        <FormMessage className="form-message" message={fieldState.error.message} danger />
                     )}
                 </div>
             )}

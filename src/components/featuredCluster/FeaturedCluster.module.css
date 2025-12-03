@@ -15,9 +15,6 @@
     grid-template-columns: 3fr 2fr;
 }
 
-.heroRecipe {
-}
-
 .companionRecipes {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

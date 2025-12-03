@@ -1,6 +1,7 @@
+import clsx from 'clsx';
 import styles from './FeaturedList.module.css';
-import RecipeCardWithFeatures from '../recipeCardWithFeatures/RecipeCardWithFeatures';
 import { Recipe } from '../../api/types/recipe';
+import RecipeCardWithFeatures from '../recipeCardWithFeatures/RecipeCardWithFeatures';
 import GlobalErrorDisplay from '../globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../buttons/Button';
 
@@ -29,9 +30,15 @@ export default function FeaturedList({
     }
 
     return (
-        <div className={`${styles.featuredList} ${className || ""}`}>
+        <div className={clsx(
+            styles.featuredList,
+            className
+        )}>
             <div 
-                className={`${styles.header} underlined-title`}
+                className={clsx(
+                    styles.header,
+                    "underlined-title"
+                )}
                 style={{ "--category-color": "var(--color-brand-primary-light)" } as React.CSSProperties}
             >
                 <h2 className={`section-title ${styles.title}`}>{title}</h2>

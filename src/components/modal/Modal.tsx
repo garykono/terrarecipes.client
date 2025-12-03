@@ -1,7 +1,8 @@
-import styles from './Modal.module.css';
-import ReactDOM from 'react-dom'
+import clsx from 'clsx';
 import { useEffect } from 'react'
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
+import ReactDOM from 'react-dom'
+import styles from './Modal.module.css';
 import GlobalErrorDisplay from '../globalErrorDisplay/GlobalErrorDisplay';
 import DeleteButton from '../buttons/DeleteButton';
 
@@ -31,11 +32,23 @@ export default function Modal({ onClose, windowTitle, danger, className, childre
 
     return (
         ReactDOM.createPortal(
-                <div className={`${styles.modal} ${className}`} >
+                <div className={clsx(
+                    styles.modal,
+                    className
+                )}>
                     <div className={styles.modalBackground} onClick={onClose} />
                     <div className={styles.modalCard}>
-                        <header className={`${styles.modalHead} ${danger && styles.danger}`}>
-                            <h1 className={`${styles.modalCardTitle} ${danger && 'has-text-white'} heading-tertiary`}>{windowTitle}</h1>
+                        <header className={clsx(
+                            styles.modalHead,
+                            danger && styles.danger
+                        )}>
+                            <h1 className={clsx(
+                                styles.modalCardTitle,
+                                danger && 'has-text-white',
+                                "heading-tertiary"
+                            )}>
+                                {windowTitle}
+                            </h1>
                             <DeleteButton
                                 onClick={onClose}
                                 className={styles.closeButton}

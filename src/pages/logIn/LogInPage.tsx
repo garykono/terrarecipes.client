@@ -1,12 +1,13 @@
-import styles from './LogInPage.module.css';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 import { Link, useNavigate, useRevalidator } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import styles from './LogInPage.module.css';
 import { logIn } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { isEmail } from '../../utils/validation';
 import Button from '../../components/buttons/Button';
+import { isEmail } from '../../utils/validation';
 
 function LogInPage () {
     const revalidator = useRevalidator();
@@ -65,14 +66,22 @@ function LogInPage () {
             <div className="container">
                 <div className={styles.formContainer}>
                     <form 
-                        className={`form card card--form ${styles.formLogin}`}
+                        className={clsx(
+                            "form",
+                            "card",
+                            "card--form",
+                            styles.formLogin
+                        )}
                         onSubmit={handleSubmit(onSubmit)}
                     >
                         <div className='form-heading'>
                             <h1 className={"form-title"}>Log In</h1>
                         </div>
 
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                            "field",
+                            styles.field
+                        )}>
                             <label className="label">Email</label>
                             <div className="control">
                                 <input 
@@ -88,12 +97,15 @@ function LogInPage () {
                                     })}
                                 />
                                 {errors.email?.message && (
-                                    <FormMessage className='form-message' message={errors.email?.message} danger />
+                                    <FormMessage className="form-message" message={errors.email?.message} danger />
                                 )}
                             </div>
                         </div>
 
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                            "field",
+                            styles.field
+                        )}>
                             <label className="label">Password</label>
                             <div className="control">
                                 <input 
@@ -104,24 +116,24 @@ function LogInPage () {
                                     })}
                                 />
                                 {errors.password?.message && (
-                                    <FormMessage className='form-message' message={errors.password?.message} danger />
+                                    <FormMessage className="form-message" message={errors.password?.message} danger />
                                 )}
                             </div>
                         </div>
 
                         {errors.root?.general?.message && (
-                            <FormMessage className='form-message' message={errors.root.general.message} danger />
+                            <FormMessage className="form-message" message={errors.root.general.message} danger />
                         )}
 
-                        <div className={`${styles.submitOptions}`}>
-                            <div className={`${styles.submitButtons}`}>
+                        <div className={styles.submitOptions}>
+                            <div className={styles.submitButtons}>
                                 <Button primary type="submit">Login</Button>
                                 <Link to="/signUp">
                                     <Button>Sign Up</Button>
                                 </Link>
                             </div>
 
-                            <Link className={`${styles.forgotPasswordLink}`} to='/forgotPassword'>
+                            <Link className={styles.forgotPasswordLink} to='/forgotPassword'>
                                 Forgot your password?
                             </Link>
                         </div>

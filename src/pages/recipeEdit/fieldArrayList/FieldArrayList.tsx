@@ -1,7 +1,8 @@
-import { GoArrowDown, GoArrowUp } from "react-icons/go";
-import IngredientInput from "../../../components/ingredientInput/IngredientInput";
-import styles from "./FieldArrayList.module.css";
+import clsx from "clsx";
 import { UseFieldArrayRemove, UseFormGetValues, UseFormRegister } from "react-hook-form";
+import { GoArrowDown, GoArrowUp } from "react-icons/go";
+import styles from "./FieldArrayList.module.css";
+import IngredientInput from "../../../components/ingredientInput/IngredientInput";
 import DeleteButton from "../../../components/buttons/DeleteButton";
 import { FormData } from "../RecipeEditPage";
 
@@ -12,6 +13,7 @@ export interface FieldArrayListProps {
     field: {
         text: string;
         isSection: boolean;
+        id: string;
     }[];
     getValues: UseFormGetValues<FormData>;
     register: UseFormRegister<FormData>;
@@ -21,13 +23,11 @@ export interface FieldArrayListProps {
 }
 
 export function FieldArrayList({ fieldArrayName, title, isInput, field, getValues, register, append, remove, swap }: FieldArrayListProps) {
-    const fieldArray = getValues(fieldArrayName) as typeof field;
-
     return (
         <>
             <ul className={styles.fieldArrayList}>
                 {field.map((item, index) => {
-                    const isSection = fieldArray[index].isSection;
+                    const isSection = item.isSection;
                     const name = `${fieldArrayName}.${index}` as keyof FormData;
                     let textBox;
                     if (isSection) {
@@ -35,7 +35,7 @@ export function FieldArrayList({ fieldArrayName, title, isInput, field, getValue
                             <div className={styles.fieldArraySectionContent}>
                                 <div className={styles.sectionFieldTag}>Section:</div>
                                 <input 
-                                    className={'input'}
+                                    className={"input"}
                                     {...register(`${name}.text` as keyof FormData)}
                                 />
                             </div>
@@ -56,11 +56,11 @@ export function FieldArrayList({ fieldArrayName, title, isInput, field, getValue
                     
                     return (
                         <li 
-                            key={index} 
-                            className={`
-                                ${styles.fieldArrayListItem}
-                                ${isSection? styles.fieldArraySection : ''}
-                            `}
+                            key={item.id} 
+                            className={clsx(
+                                styles.fieldArrayListItem,
+                                isSection && styles.fieldArraySection
+                            )}
                         >
                             <div className={styles.moveItemArrows}>
                                 <button

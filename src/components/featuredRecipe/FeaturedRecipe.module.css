@@ -28,9 +28,6 @@
     text-align: center;
 }
 
-.recipeDescription {
-}
-
 .recipeButtonLink {
     display: flex;
     justify-content: center;
@@ -75,11 +72,4 @@
     .recipeBody {
         gap: 3.6rem;
     }
-}
-
-/**************************/
-/* Below 544px (Phones) */
-/**************************/
-
-@media (max-width: 34em) {
 }

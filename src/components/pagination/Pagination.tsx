@@ -1,5 +1,6 @@
-import styles from './Pagination.module.css';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
+import styles from './Pagination.module.css';
 
 interface PaginationProps {
     currentPage: number;
@@ -38,10 +39,20 @@ export default function Pagination({
     }, [currentPage, numPages])
 
     return (
-        <nav className={`${styles.pagination} ${className}`} role="navigation" aria-label="pagination">
+        <nav 
+            className={clsx(
+                styles.pagination,
+                className
+            )} 
+            role="navigation" 
+            aria-label="pagination"
+        >
             <a 
-                className={`${styles.paginationButton} ${previousPageButtonDisabledClass}`}
-                onClick={previousPageButtonDisabledClass === ""? onPreviousPageButtonClicked : undefined}
+                className={clsx(
+                    styles.paginationButton,
+                    previousPageButtonDisabledClass
+                )}
+                onClick={previousPageButtonDisabledClass === "" ? onPreviousPageButtonClicked : undefined}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={styles.paginationButtonIcon}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -73,7 +84,10 @@ export default function Pagination({
                 }
                 <li>
                     <a
-                        className={`${styles.pageLink} ${styles.pageLinkCurrent}`}
+                        className={clsx(
+                            styles.pageLink,
+                            styles.pageLinkCurrent
+                        )}
                         aria-label={`Page ${currentPage}`}
                         aria-current="page"
                         >{currentPage}
@@ -104,7 +118,10 @@ export default function Pagination({
             </ul>
 
             <a 
-                className={`${styles.paginationButton} ${nextPageButtonDisabledClass}`}
+                className={clsx(
+                    styles.paginationButton,
+                    nextPageButtonDisabledClass
+                )}
                 onClick={nextPageButtonDisabledClass === ""? onNextPageButtonClicked : undefined}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className={styles.paginationButtonIcon}>

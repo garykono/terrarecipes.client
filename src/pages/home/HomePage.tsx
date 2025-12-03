@@ -1,8 +1,9 @@
-import styles from "./HomePage.module.css";
+import clsx from "clsx";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import FeaturedList from "../../components/featuredList/FeaturedList";
-import { Recipe } from "../../api/types/recipe";
+import styles from "./HomePage.module.css";
 import { HomeLoaderResult } from "./homeLoader";
+import { Recipe } from "../../api/types/recipe";
+import FeaturedList from "../../components/featuredList/FeaturedList";
 import FeaturedCluster from "../../components/featuredCluster/FeaturedCluster";
 import { shavePrefix } from "../../utils/tagHelpers";
 
@@ -50,8 +51,15 @@ function HomePage () {
     
     return (
         <div className={styles.homePage}>
-            <section className={`page-top section ${styles.heroSection}`}>
-                <div className={`container ${styles.heroContainer}`}>
+            <section className={clsx(
+                "page-top",
+                "section",
+                styles.heroSection
+            )}>
+                <div className={clsx(
+                    "container",
+                    styles.heroContainer
+                )}>
                     {recipes[0] && 
                         <FeaturedCluster 
                             title="Featured This Week" 
@@ -66,8 +74,14 @@ function HomePage () {
             <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
             <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
 
-            <section className={`section ${styles.secondClusterSection}`}>
-                <div className={`container ${styles.secondClusterContainer}`}>
+            <section className={clsx(
+                "section",
+                styles.secondClusterSection
+            )}>
+                <div className={clsx(
+                    "container",
+                    styles.secondClusterContainer
+                )}>
                     <FeaturedCluster 
                         title="One Pot Recipes" 
                         hero={recipes[10]} 

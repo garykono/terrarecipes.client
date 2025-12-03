@@ -1,12 +1,13 @@
+import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { getCurrentWordAtPosition } from "../../utils/helpers";
-import { AutoSuggestResult, useAutoSuggest } from "../../hooks/use-auto-suggest";
 import { useRouteLoaderData } from "react-router";
+import { StandardIngredient, StandardMeasurement } from "../../api/types/standardized";
+import { AutoSuggestResult, useAutoSuggest } from "../../hooks/use-auto-suggest";
+import { getCurrentWordAtPosition } from "../../utils/helpers";
 import { RootLoaderResult } from "../../pages/root/rootLoader";
 import { parseIngredientLine } from "../../utils/parseIngredientLine";
 import { preprocessIngredientInput } from "../../utils/ingredientPreprocessor";
-import { StandardIngredient, StandardMeasurement } from "../../api/types/standardized";
 import { logRecipe } from "../../utils/logger";
 
 const UNIT_SEARCH_KEYS = ['name', 'plural', 'symbol', 'aliases'];
@@ -36,7 +37,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
     const PARSED_INGREDIENT_NAME = `${name}.parsed`;
 
     const { register, getValues, setValue } = useFormContext();
-    const { ref, ...rest } = register(TEXT_NAME);
+    const { ref, onChange: rhfOnChange, ...rest } = register(TEXT_NAME);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +49,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
-    const hasData =
+    const hasData = Boolean(
         standardMeasurementsLookupTable &&
         flattenedStandardIngredientsForFuse &&
         flattenedStandardMeasurementsForFuse &&
@@ -56,15 +57,17 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
         rawUnitsSet &&
         allIngredientForms &&
         allIngredientPreparations
+    );
 
-    const searchUnits = hasData
+
+    const searchUnits = flattenedStandardMeasurementsForFuse
         ? useAutoSuggest<StandardMeasurement>({
               autoSuggestionsList: flattenedStandardMeasurementsForFuse,
               keys: UNIT_SEARCH_KEYS
           })
         : null;
 
-    const searchIngredients = hasData
+    const searchIngredients = flattenedStandardIngredientsForFuse
         ? useAutoSuggest<StandardIngredient>({
               autoSuggestionsList: flattenedStandardIngredientsForFuse,
               keys: INGREDIENT_SEARCH_KEYS
@@ -89,7 +92,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
     }, []);
 
     useEffect(() => {
-        if (!hasData || !currentWord) {
+        if (!hasData || !rawUnitsSet || !currentWord) {
             setShowSuggestions(false);
             return;
         }
@@ -120,7 +123,7 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
     }, [currentWord, inputValue, hasData, searchIngredients, searchUnits]);
 
     const updateParsedInfo = (input: string) => {
-        if (!hasData) return;
+        if (!hasData || !rawUnitsSet || !rawIngredientsSet || !standardMeasurementsLookupTable || !allIngredientForms || !allIngredientPreparations) return;
         const parsedIngredients = parseIngredientLine(
             preprocessIngredientInput(input, rawUnitsSet), 
             rawIngredientsSet,
@@ -188,13 +191,23 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
     };
 
     return (
-        <div className={`dropdown ${showSuggestions && 'dropdown--is-active'} ${className}`} ref={wrapperRef}>
+        <div 
+            className={clsx(
+                "dropdown",
+                showSuggestions && 'dropdown--is-active',
+                className
+            )} 
+            ref={wrapperRef}
+        >
             <div className={`dropdown-trigger`}>
                 <input
-                    className={`input ${className}`}
+                    className={clsx(
+                        "input",
+                        className
+                    )}
                     {...rest}
                     onChange={(e) => {
-                        register(TEXT_NAME).onChange(e);
+                        rhfOnChange(e);
                         handleIngredientChange(e);
                     }}
                     onKeyDown={handleKeyDown}
@@ -213,7 +226,9 @@ export default function IngredientInput({ name, className, suggestionLimit = 5 }
                         {suggestions.map((item, index) => (
                             <div
                                 key={index}
-                                className={`dropdown-item ${index === highlightedIndex && 'dropdown-item--is-highlighted'}`}
+                                className={clsx("dropdown-item",
+                                    index === highlightedIndex && 'dropdown-item--is-highlighted'
+                                )}
                                 onMouseDown={(e) => handleSuggestionClick(e.currentTarget.textContent || "")}
                             >
                                 {item.name}

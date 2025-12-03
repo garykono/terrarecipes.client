@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import styles from './Card.module.css';
 import leanStyles from './CardLean.module.css';
 import richStyles from './CardRich.module.css';
@@ -39,19 +40,26 @@ export default function Card({
                 })}
             </div>
         :   <img 
-                className={`${styles.img} ${size === 'rich' && richStyles.img}`}
+                className={clsx(
+                    styles.img, 
+                    size === 'rich' && richStyles.img
+                )}
                 src={image? image : "https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"}
             />
 
     return (
-        <div className={`
-            card ${styles.card} 
-            ${size === 'lean' ? leanStyles.card : richStyles.card } 
-            ${hoverable && styles.hoverable}
-            ${className}`
-        }>
+        <div className={clsx(
+            "card",
+            styles.card,
+            size === 'lean' ? leanStyles.card : richStyles.card,
+            hoverable && styles.hoverable,
+            className
+        )}>
             {imageContent}
-            <div className={`${styles.content} ${size === 'rich' && richStyles.recipeContent}`}>
+            <div className={clsx(
+                styles.content,
+                size === 'rich' && richStyles.recipeContent
+            )}>
                 <div className={styles.mainText}>
                     <div className={styles.header}>
                         <p className={`${styles.title}`}>{title}</p>
@@ -69,7 +77,10 @@ export default function Card({
                     </div>
                 </div>
                 {metaDataItems && 
-                    <ul className={`${styles.metaDataRow} ${size === 'rich' && styles.metaDivide}`}>
+                    <ul className={clsx(
+                        styles.metaDataRow,
+                        size === 'rich' && styles.metaDivide
+                    )}>
                         {metaDataItems.map((item, index) => {
                             if (item.icon && item.value) {
                                 return <li key={index} className="text-meta"><span>{`${item.icon} ${item.value}`}</span></li>

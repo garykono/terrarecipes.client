@@ -1,4 +1,4 @@
-import { useRouteLoaderData, type Params } from 'react-router-dom';
+import { type Params } from 'react-router-dom';
 import type { Recipe } from '../../api/types/recipe';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';

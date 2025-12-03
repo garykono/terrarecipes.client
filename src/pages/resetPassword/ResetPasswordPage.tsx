@@ -1,12 +1,13 @@
-import styles from './ResetPasswordPage.module.css';
+import clsx from 'clsx';
 import { useState, useEffect } from 'react';
-import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import styles from './ResetPasswordPage.module.css';
+import { ResetPasswordLoaderResult } from './ResetPasswordLoader';
 import { resetPassword } from '../../api/queries/usersApi';
 import FormMessage from '../../components/formMessage/FormMessage';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
 import Button from '../../components/buttons/Button';
-import { ResetPasswordLoaderResult } from './ResetPasswordLoader';
 
 export default function SignUpPage () {
     const { token } = useLoaderData() as ResetPasswordLoaderResult;
@@ -56,13 +57,25 @@ export default function SignUpPage () {
 
     return (
         <div className={styles.pageResetPassword}>
-            <div className='container'>
+            <div className="container">
                 <div className={styles.formContainer}>
-                    <form className={`form card card--form ${styles.form} ${styles.formResetPassword}`} onSubmit={handleSubmit(onSubmit)}>
+                    <form 
+                        className={clsx(
+                            "form",
+                            "card",
+                            "card--form",
+                            styles.form,
+                            styles.formResetPassword
+                        )} 
+                        onSubmit={handleSubmit(onSubmit)}
+                    >
                         <div className="form-heading">
-                            <h1 className={`form-title`}>Reset Password</h1>
+                            <h1 className={"form-title"}>Reset Password</h1>
                         </div>
-                        <div className={`field ${styles.field}`}>
+                        <div className={clsx(
+                            "field",
+                            styles.field
+                        )}>
                             <label className="label">Password</label>
                             <div className="control">
                                 <input 
@@ -81,7 +94,7 @@ export default function SignUpPage () {
                                     })}
                                 />
                                 {errors.password?.message && (
-                                    <FormMessage className='form-message' message={errors.password.message} danger />
+                                    <FormMessage className="form-message" message={errors.password.message} danger />
                                 )}
                             </div>
                         </div>
@@ -103,11 +116,11 @@ export default function SignUpPage () {
                                         })}
                                     />
                                     {errors.passwordConfirm?.message && (
-                                        <FormMessage className='form-message' message={errors.passwordConfirm.message} danger />
+                                        <FormMessage className="form-message" message={errors.passwordConfirm.message} danger />
                                     )}
                             </div>
                         </div>
-                        <div className={`${styles.submitButtons}`}>
+                        <div className={styles.submitButtons}>
                             <Button primary type="submit">Submit</Button>
                         </div>
                         {successMessage !== '' &&

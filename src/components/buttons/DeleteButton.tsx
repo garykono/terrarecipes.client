@@ -1,6 +1,7 @@
-import { GoXCircleFill } from 'react-icons/go';
 import styles from './Buttons.module.css';
+import clsx from 'clsx';
 import { ButtonHTMLAttributes } from 'react';
+import { GoXCircleFill } from 'react-icons/go';
 
 interface CustomButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     // Add any custom props specific to your component here, if needed
@@ -10,8 +11,8 @@ interface CustomButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function DeleteButton({ iconClassName, className, ...rest }: CustomButtonProps) {
     return (
-        <button { ...rest } className={`${className} ${styles.deleteButton}`}>
-            <GoXCircleFill className={`${iconClassName} ${styles.deleteButtonIcon}`} />
+        <button { ...rest } className={clsx(className, styles.deleteButton)}>
+            <GoXCircleFill className={clsx(iconClassName, styles.deleteButtonIcon)} />
         </button>
     )
 }

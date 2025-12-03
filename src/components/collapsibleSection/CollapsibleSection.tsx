@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import styles from "./CollapsibleSection.module.css";
 import { useId, useState } from "react";
 
@@ -60,7 +61,10 @@ export function CollapsibleSection({
                 id={regionId}
                 role="region"
                 aria-labelledby={sectionId}
-                className={[styles.collapsibleBody, isOpen ? styles.isOpen : styles.isClosed].join(" ")}
+                className={clsx(
+                    styles.collapsibleBody, 
+                    isOpen ? styles.isOpen : styles.isClosed
+                )}
                 hidden={!isOpen}
             >
                 {children}

@@ -1,5 +1,3 @@
-
-
 export const removeEmptyFieldsFromObj = <T extends Record<string, unknown>>(obj: T): Partial<T> => {
     const newObj = { ...obj }; // Create a shallow copy to avoid mutating the original object
     for (const key in newObj) {

@@ -1,5 +1,6 @@
-import DeleteButton from '../buttons/DeleteButton';
+import clsx from 'clsx';
 import styles from './Chip.module.css';
+import DeleteButton from '../buttons/DeleteButton';
 
 export type ChipProps = {
     label: string;
@@ -26,11 +27,12 @@ export default function Chip({
 }: ChipProps) {
     return (
         <div
-            className={[
+            className={clsx(
                 styles.chip,
-                selected ? styles.chipSelected : "",
-                disabled ? styles.chipDisabled : "",
-                className].join(" ")}
+                selected && styles.chipSelected,
+                disabled && styles.chipDisabled,
+                className
+            )}
             title={title}
         >
             <button
@@ -62,7 +64,7 @@ export default function Chip({
                         />
                     </svg>
                 )}
-                <span className={`${styles.chipLabel}`}>{label}</span>
+                <span className={styles.chipLabel}>{label}</span>
             </button>
 
             {onRemove && (

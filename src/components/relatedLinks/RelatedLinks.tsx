@@ -1,6 +1,5 @@
-import { ReactElement } from 'react';
-import styles from './RelatedLinks.module.css'
 import { Link } from 'react-router';
+import styles from './RelatedLinks.module.css'
 
 interface RelatedLinksProps {
     links: {

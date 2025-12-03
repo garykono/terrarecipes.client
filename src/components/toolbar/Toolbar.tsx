@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-import styles from './Toolbar.module.css';
 import { Link } from "react-router-dom";
+import styles from './Toolbar.module.css';
 
 export type ToolbarAction = 
         {

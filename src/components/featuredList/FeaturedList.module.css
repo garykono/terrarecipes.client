@@ -12,9 +12,6 @@
     margin-bottom: var(--space-xs);
 }
 
-.title {
-}
-
 .scrollWrapper {
     display: flex;
     gap: 1.6rem;
@@ -42,19 +39,3 @@
 /* .scrollWrapper {
   scrollbar-width: none;
 } */
-
-/**************************/
-/* Below 1200px (Landscape Tablets) */
-/**************************/
-@media (max-width: 44em) {
-  .cardWrapper {
-  }
-}
-
-/**************************/
-/* Below 944px (Tablets) */
-/**************************/
-@media (max-width: 34em) {
-  .cardWrapper {
-  }
-}

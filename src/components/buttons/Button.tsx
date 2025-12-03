@@ -1,5 +1,6 @@
-import styles from './Buttons.module.css';
+import clsx from 'clsx';
 import { ButtonHTMLAttributes } from 'react';
+import styles from './Buttons.module.css';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     // Add any custom props specific to your component here, if needed
@@ -13,14 +14,14 @@ export default function Button({ primary, secondary, danger, children, className
     return (
         <button 
             { ...rest } 
-            className={`
-                button 
-                ${primary && 'button--primary'} 
-                ${secondary && 'button--secondary'}
-                ${danger && 'button--danger'} 
-                ${!(primary || danger) && 'button--secondary'}
-                ${className}
-            `}
+            className={clsx(
+                "button",
+                primary && 'button--primary',
+                secondary && 'button--secondary',
+                danger && 'button--danger',
+                !(primary || danger) && 'button--secondary',
+                className,
+            )}
         >
             {children}
         </button>

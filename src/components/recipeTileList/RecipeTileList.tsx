@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { Link } from 'react-router';
 import { Recipe } from '../../api/types/recipe';
 import styles from './RecipeTileList.module.css';
@@ -10,7 +11,10 @@ interface RecipeTileListProps {
 export default function RecipeTileList({ list, className }: RecipeTileListProps) {
     return (
         <div 
-            className={`${styles.recipeTileList} ${className}`}
+            className={clsx(
+                styles.recipeTileList,
+                className
+            )}
         >
                 {list.filter(recipe => !!recipe.image).map(recipe => (
                     <Link to={`/recipe/${recipe._id}`} className={styles.recipeLink} key={recipe._id}>

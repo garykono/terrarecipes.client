@@ -1,11 +1,12 @@
-import styles from './RecipeCardWithFeatures.module.css';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { Link, useNavigate, useRevalidator } from 'react-router-dom';
 import { MdOutlineAddCircle, MdOutlineRemoveCircle } from "react-icons/md";
+import styles from './RecipeCardWithFeatures.module.css';
 import { deleteRecipeById } from '../../api/queries/recipesApi';
+import { Recipe } from '../../api/types/recipe';
 import RecipeCard from '../recipeCard/RecipeCard'
 import Modal from '../modal/Modal'
-import { Recipe } from '../../api/types/recipe';
 import Button from '../buttons/Button';
 import { logRecipe } from '../../utils/logger';
 
@@ -68,7 +69,7 @@ export default function RecipeCardWithFeatures({
 
     function getManagementButtons(recipeId: string) {
         return (
-            <div className={`${styles.managementButtons}`}>
+            <div className={styles.managementButtons}>
                 <button 
                     className={`${styles.managementIcon} managementIcon`}
                     onClick={() => navigate(`/editRecipe/${recipeId}`)}
@@ -76,7 +77,11 @@ export default function RecipeCardWithFeatures({
                     ✏️
                 </button>
                 <button 
-                    className={`${styles.managementIcon} managementIcon js-modal-trigger`}
+                    className={clsx(
+                        styles.managementIcon,
+                        "managementIcon",
+                        "js-modal-trigger"
+                    )}
                     onClick={() => handleDeleteRecipeButtonClick(recipeId)}
                 >
                     🗑️
@@ -86,7 +91,13 @@ export default function RecipeCardWithFeatures({
     }
 
     return (
-        <div className={`${styles.recipeCardWithFeatures} ${className}`} key={recipe._id} >
+        <div 
+            className={clsx(
+                styles.recipeCardWithFeatures,
+                className
+            )} 
+            key={recipe._id}
+        >
             <div className={styles.options}>
                 {collectionMode &&
                     (markForDelete ? 
@@ -113,7 +124,7 @@ export default function RecipeCardWithFeatures({
                             Cancel
                         </Button>
                         <Button type="button" 
-                            className={`${styles.deleteCollectionModalButton}`}
+                            className={styles.deleteCollectionModalButton}
                             danger 
                             onClick={() => deleteRecipe(recipeIdToDelete)}
                         >

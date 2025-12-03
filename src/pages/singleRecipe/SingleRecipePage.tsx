@@ -1,11 +1,12 @@
-import styles from './SingleRecipePage.module.css';
+import clsx from 'clsx';
 import { useState } from 'react'
 import { useLoaderData, useRouteLoaderData, useNavigate } from 'react-router-dom';
+import styles from './SingleRecipePage.module.css';
+import { RootLoaderResult } from '../root/rootLoader';
+import { SingleRecipeLoaderResult } from './singleRecipeLoader';
 import { editCollectionById, getCollectionById } from '../../api/queries/collectionApi';
 import TagList from '../../components/tagList/TagList';
 import GlobalErrorDisplay from '../../components/globalErrorDisplay/GlobalErrorDisplay';
-import { RootLoaderResult } from '../root/rootLoader';
-import { SingleRecipeLoaderResult } from './singleRecipeLoader';
 import { Ingredient, Direction } from '../../api/types/recipe';
 import FormMessage from '../../components/formMessage/FormMessage';
 import RelatedLinks from '../../components/relatedLinks/RelatedLinks';
@@ -15,7 +16,7 @@ import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
 import { AppError } from '../../utils/errors/types';
 
-function SingleRecipePage() {
+export default function SingleRecipePage() {
     const navigate = useNavigate();
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
     const { recipe } = useLoaderData() as SingleRecipeLoaderResult;
@@ -77,7 +78,10 @@ function SingleRecipePage() {
             if (item.isSection) {
                 return (
                     <div 
-                        className={`heading-tertiary ${styles.listItemIsSection}`}
+                        className={clsx(
+                            "heading-tertiary",
+                            styles.listItemIsSection
+                        )}
                         key={index}>
                             {item.text}
                     </div>
@@ -135,8 +139,11 @@ function SingleRecipePage() {
             </div>
 
             <div className="container">
-                <div className={`card--padded ${styles.recipe}`}>
-                    <div className={`${styles.sectionOverview}`}>
+                <div className={clsx(
+                    "card--padded",
+                    styles.recipe
+                )}>
+                    <div className={styles.sectionOverview}>
                         <div className={styles.overviewWrapper}>
                             <div className={styles.textOverview}>
                             <h1 className="page-title">{recipe.name}</h1>
@@ -166,11 +173,22 @@ function SingleRecipePage() {
                         </div>
                     </div>
 
-                    <div className={`section ${styles.sectionIngredientsAndDirections}`}>
+                    <div className={clsx(
+                        "section",
+                        styles.sectionIngredientsAndDirections
+                    )}>
                         <div className={styles.ingredientsAndDirectionsWrapper}>
-                            <div className={`card card--padded ${styles.ingredientsWrapper}`}>
+                            <div className={clsx(
+                                "card",
+                                "card--padded",
+                                styles.ingredientsWrapper
+                            )}>
                                 <h2 
-                                    className={`heading-secondary underlined-title ${styles.ingredientsTitle}`}
+                                    className={clsx(
+                                        "heading-secondary",
+                                        "underlined-title",
+                                        styles.ingredientsTitle
+                                    )}
                                     style={{ "--category-color": 'var(--primary-dark)' } as React.CSSProperties}
                                 >
                                     Ingredients
@@ -179,9 +197,17 @@ function SingleRecipePage() {
                                     {renderListWithSections(recipe.ingredients)}
                                 </ul>
                             </div>
-                            <div className={`card card--padded ${styles.directionsWrapper}`}>
+                            <div className={clsx(
+                                "card",
+                                "card--padded",
+                                styles.directionsWrapper
+                            )}>
                                 <h2 
-                                    className={`heading-secondary underlined-title ${styles.ingredientsTitle}`}
+                                    className={clsx(
+                                    "heading-secondary",
+                                    "underlined-title",
+                                    styles.ingredientsTitle
+                                )}
                                     style={{ "--category-color": 'var(--primary-dark)' } as React.CSSProperties}
                                 >
                                     Directions
@@ -198,7 +224,10 @@ function SingleRecipePage() {
                     </div>
                 </div>
                 
-                <div className={`section ${styles.sectionRelatedLinks}`}>
+                <div className={clsx(
+                    "section",
+                    styles.sectionRelatedLinks
+                )}>
                         <RelatedLinks links={[
                             { label: "Home (Placeholder)", to: "/"},
                             { label: "Browse (Placeholder)", to: "/browse"}
@@ -208,5 +237,3 @@ function SingleRecipePage() {
         </div>
     )
 }
-
-export default SingleRecipePage;
