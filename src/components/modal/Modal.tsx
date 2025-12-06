@@ -32,12 +32,12 @@ export default function Modal({ onClose, windowTitle, danger, className, childre
 
     return (
         ReactDOM.createPortal(
-                <div className={clsx(
-                    styles.modal,
-                    className
-                )}>
+                <div className={styles.modal}>
                     <div className={styles.modalBackground} onClick={onClose} />
-                    <div className={styles.modalCard}>
+                    <div className={clsx(
+                        styles.modalCard,
+                        className
+                    )}>
                         <header className={clsx(
                             styles.modalHead,
                             danger && styles.danger

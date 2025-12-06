@@ -6,20 +6,21 @@ export interface ErrorMessageSetter {
 }
 
 export function useSetError(
-        err: { 
-            duplicate_fields?: string[];
-            invalid_fields?: { name: string; message: string }[];
+        err: {
             status?: number;
-            name?: string;
+            details: { 
+                duplicateFields?: string[];
+                invalidFields?: { name: string; message: string }[];
+            }
         }, 
         setError: ErrorMessageSetter
 ) {
-    if (err.duplicate_fields) {
-        err.duplicate_fields.forEach((field) => {
+    if (err.details.duplicateFields) {
+        err.details.duplicateFields.forEach((field) => {
             setError(field,  { type: 'server', message: `This ${field} is already taken.`}, { shouldFocus: true })
         })
-    } else if (err.invalid_fields) {
-        err.invalid_fields.forEach(field => {
+    } else if (err.details.invalidFields) {
+        err.details.invalidFields.forEach(field => {
             let fieldName = field.name;
             if (['ingredients', 'directions', 'tags'].includes(field.name)) {
                 fieldName = `${field.name}.root`;
@@ -28,6 +29,9 @@ export function useSetError(
         });
     } else {
         logAPI.debug({err}, "unknown error")
-        setError('root.other', err as FieldError)
+        setError('root.other', {
+            type: 'server',
+            message: 'Something went wrong. Please try again.',
+        })
     }
 }

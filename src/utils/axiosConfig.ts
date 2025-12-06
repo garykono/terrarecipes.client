@@ -66,12 +66,12 @@ axiosInstance.interceptors.response.use(
             (status ? (HTTP_STATUS_TO_CODE[status] ?? AppErrorCodes.UNKNOWN) : AppErrorCodes.UNKNOWN);
 
         // 2) Do additional normalizing for specific errors
-        const duplicateFields = serverPayload.response?.data?.name === 'DUPLICATE_FIELD_ERROR'
+        const duplicateFields = serverPayload.name === 'DUPLICATE_FIELD_ERROR'
             ? error.response.data.errors.map((errMessage: string) => errMessage.split(':')[0].trim())
             : undefined;
 
-        const invalidFields = serverPayload.response?.data?.name === 'VALIDATION_ERROR'
-        ? error.response.data.errors.map((errMessage: string) => {
+        const invalidFields = serverPayload.name === 'VALIDATION_ERROR'
+        ? serverPayload.errors.map((errMessage: string) => {
                 return {
                     name: errMessage.split(':')[0],
                     message: errMessage.split(':')[1]
