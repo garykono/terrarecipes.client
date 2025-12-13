@@ -1,10 +1,9 @@
 import axiosInstance from '../../utils/axiosConfig';
-import { removeEmptyFieldsFromObj } from '../../utils/helpers';
+import { PrimitiveParam, removeEmptyFieldsFromObj, toStringRecord } from '../../utils/helpers';
 import { logAPI } from '../../utils/logger';
 import { Recipe, UnvalidatedRecipe } from '../types/recipe'
 
 const endpointBase = "/recipes";
-const endpointLabel = "RECIPES";
 
 export type FetchRecipesProps<
   TExtra extends Record<string, unknown> = {}
@@ -15,9 +14,29 @@ export type FetchRecipesProps<
   searchFields?: string;
 } & TExtra;
 
+export const fetchMyRecipes = ({limit, page, search, searchFields, ...rest} : FetchRecipesProps) => {
+    const filtered = removeEmptyFieldsFromObj({ limit, page, search, searchFields, ...rest})
+    const p = new URLSearchParams(toStringRecord(filtered as Record<string, PrimitiveParam>));
+
+    return (
+        axiosInstance
+            .get(`${endpointBase}/myRecipes/?${p.toString()}`)
+            .then((response) => {
+                return {
+                    data: response.data.data.data as Recipe[],
+                    totalPages: response.data.totalPages as number
+                }
+            })
+            .catch((error) => {
+                throw error;
+            })
+    );
+}
+
 // export const fetchRecipes = (params: { [key: string]: string }) => {
 export const fetchRecipes = ({limit, page, search, searchFields, ...rest} : FetchRecipesProps) => {
-    const p = new URLSearchParams(removeEmptyFieldsFromObj({ limit, page, search, searchFields, ...rest}));
+    const filtered = removeEmptyFieldsFromObj({ limit, page, search, searchFields, ...rest})
+    const p = new URLSearchParams(toStringRecord(filtered as Record<string, PrimitiveParam>));
 
     return (
         axiosInstance

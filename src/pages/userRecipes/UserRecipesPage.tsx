@@ -2,7 +2,6 @@ import styles from './UserRecipesPage.module.css';
 import { useState, useEffect } from 'react'
 import { useNavigate, useRouteLoaderData, useLoaderData } from 'react-router-dom';
 import { RootLoaderResult } from '../root/rootLoader';
-import { Recipe } from '../../api/types/recipe';
 import CardList from '../../components/cardList/CardList';
 import Pagination from '../../components/pagination/Pagination';
 import RecipeCardWithFeatures from '../../components/recipeCardWithFeatures/RecipeCardWithFeatures';
@@ -13,17 +12,18 @@ import BasicHero from '../../components/basicHero/BasicHero';
 import Toolbar from '../../components/toolbar/Toolbar';
 import { createAppError } from '../../utils/errors/factory';
 import { AppErrorCodes } from '../../utils/errors/codes';
+import { UserRecipesLoaderResult } from './userRecipesLoader';
 
 function UserRecipesPage() {
     const navigate = useNavigate();
     const { user } = useRouteLoaderData('root') as RootLoaderResult;
-    const { search, page, numResults } = useLoaderData();
-    const [ recipesToShow, setRecipesToShow ] = useState<Recipe[]>([]);
-    const [ totalPages, setTotalPages ] = useState(1);
+    const { userRecipes, totalPages, page, search } = useLoaderData() as UserRecipesLoaderResult;
 
     const [showAddRecipeButton, setShowAddRecipeButton] = useState(false);
     const [ deletedRecipeName, setDeletedRecipeName ] = useState('');
     const [ error, setError ] = useState(null);
+
+    const searchSlug = search ? search : "";
 
     // Collection Modification
     const [showCollectionModificationButtons, setShowCollectionModificationButtons] = useState(false);
@@ -38,36 +38,10 @@ function UserRecipesPage() {
         }
     }, [user])
 
-    useEffect(() => {
-        if(user) {
-            // Apply search to the recipes
-            let recipes = user.recipes;
-            if (search) {
-                const formattedSearchTerm = search.replace('-', ' ').toLowerCase();
-                recipes = 
-                    user.recipes.filter(recipe => {
-                        return recipe.name.toLowerCase().split(' ').includes(formattedSearchTerm) || recipe.tags.includes(formattedSearchTerm);
-                    })
-            }
-
-            // Slice the searched recipes into what will be displayed on this page
-            const numRecipes = recipes.length;
-            setTotalPages(Math.ceil(numRecipes / numResults));
-
-            const startIndex = (page - 1) * numResults;
-            const endIndex = Math.min((page * numResults), numRecipes)
-
-            // Apply pagination to recipes
-            const filteredRecipesToShow = recipes.slice(startIndex, endIndex);
-
-            setRecipesToShow(filteredRecipesToShow);            
-        }
-    }, [user, page, search])
-
     const renderedRecipeCards = (() => {
         if (user) {
             return (
-                recipesToShow.map(recipe => {
+                userRecipes.map(recipe => {
                     return <RecipeCardWithFeatures 
                         key={recipe._id} 
                         recipe={recipe}
@@ -115,10 +89,10 @@ function UserRecipesPage() {
                     <CardList list={renderedRecipeCards} className={styles.cardList} />
                     <Pagination 
                         currentPage={page} 
-                        onFirstPageButtonClicked={() => navigate(`/myRecipes/${1}`)}
-                        onPreviousPageButtonClicked={() => navigate(`/myRecipes/${page - 1}`)} 
-                        onNextPageButtonClicked={() => navigate(`/myRecipes/${page + 1}`)}
-                        onLastPageButtonClicked={() => navigate(`/myRecipes/${totalPages}`)}
+                        onFirstPageButtonClicked={() => navigate(`/myRecipes/${1}/${searchSlug}`)}
+                        onPreviousPageButtonClicked={() => navigate(`/myRecipes/${page - 1}/${searchSlug}`)} 
+                        onNextPageButtonClicked={() => navigate(`/myRecipes/${page + 1}/${searchSlug}`)}
+                        onLastPageButtonClicked={() => navigate(`/myRecipes/${totalPages}/${searchSlug}`)}
                         numPages={totalPages} 
                     />
                 </div>

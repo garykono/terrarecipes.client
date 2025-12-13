@@ -8,6 +8,18 @@ export const removeEmptyFieldsFromObj = <T extends Record<string, unknown>>(obj:
     return newObj;
 }
 
+export type PrimitiveParam = string | number | boolean | null | undefined;
+
+export const toStringRecord = (obj: Record<string, PrimitiveParam>): Record<string, string> => {
+    const result: Record<string, string> = {};
+    for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined && value !== null && value !== '') {
+        result[key] = String(value);
+        }
+    }
+    return result;
+};
+
 export const getCurrentWordAtPosition = (text: string, position: number | null) => {
     if (!position) {
         return "";
