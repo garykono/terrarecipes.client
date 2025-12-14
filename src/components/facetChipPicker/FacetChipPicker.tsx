@@ -85,14 +85,16 @@ export function FacetChipPicker({
                     const isDisabled = option.disabled || (!isSelected && reachedCap);
                     return (
                         <Chip
+                            variant="filter"
                             key={option.id}
-                            label={option.label}
                             selected={isSelected}
                             disabled={isDisabled}
                             onClick={() => toggle(option.id)}
                             role={multi ? "checkbox" : "radio"}
                             ariaChecked={isSelected}
-                        />
+                        >
+                            {option.label}
+                        </Chip>
                     );
                 })}
             </div>

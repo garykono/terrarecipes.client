@@ -4,8 +4,9 @@
     gap: 0.4rem; 
 }
 
-.chipButton {
-    display: flex;
+/* Non-interactive pill styling */
+.chipStatic {
+    display: inline-flex;
     align-items: center;
     gap: 0.6rem;
     padding: 0.6rem 1.0rem;
@@ -15,6 +16,9 @@
     border: 1px solid var(--color-border);
     background: #fff;
     color: var(--color-text);
+}
+
+.chipButton {
     cursor: pointer;
     transition: border-color .15s, box-shadow .15s, background-color .15s;
 }
@@ -39,15 +43,55 @@
     cursor: not-allowed;
 }
 
+/* Checkmark icon */
 .chipCheck {
     width: 14px;
     height: 14px;
 }
 
+/* Label inside the chip */
+.chipLabel {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Remove icon (used with DeleteButton) */
 .chipRemoveIcon {
     font-size: 1.6rem;
 }
 
 .chipRemove:hover { 
     background: var(--color-bg);
+}
+
+/* Tag variant – neutral pill, often used as simple labels/tags */
+.chipTag .chipButton {
+    background: var(--color-bg, #f8fafc);
+    border-color: var(--color-border, #e2e8f0);
+    color: var(--color-text-muted, #475569);
+}
+
+/* Status variant – e.g. "Draft", "Published" */
+.chipStatus .chipButton {
+    padding: 0.3rem 0.7rem;
+    font-size: calc(var(--font-size-meta) * 0.9);
+    background: var(--color-status-bg, #ecfdf5);
+    border-color: var(--color-status-border, #22c55e33);
+    color: var(--color-status-text, #15803d);
+}
+
+/* Input variant – token-style chips (usually with an X) */
+.chipInput .chipButton {
+    background: var(--color-bg, #f9fafb);
+    border-color: var(--color-border, #e5e7eb);
+}
+
+/* Label variant – small, subtle label chip */
+.chipLabelChip .chipButton {
+    padding: 0.2rem 0.6rem;
+    font-size: calc(var(--font-size-meta) * 0.85);
+    background: var(--color-bg-muted, #f3f4f6);
+    border-radius: 999px;
+    border: none;
+    color: var(--color-text-muted, #6b7280);
 }

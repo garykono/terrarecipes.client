@@ -39,6 +39,7 @@ export interface UnvalidatedRecipe {
 export interface Recipe extends UnvalidatedRecipe {
     totalTimeMin: number;
     _id: string;
+    id: string;
     author: {
         _id: string;
         username: string;

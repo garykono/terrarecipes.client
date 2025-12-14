@@ -224,7 +224,7 @@ export default function SingleRecipePage() {
                     </div>
                 </div>
                 
-                <div className={clsx(
+                {/* <div className={clsx(
                     "section",
                     styles.sectionRelatedLinks
                 )}>
@@ -232,7 +232,7 @@ export default function SingleRecipePage() {
                             { label: "Home (Placeholder)", to: "/"},
                             { label: "Browse (Placeholder)", to: "/browse"}
                         ]}/>
-                </div>
+                </div> */}
             </div>
         </div>
     )

@@ -88,10 +88,11 @@ export function CustomTagsInput({
                     {value.map(slug => (
                         <Chip 
                             key={slug} 
-                            label={slug} 
                             selected 
                             onRemove={() => remove(slug)} 
-                        />
+                        >
+                            {slug}
+                        </Chip>
                     ))}
                 </div>
                 <input

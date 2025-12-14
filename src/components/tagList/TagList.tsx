@@ -2,26 +2,21 @@ import styles from './TagList.module.css';
 import { UseFieldArrayRemove } from 'react-hook-form';
 import { GoXCircleFill } from 'react-icons/go';
 import { shavePrefix } from '../../utils/tagHelpers';
+import Chip from '../chip/Chip';
 
 interface TagListProps {
     tags: string[];
-    onDelete?: (index: number) => void | UseFieldArrayRemove;
 }
 
-export default function TagList({ tags, onDelete }: TagListProps) {
+export default function TagList({ tags }: TagListProps) {
     return (
         <div className={styles.tagList}>
             {tags.map((tag, index) => {
 
                 return (
-                    <span className={styles.tag} key={index}>
+                    <Chip key={index}>
                         {shavePrefix(tag)}
-                        {onDelete && 
-                            <button className={styles.deleteButton} type="button" onClick={() => onDelete(index)}>
-                                <GoXCircleFill />
-                            </button>
-                        }
-                    </span>
+                    </Chip>
                 );
             })}
         </div>
