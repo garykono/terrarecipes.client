@@ -1,25 +1,20 @@
 import type { Params } from 'react-router-dom';
-import type { Recipe } from '../../api/types/recipe';
-import { fetchRecipes } from '../../api/queries/recipesApi';
+import { getHomeCategoryRecipes } from '../../api/queries/categoryApi';
+import { HomeCategoryResult } from '../../api/types/category';
 
 interface LoaderArgs {
     params: Params
 }
 
 export interface HomeLoaderResult {
-    recipes: Recipe[];
-    totalPages: number;
-    page?: number;
-    numCols?: number;
-    numRows?: number;
+    categoryResults: HomeCategoryResult;
 }
 
 export async function homeLoader({ params }: LoaderArgs): Promise<HomeLoaderResult> {
 
-    const { data, totalPages } = await fetchRecipes({});
+    const categoryResults = await getHomeCategoryRecipes();
 
     return {
-        recipes: data,
-        totalPages
+        categoryResults
     }
 }

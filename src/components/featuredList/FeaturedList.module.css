@@ -12,6 +12,10 @@
     margin-bottom: var(--space-xs);
 }
 
+.description {
+    margin: var(--space-xs) 0 var(--space-xs) 0;
+}
+
 .scrollWrapper {
     display: flex;
     gap: 1.6rem;

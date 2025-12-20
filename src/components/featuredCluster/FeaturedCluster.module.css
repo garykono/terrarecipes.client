@@ -5,9 +5,13 @@
     padding: 0 var(--space-lg);
 }
 
-.title {
+.header {
     padding-bottom: var(--space-xs);
     margin-bottom: var(--space-xs);
+}
+
+.description {
+    margin: var(--space-xs) 0 var(--space-xs) 0;
 }
 
 .content {

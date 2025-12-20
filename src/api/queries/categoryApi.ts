@@ -1,5 +1,15 @@
 import axiosInstance from "../../utils/axiosConfig";
-import { CategoryData } from "../types/category";
+import { CategoryData, HomeCategoryResult } from "../types/category";
+
+export const getHomeCategoryRecipes = async () => {
+    return (
+        axiosInstance
+            .get(`/category/home`)
+            .then((response) => {
+                return response.data.data as HomeCategoryResult;
+            })
+    );      
+}
 
 export const getCategory = async (group: string, category: string) => {
     return (

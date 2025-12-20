@@ -5,12 +5,13 @@ import RecipeCardWithFeatures from '../recipeCardWithFeatures/RecipeCardWithFeat
 
 type FeaturedClusterProps = {
     title?: string;
+    description?: string;
     hero: Recipe;
     companions: Recipe[];
     className?: string;
 };
 
-export default function FeaturedCluster({ title, hero, companions, className } : FeaturedClusterProps) {
+export default function FeaturedCluster({ title, description, hero, companions, className } : FeaturedClusterProps) {
     return (
         <div className={clsx(
             styles.featuredClusterWrapper,
@@ -18,16 +19,24 @@ export default function FeaturedCluster({ title, hero, companions, className } :
         )}>
             {title &&
                 <div className={styles.header}>
-                    <h2 
+                    <div 
                         className={clsx(
-                            "section-title",
-                            styles.title,
+                            styles.header,
                             "underlined-title"
                         )}
                         style={{ "--category-color": "var(--color-brand-primary-light)" } as React.CSSProperties}
                     >
-                        {title}
-                    </h2>
+                        <h2 
+                            className={clsx(
+                                "section-title",
+                                styles.title
+                            )}
+                            
+                        >
+                            {title}
+                        </h2>
+                        <p className={clsx("text", styles.description)}>{description}</p>
+                    </div>
                 </div>
             }
 

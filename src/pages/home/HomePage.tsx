@@ -5,120 +5,133 @@ import { HomeLoaderResult } from "./homeLoader";
 import { Recipe } from "../../api/types/recipe";
 import FeaturedList from "../../components/featuredList/FeaturedList";
 import FeaturedCluster from "../../components/featuredCluster/FeaturedCluster";
-import { shavePrefix } from "../../utils/tagHelpers";
+import { HomeCategoryResult, SingleHomeCategoryResult } from "../../api/types/category";
+import { useMemo } from "react";
+
+// Most recipes to show in a single cluster or row
+const MAX_RECIPES_TO_DISPLAY = 5
 
 function HomePage () {
-    const { recipes } = useLoaderData() as HomeLoaderResult;
-    const navigate = useNavigate();
+    const { categoryResults } = useLoaderData() as HomeLoaderResult;
 
-    const featuredListsData = 
-        {
-            dinner: {
-                title: "Trending Now",
-                featuredList: getFeaturedRecipesList("dinner"),
-                buttonTitle: "More Dinner Recipes",
-                onClick: () => navigate(`./recipes/1/dinner`)
-            },
-            onePot: {
-                title: "30-Minute Dinners",
-                featuredList: getFeaturedRecipesList("one pot"),
-                buttonTitle: "More One Pot Recipes",
-                onClick: () => navigate(`./recipes/1/one pot`)
-            },
-            side: {
-                title: "Sides Recipes",
-                featuredList: getFeaturedRecipesList("side"),
-                buttonTitle: "More Sides",
-                onClick: () => navigate(`./recipes/1/sides`)
-            },
-            toMake: {
-                title: "New This Week",
-                featuredList: getFeaturedRecipesList("to make"),
-                buttonTitle: "More Recipes to Try",
-                onClick: () => navigate(`./recipes/1/to make`)
-            }
-        }
+    const uniqueCategoryResults = useMemo(() => {
+        // Keep a counter of how many times each recipes shows up
+        const recipeIdsCounter = {} as Record<string, number>;
 
-    function getFeaturedRecipesList(tag: string) {
-        return recipes.filter((recipe: Recipe) => {
-            const flattenedTags = Array.isArray(recipe?.tags)
-                ? recipe.tags
-                : Object.values(recipe.tags.facets).flat().map(shavePrefix).concat(recipe.tags.custom);
+        const categoryResultsWithDuplicatesMinimized = {} as HomeCategoryResult;
+        
+        Object.entries(categoryResults).forEach(([categoryKey, categoryData]) => {
+            const categoryRecipesToDisplay = [] as Recipe[];
+
+            // Increment the counter for each recipe we're using
+            for (const recipe of categoryData.recipes.results) {
+                if (recipeIdsCounter[recipe.id]) {
+                    recipeIdsCounter[recipe.id] += 1;
+                } else {
+                    recipeIdsCounter[recipe.id] = 1;
+                }
+
+                // If the recipe hasn't shown up already on other lists, display it in this list
+                if (recipeIdsCounter[recipe.id] < 2) categoryRecipesToDisplay.push(recipe);
+                // Stop at 5 recipes
+                if (categoryRecipesToDisplay.length >= MAX_RECIPES_TO_DISPLAY) break;
+            };
             
-            return flattenedTags.includes(tag);
-        }).slice(0, 4);
-    }
-    
+            const uniqueCategory = { 
+                ...categoryData,
+                recipes: {
+                    ...categoryData.recipes,
+                    results: categoryRecipesToDisplay,
+                }
+            }
+            categoryResultsWithDuplicatesMinimized[categoryKey] = uniqueCategory;
+        })
+
+        return categoryResultsWithDuplicatesMinimized;
+    }, [categoryResults])
+
     return (
         <div className={styles.homePage}>
-            <section className={clsx(
-                "page-top",
-                "section",
-                styles.heroSection
-            )}>
-                <div className={clsx(
-                    "container",
-                    styles.heroContainer
-                )}>
-                    {recipes[0] && 
-                        <FeaturedCluster 
-                            title="Featured This Week" 
-                            hero={recipes[0]} 
-                            companions={recipes.slice(1, 5)} 
-                            className={styles.heroCluster}
-                        />}
-                </div>
-            </section>
-            
-            {/* {recipes[0] && <HomePageFeaturedRecipe recipe={recipes[0]} />} */}
-            <HomePageFeaturedList listInfo={featuredListsData["toMake"]} />
-            <HomePageFeaturedList listInfo={featuredListsData["dinner"]} />
+            <div className={"page-top"}>
+                <HomePageSection
+                    singleHomeCategoryResult={uniqueCategoryResults["christmas-favorites"]}
+                    variant="cluster"
+                    isHero
+                />
 
-            <section className={clsx(
-                "section",
-                styles.secondClusterSection
-            )}>
-                <div className={clsx(
-                    "container",
-                    styles.secondClusterContainer
-                )}>
-                    <FeaturedCluster 
-                        title="One Pot Recipes" 
-                        hero={recipes[10]} 
-                        companions={recipes.slice(11, 15)} 
-                        className={styles.heroCluster}
-                    />
-                </div>
-            </section>
+                <HomePageSection
+                    singleHomeCategoryResult={uniqueCategoryResults["quick-and-easy"]}
+                    variant="row"
+                    isHero
+                />
 
-            <HomePageFeaturedList listInfo={featuredListsData["onePot"]} />
+                <HomePageSection
+                    singleHomeCategoryResult={uniqueCategoryResults["featured"]}
+                    variant="cluster"
+                    isHero
+                />
+
+                <HomePageSection
+                    singleHomeCategoryResult={uniqueCategoryResults["comfort-classics"]}
+                    variant="row"
+                    isHero
+                />
+
+                <HomePageSection
+                    singleHomeCategoryResult={uniqueCategoryResults["recently-added"]}
+                    variant="row"
+                    isHero
+                />
+            </div>
         </div>
     );
 }
 
-interface HomePageFeaturedListProps {
-    listInfo: {
-        title: string;
-        featuredList: Recipe[];
-        buttonTitle: string;
-        onClick: React.MouseEventHandler<HTMLButtonElement>;
-    }
+interface HomePageSectionProps {
+    singleHomeCategoryResult: SingleHomeCategoryResult,
+    variant: "cluster" | "row",
+    isHero: boolean
 }
 
-function HomePageFeaturedList({ listInfo }: HomePageFeaturedListProps) {
-    const { title, featuredList, buttonTitle, onClick } = listInfo;
-    return (
-        <section className="section">
-            <div className="container">
-                <FeaturedList 
-                    title={title}
-                    featuredList={featuredList}
-                    buttonTitle={buttonTitle}
-                    onClick={onClick}
-                />
-            </div>
-        </section>
-    )
+function HomePageSection({
+    singleHomeCategoryResult,
+    variant,
+    isHero = false
+}: HomePageSectionProps) {
+    if (singleHomeCategoryResult) {
+        const categoryInfo = singleHomeCategoryResult.categoryInfo;
+        const recipesList = singleHomeCategoryResult.recipes.results;
+
+        if (recipesList.length > 0) {
+            return (
+                <section className={clsx(
+                    "section",
+                    isHero ?? styles.heroSection
+                )}>
+                    <div className={clsx(
+                        "container",
+                        styles.heroContainer
+                    )}>
+                        {variant === "cluster" 
+                            ? <FeaturedCluster 
+                                title={categoryInfo.title}
+                                description={categoryInfo.description}
+                                hero={recipesList[0]} 
+                                companions={recipesList.slice(1, 5)} 
+                                className={styles.heroCluster}
+                            />
+                            : <FeaturedList 
+                                title={categoryInfo.title}
+                                description={categoryInfo.description}
+                                featuredList={recipesList}
+                            />
+                        }
+                    </div>
+                </section>
+            )
+        }
+    }
+    return <></>;
 }
 
 export default HomePage;

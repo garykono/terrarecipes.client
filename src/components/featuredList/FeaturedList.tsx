@@ -7,6 +7,7 @@ import Button from '../buttons/Button';
 
 interface FeaturedListProps {
     title: string;
+    description?: string;
     featuredList: Recipe[];
     moreButton?: boolean;
     buttonTitle?: string;
@@ -17,8 +18,9 @@ interface FeaturedListProps {
 
 export default function FeaturedList({ 
     title, 
+    description,
     featuredList = [], 
-    moreButton = true,
+    moreButton = false,
     buttonTitle = "More Recipes", 
     onClick, 
     className 
@@ -41,7 +43,11 @@ export default function FeaturedList({
                 )}
                 style={{ "--category-color": "var(--color-brand-primary-light)" } as React.CSSProperties}
             >
-                <h2 className={`section-title ${styles.title}`}>{title}</h2>
+                <div className={styles.textHeading}>
+                    <h2 className={`section-title ${styles.title}`}>{title}</h2>
+                    <p className={clsx("text", styles.description)}>{description}</p>
+                </div>
+
                 {moreButton &&
                     <Button onClick={ onClick }>{buttonTitle}</Button>
                 }
