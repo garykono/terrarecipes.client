@@ -19,7 +19,7 @@ This repo contains the **frontend** (React + Vite) that powers the TerraRecipes 
 - React Router (data routers / loaders, etc.)
 - Styling: Tailwind CSS (and/or CSS Modules)
 - API communication: fetch / Axios (whichever you use)
-- Deployment: (Netlify / Vercel / Render Static Site — update to match)
+- Deployment: (Render Static Site)
 
 ## Getting Started
 
@@ -29,10 +29,8 @@ npm install
 2) Configure environment variables
 Create a .env file in the project root:
 
-# Base URL for the TerraRecipes backend API
+### Base URL for the TerraRecipes backend API
 VITE_API_BASE_URL="http://localhost:5000"
-
-If your backend uses cookies/sessions or specific CORS settings, keep the frontend + backend origins aligned.
 
 3) Run locally
 npm run dev
@@ -55,7 +53,7 @@ src/
     utils/            Helpers (formatting, parsing helpers, etc.)
 
 ## Notes on Design
-TerraRecipes is built as a real product-style project:
+TerraRecipes is built as a real product-style project.
 
 UI components are designed to be reusable and consistent.
 
